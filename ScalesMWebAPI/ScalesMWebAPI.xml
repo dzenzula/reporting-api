@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ScalesMWebAPI</name>
+    </assembly>
+    <members>
+        <member name="T:ScalesMWebAPI.Controllers.AssigmentPointsController">
+            <summary>Service for providing operations for <cref>Assigment definition</cref></summary>
+        </member>
+        <member name="M:ScalesMWebAPI.Controllers.AssigmentPointsController.GetAssigmentPoints">
+            <summary>
+            Retrieves all name Assigment definition 
+            </summary>
+            <remarks>Awesomeness!</remarks>
+            <response code="200">Product list</response>
+            <response code="400">Assigment definition has missing values</response>
+            <response code="401">User has no unauthorized</response>
+            <response code="500">Oops! Can't create your product right now</response>
+        </member>
+        <member name="M:ScalesMWebAPI.Controllers.AssigmentPointsController.GetAssigmentPoint(System.Int32)">
+            <summary>
+            Retrieves a specific name Assigment definition by unique id
+            </summary>
+            <remarks>Awesomeness!</remarks>
+            <response code="200">Product list </response>
+            <response code="400">Product list has missing</response>
+            <response code="500">Oops! Can't create your product right now</response>
+        </member>
+        <member name="M:ScalesMWebAPI.Controllers.AssigmentPointsController.PutAssigmentPoints(System.Int32,System.String)">
+            <summary>
+            Update a specific name Assigment definition by unique id
+            </summary>
+            <remarks>Awesomeness!</remarks>
+            <response code="200">Product created</response>
+            <response code="400">Product has missing/invalid values</response>
+            <response code="500">Oops! Can't create your product right now</response>
+        </member>
+        <member name="M:ScalesMWebAPI.Controllers.AssigmentPointsController.PostAssigmentPoint(ScalesMWebAPI.Dtos.AddAssigmentPointDto)">
+            <summary>
+            Create a new Assigment definition 
+            </summary>
+            <remarks>Awesomeness!</remarks>
+            <response code="200">Product created</response>
+            <response code="400">Product has missing/invalid values</response>
+            <response code="500">Oops! Can't create your product right now</response>
+        </member>
+        <member name="M:ScalesMWebAPI.Controllers.AssigmentPointsController.DeleteAssigmentPoint(System.Int32)">
+            <summary>
+            DELETE a specific Assigment definition by unique id
+            </summary>
+            <remarks>Awesomeness!</remarks>
+            <response code="200">Product created</response>
+            <response code="400">Product has missing/invalid values</response>
+            <response code="500">Oops! Can't update your product right now</response>
+        </member>
+        <member name="M:ScalesMWebAPI.Controllers.LocationPointsController.GetLocationPoints">
+            <summary>
+            Retrieves all name Location point 
+            </summary>
+            <remarks>Awesomeness!</remarks>
+            <response code="200">Product created</response>
+            <response code="400">Product has missing/invalid values</response>
+            <response code="500">Oops! Can't create your product right now</response>
+        </member>
+        <member name="M:ScalesMWebAPI.Controllers.LocationPointsController.GetLocationPoint(System.Int32)">
+            <summary>
+            Retrieves a specific name Location point by unique id
+            </summary>
+            <remarks>Awesomeness!</remarks>
+            <response code="200">Product created</response>
+            <response code="400">Product has missing/invalid values</response>
+            <response code="500">Oops! Can't create your product right now</response>
+        </member>
+        <member name="M:ScalesMWebAPI.Controllers.LocationPointsController.PutLocationPoint(System.Int32,ScalesMWebAPI.Dtos.UpdateLocationPoint)">
+            <summary>
+            Update a specific name Location point by unique id
+            </summary>
+            <remarks>Awesomeness!</remarks>
+            <response code="200">Product created</response>
+            <response code="400">Product has missing/invalid values</response>
+            <response code="500">Oops! Can't create your product right now</response>
+        </member>
+        <member name="M:ScalesMWebAPI.Controllers.LocationPointsController.PostLocationPoint(ScalesMWebAPI.Dtos.AddLocationPointDto)">
+            <summary>
+            Create a new Location point 
+            </summary>
+            <remarks>Awesomeness!</remarks>
+            <response code="200">Product created</response>
+            <response code="400">Product has missing/invalid values</response>
+            <response code="500">Oops! Can't update your product right now</response>
+        </member>
+        <member name="M:ScalesMWebAPI.Controllers.LocationPointsController.DeleteLocationPoint(System.Int32)">
+            <summary>
+            Delete a specific Location point by unique id
+            </summary>
+            <remarks>Awesomeness!</remarks>
+            <response code="200">Product created</response>
+            <response code="400">Product has missing/invalid values</response>
+            <response code="500">Oops! Can't delete your product right now</response>
+        </member>
+        <member name="M:ScalesMWebAPI.Controllers.TypePlcsController.GetTypePlcs">
+            <summary>
+            Retrieves all name Type PLC 
+            </summary>
+            <remarks>Awesomeness!</remarks>
+            <response code="200">Product created</response>
+            <response code="400">Product has missing/invalid values</response>
+            <response code="500">Oops! Can't create your product right now</response>
+        </member>
+        <member name="P:ScalesMWebAPI.Startup.Configuration">
+            <summary>
+            dotnet ef dbcontext scaffold "Server=KRR-TST-PAHWL02;Database=KRR-PA-MON-SCALES;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -o Models --ContexDir ContextDB
+            </summary>
+        </member>
+    </members>
+</doc>
