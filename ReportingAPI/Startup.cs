@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Net.Http.Headers;
 using ReportingAPI.Services;
 using ReportingAPI.Models;
+using System.Text.Json.Serialization;
 
 namespace ReportingAPI
 {
@@ -40,6 +41,12 @@ namespace ReportingAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            /*services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+            });*/
+
+
             services.AddCors(options =>
             {
                 

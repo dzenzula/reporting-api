@@ -12,6 +12,8 @@ namespace ReportingAPI.Models
         public string URL { get; set; }
 
         public int? ParentId { get; set; }
-       /* public Category Category { get; set; }*/
+        /*public Category Category { get; set; }*/
+        /*public Category Category { get; set; }
+        public ICollection<Category> Categories { get; set; }*/
     }
 }

@@ -28,11 +28,14 @@ namespace ReportingAPI.Models
         public DbSet<Category> Categories { get; set; }
         public DbSet<Report> Reports { get; set; }
 
-       /* protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
-        }*/
+            /*modelBuilder.Entity<Category>()
+                      .HasMany(j => j.SubCategories)
+                      .WithOne(j => j.Parent)
+                      .HasForeignKey(j => j.ParentId);*/
+        }
 
-        
+
     }
 }
