@@ -9677,11 +9677,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\projects\\reporting-api\\ReportingAPI\\ReportingAPI.csproj",
-      "projectName": "ReportingAPI",
-      "projectPath": "D:\\projects\\reporting-api\\ReportingAPI\\ReportingAPI.csproj",
+      "projectUniqueName": "D:\\projects\\reporting-api\\ReportingApi\\ReportingApi.csproj",
+      "projectName": "ReportingApi",
+      "projectPath": "D:\\projects\\reporting-api\\ReportingApi\\ReportingApi.csproj",
       "packagesPath": "C:\\Users\\vlvshevchuk\\.nuget\\packages\\",
-      "outputPath": "D:\\projects\\reporting-api\\ReportingAPI\\obj\\",
+      "outputPath": "D:\\projects\\reporting-api\\ReportingApi\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
