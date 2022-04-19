@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ReportingAPI.Models;
+using ReportingApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ReportingAPI.Controllers
+namespace ReportingApi.Controllers
 {
     [SwaggerTag("Категории")]
     [Route("api/[controller]")]
@@ -24,10 +24,10 @@ namespace ReportingAPI.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/WeightPlatforms
+        // GET: api/Categories
         [HttpGet]
 
-        public async Task<ActionResult<IEnumerable<Category>>> GetWeightPlatforms()
+        public async Task<List<Category>> GetCategories()
         {
 
             /*var Categories = new List<Category>
@@ -55,7 +55,7 @@ namespace ReportingAPI.Controllers
 
         // GET: api/StaticGet
         /*[HttpGet]
-        public ActionResult<IEnumerable<string>> StaticGet()
+        public string StaticGet()
         {
             string json = @"
 [
@@ -97,12 +97,7 @@ namespace ReportingAPI.Controllers
         ""type"": ""folder""
     }
 ]";
-            return new string[] { "te", "asd" };
+            return json;
         }*/
-        [HttpGet]
-        public bool GetT()
-        {
-            return false;
-        }
     }
 }

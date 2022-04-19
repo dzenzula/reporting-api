@@ -31,7 +31,7 @@
   },
   "targets": {
     ".NETCoreApp,Version=v5.0": {
-      "ReportingAPI/1.0.0": {
+      "ReportingApi/1.0.0": {
         "dependencies": {
           "AutoMapper": "10.1.1",
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "8.1.1",
@@ -328,10 +328,10 @@
           "WindowsBase": "4.0.0.0"
         },
         "runtime": {
-          "ReportingAPI.dll": {}
+          "ReportingApi.dll": {}
         },
         "compile": {
-          "ReportingAPI.dll": {}
+          "ReportingApi.dll": {}
         }
       },
       "AutoMapper/10.1.1": {
@@ -4217,7 +4217,7 @@
     }
   },
   "libraries": {
-    "ReportingAPI/1.0.0": {
+    "ReportingApi/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

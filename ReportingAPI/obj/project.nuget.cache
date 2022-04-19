@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "P+mSvMWzOkHfFRa1qgQsluhJpMH/8+oicLAMMxnrKAgH9qYCLC2JoRdNTCMXUNEKAETRWiPVu1QyJZHvmNAU6w==",
+  "dgSpecHash": "EybPdsRE21rwWvU1peaFxc8sB9WtQ3Qjq1ZUfc2mGzvHOeIXCTsFdDvDuY+n2YtCGQEHATdePpE6P83blTDKtg==",
   "success": true,
-  "projectFilePath": "D:\\projects\\reporting-api\\ReportingAPI\\ReportingAPI.csproj",
+  "projectFilePath": "D:\\projects\\reporting-api\\ReportingApi\\ReportingApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\vlvshevchuk\\.nuget\\packages\\automapper\\10.1.1\\automapper.10.1.1.nupkg.sha512",
     "C:\\Users\\vlvshevchuk\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\8.1.1\\automapper.extensions.microsoft.dependencyinjection.8.1.1.nupkg.sha512",

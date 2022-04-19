@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace ReportingAPI.Migrations
+namespace ReportingApi.Migrations
 {
     public partial class CreatingSchema : Migration
     {

@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ReportingAPI.Models;
+using ReportingApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ReportingAPI.Controllers
+namespace ReportingApi.Controllers
 {
     [SwaggerTag("Отчеты")]
     [Route("api/[controller]")]
@@ -26,7 +26,7 @@ namespace ReportingAPI.Controllers
 
         // GET: api/WeightPlatforms
         [HttpGet]
-        public async Task<int> GetWeightPlatforms()
+        public async Task<List<Report>> GetReports()
         {
             /*if (base.User.Identity.Name != null && HttpContext.User.Identity.IsAuthenticated)
             {
@@ -34,7 +34,7 @@ namespace ReportingAPI.Controllers
             }
             else
             {*/
-                return 0;
+                return await _context.Reports.ToListAsync(); 
             /*}*/
         }
 

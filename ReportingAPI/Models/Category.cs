@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace ReportingAPI.Models
+namespace ReportingApi.Models
 {
     public class Category
     {
@@ -17,6 +17,7 @@ namespace ReportingAPI.Models
         public virtual Report item { get; set; }  */ 
 
         public ICollection<Category> Children { get; set; }
+        public ICollection<Report> Reports { get; set; }
         
         /*public List<Report> Report { get; set; }*/
     }

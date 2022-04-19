@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ReportingAPI.Models;
+using ReportingApi.Models;
 
-namespace ReportingAPI.Migrations
+namespace ReportingApi.Migrations
 {
     [DbContext(typeof(ReportingContext))]
     [Migration("20220414100248_CreatingSchema")]
@@ -21,7 +21,7 @@ namespace ReportingAPI.Migrations
                 .HasAnnotation("ProductVersion", "5.0.8")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("ReportingAPI.Models.Category", b =>
+            modelBuilder.Entity("ReportingApi.Models.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -41,7 +41,7 @@ namespace ReportingAPI.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("ReportingAPI.Models.Report", b =>
+            modelBuilder.Entity("ReportingApi.Models.Report", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -62,16 +62,16 @@ namespace ReportingAPI.Migrations
                     b.ToTable("Reports");
                 });
 
-            modelBuilder.Entity("ReportingAPI.Models.Category", b =>
+            modelBuilder.Entity("ReportingApi.Models.Category", b =>
                 {
-                    b.HasOne("ReportingAPI.Models.Category", "Parent")
+                    b.HasOne("ReportingApi.Models.Category", "Parent")
                         .WithMany("SubCategories")
                         .HasForeignKey("ParentId");
 
                     b.Navigation("Parent");
                 });
 
-            modelBuilder.Entity("ReportingAPI.Models.Category", b =>
+            modelBuilder.Entity("ReportingApi.Models.Category", b =>
                 {
                     b.Navigation("SubCategories");
                 });
