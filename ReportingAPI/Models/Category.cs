@@ -13,14 +13,21 @@ namespace ReportingApi.Models
         [NotMapped]
         public ICollection<BaseTreeItem> Children { get {
                 var tree = new List<BaseTreeItem>();
-                tree.AddRange(Categories);
-                tree.AddRange(Reports);
+                if (Categories != null)
+                {
+                    tree.AddRange(Categories);
+                }
+                if (Reports != null)
+                {
+                    tree.AddRange(Reports);
+                }
                 return tree;
             } 
         }
         /*        [JsonIgnore]
                 public virtual Report item { get; set; }  */
         public virtual Category Parent { get; set; }
+
         [JsonIgnore]
         public ICollection<Category> Categories { get; set; }
         [JsonIgnore]

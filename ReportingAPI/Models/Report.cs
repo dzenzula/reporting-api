@@ -9,6 +9,7 @@ namespace ReportingApi.Models
 {
     public class Report : BaseTreeItem
     {
+        
         public virtual Category Parent { get; set; }
 
         [JsonIgnore]

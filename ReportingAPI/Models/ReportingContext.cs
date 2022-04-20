@@ -36,7 +36,7 @@ namespace ReportingApi.Models
                       .HasForeignKey(j => j.ParentId);
 
             modelBuilder.Entity<Category>()
-                      .HasMany(j => j.Children)
+                      .HasMany(j => j.Categories)
                       .WithOne(j => j.Parent)
                       .HasForeignKey(j => j.ParentId);
 
