@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace ReportingApi.Models
 {
-    public class Report
+    public class Report : BaseTreeItem
     {
-        public int Id { get; set; }
-        public string Text { get; set; }
+        public virtual Category Parent { get; set; }
+
         [JsonIgnore]
         public string URL { get; private set; }
 
@@ -19,9 +19,7 @@ namespace ReportingApi.Models
         [NotMapped]
         public Data data { get => new Data(URL);}
 
-        public int ParentId { get; set; }
-        [JsonIgnore]
-        public Category Parent { get; set; }
+        /*public ICollection<Report> Reports { get; set; }*/
 
         /*public object dataT
         {

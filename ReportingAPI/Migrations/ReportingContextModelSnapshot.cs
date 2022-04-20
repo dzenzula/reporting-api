@@ -19,12 +19,16 @@ namespace ReportingApi.Migrations
                 .HasAnnotation("ProductVersion", "5.0.8")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("ReportingApi.Models.Category", b =>
+            modelBuilder.Entity("ReportingApi.Models.BaseTreeItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ParentId")
                         .HasColumnType("int");
@@ -36,54 +40,77 @@ namespace ReportingApi.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("BaseTreeItem");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("BaseTreeItem");
+                });
+
+            modelBuilder.Entity("ReportingApi.Models.Category", b =>
+                {
+                    b.HasBaseType("ReportingApi.Models.BaseTreeItem");
+
+                    b.Property<int?>("ParentId1")
+                        .HasColumnType("int");
+
+                    b.HasIndex("ParentId1");
+
+                    b.HasDiscriminator().HasValue("Category");
                 });
 
             modelBuilder.Entity("ReportingApi.Models.Report", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.HasBaseType("ReportingApi.Models.BaseTreeItem");
 
-                    b.Property<int>("ParentId")
+                    b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Text")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("ParentId1")
+                        .HasColumnType("int")
+                        .HasColumnName("Report_ParentId1");
 
                     b.Property<string>("URL")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasIndex("CategoryId");
 
-                    b.HasIndex("ParentId");
+                    b.HasIndex("ParentId1");
 
-                    b.ToTable("Reports");
+                    b.HasDiscriminator().HasValue("Report");
+                });
+
+            modelBuilder.Entity("ReportingApi.Models.BaseTreeItem", b =>
+                {
+                    b.HasOne("ReportingApi.Models.Category", null)
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId");
                 });
 
             modelBuilder.Entity("ReportingApi.Models.Category", b =>
                 {
                     b.HasOne("ReportingApi.Models.Category", "Parent")
-                        .WithMany("Children")
-                        .HasForeignKey("ParentId");
+                        .WithMany("Categories")
+                        .HasForeignKey("ParentId1");
 
                     b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("ReportingApi.Models.Report", b =>
                 {
-                    b.HasOne("ReportingApi.Models.Category", "Parent")
+                    b.HasOne("ReportingApi.Models.Category", null)
                         .WithMany("Reports")
-                        .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CategoryId");
+
+                    b.HasOne("ReportingApi.Models.Category", "Parent")
+                        .WithMany()
+                        .HasForeignKey("ParentId1");
 
                     b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("ReportingApi.Models.Category", b =>
                 {
+                    b.Navigation("Categories");
+
                     b.Navigation("Children");
 
                     b.Navigation("Reports");

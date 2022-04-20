@@ -38,14 +38,17 @@ namespace ReportingApi.Controllers
             Categories.ForEach(t => _context.Categories.Add(t));
             _context.SaveChanges();*/
             /*_context.Categories.Where(x => x.ParentId == null);*/
-            var temp = await _context.Categories.Include(x => x.Children).ToListAsync();
+
+            /*var temp = await _context.Categories.Include(x => x.Children).ToListAsync();
             var result = temp.Where(x => x.Parent == null).ToList();
 
-            return result;
+            return result;*/
+            var temp = await _context.Categories.Include(x => x.Reports).ToListAsync();
+
+            return temp;
 
             /*var tst =  _context.Categories.ToListAsync();
             var tst2 = _context.Reports.ToListAsync();
-
             
 
             return await _context.Categories.ToListAsync();*/

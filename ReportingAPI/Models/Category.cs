@@ -1,24 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace ReportingApi.Models
 {
-    public class Category
+    public class Category : BaseTreeItem
     {
-        public int Id { get; set; }
-        public int? ParentId { get; set; }
-        public string Text { get; set; }
-        [JsonIgnore]
-        public virtual Category Parent { get; set; }
-/*        [JsonIgnore]
-        public virtual Report item { get; set; }  */ 
 
-        public ICollection<Category> Children { get; set; }
+        [NotMapped]
+        public ICollection<BaseTreeItem> Children { get {
+                var tree = new List<BaseTreeItem>();
+                tree.AddRange(Categories);
+                tree.AddRange(Reports);
+                return tree;
+            } 
+        }
+        /*        [JsonIgnore]
+                public virtual Report item { get; set; }  */
+        public virtual Category Parent { get; set; }
+        [JsonIgnore]
+        public ICollection<Category> Categories { get; set; }
+        [JsonIgnore]
         public ICollection<Report> Reports { get; set; }
-        
+
         /*public List<Report> Report { get; set; }*/
     }
 }
