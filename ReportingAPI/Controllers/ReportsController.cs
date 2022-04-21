@@ -17,25 +17,16 @@ namespace ReportingApi.Controllers
     public class ReportsController : ControllerBase
     {
         private readonly ReportingContext _context;
-        private IMapper _mapper;
-        public ReportsController(ReportingContext context, IMapper mapper)
+        public ReportsController(ReportingContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
         // GET: api/WeightPlatforms
         [HttpGet]
         public async Task<List<Report>> GetReports()
         {
-            /*if (base.User.Identity.Name != null && HttpContext.User.Identity.IsAuthenticated)
-            {
-                return await _context.WeightPlatforms.ToListAsync();
-            }
-            else
-            {*/
-                return await _context.Reports.ToListAsync(); 
-            /*}*/
+            return await _context.Reports.ToListAsync();
         }
 
     }

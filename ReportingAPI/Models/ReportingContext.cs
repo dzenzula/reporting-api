@@ -27,10 +27,8 @@ namespace ReportingApi.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            /*modelBuilder.Ignore<BaseTreeItem>();*/
-            /*modelBuilder.Entity<BaseTreeItem>().Ignore(j => j.Parent);*/
 
-            modelBuilder.Entity<Category>()
+            /*modelBuilder.Entity<Category>()
                       .HasMany(j => j.Reports)
                       .WithOne(j => j.Parent)
                       .HasForeignKey(j => j.ParentId);
@@ -38,7 +36,7 @@ namespace ReportingApi.Models
             modelBuilder.Entity<Category>()
                       .HasMany(j => j.Categories)
                       .WithOne(j => j.Parent)
-                      .HasForeignKey(j => j.ParentId);
+                      .HasForeignKey(j => j.ParentId);*/
 
         }
 

@@ -17,11 +17,9 @@ namespace ReportingApi.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly ReportingContext _context;
-        private IMapper _mapper;
-        public CategoriesController(ReportingContext context, IMapper mapper)
+        public CategoriesController(ReportingContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
         // GET: api/Categories
@@ -29,31 +27,10 @@ namespace ReportingApi.Controllers
 
         public async Task<List<Category>> GetCategories()
         {
+           // var temp = await _context.Categories.Include(x => x.Reports).ToListAsync();
+          //  var result = temp.Where(x => x.ParentId == null).ToList();
 
-            /*var Categories = new List<Category>
-            {
-                new Category{Text="test2", ParentId=1},
-            };
-
-            Categories.ForEach(t => _context.Categories.Add(t));
-            _context.SaveChanges();*/
-            /*_context.Categories.Where(x => x.ParentId == null);*/
-
-            /*var temp = await _context.Categories.Include(x => x.Children).ToListAsync();
-            var result = temp.Where(x => x.Parent == null).ToList();
-
-            return result;*/
-            var temp = await _context.Categories.Include(x => x.Reports).ToListAsync();
-
-            return temp;
-
-            /*var tst =  _context.Categories.ToListAsync();
-            var tst2 = _context.Reports.ToListAsync();
-            
-
-            return await _context.Categories.ToListAsync();*/
-            /*await _context.Categories.ToListAsync();
-            return Unauthorized();*/
+            return await _context.Categories.ToListAsync();
         }
 
         // GET: api/StaticGet

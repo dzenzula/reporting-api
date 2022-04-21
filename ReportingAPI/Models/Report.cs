@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text.Json.Serialization;
@@ -7,30 +8,24 @@ using System.Threading.Tasks;
 
 namespace ReportingApi.Models
 {
-    public class Report : BaseTreeItem
+    public class Report : ITreeItem
     {
-        
+        /* [Column("ReportId")]*/
+        public int Id { get; set; }
+        public string Text { get; set; }
+        [NotMapped]
+        public string Type { get => "file"; }
+        [JsonIgnore]
+        public int? ParentId { get; set; }
+        [NotMapped]
+        [JsonIgnore]
         public virtual Category Parent { get; set; }
-
         [JsonIgnore]
         public string URL { get; private set; }
-
-        /*public int? ParentId { get; set; }*/
-
         [NotMapped]
-        public Data data { get => new Data(URL);}
+        public Data Data { get => new Data(URL); }
 
-        /*public ICollection<Report> Reports { get; set; }*/
-
-        /*public object dataT
-        {
-            get
-            {
-                dynamic data = new System.Dynamic.ExpandoObject();
-                data.url = URL;
-                return data;
-            }
-        }*/
+        public ICollection<ITreeItem> Children { get => null; }
     }
     public class Data
     {
