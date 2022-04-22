@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>ReportingAPI</name>
+        <name>ReportingApi</name>
     </assembly>
     <members>
-        <member name="P:ReportingAPI.Startup.Configuration">
+        <member name="P:ReportingApi.Startup.Configuration">
             <summary>
             dotnet ef dbcontext scaffold "Server=KRR-TST-PAHWL02;Database=KRR-PA-MON-SCALES;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -o Models --ContexDir ContextDB
             </summary>

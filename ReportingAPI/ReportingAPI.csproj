@@ -2,12 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <AssemblyName>ReportingAPI</AssemblyName>
-    <RootNamespace>ReportingAPI</RootNamespace>
+    <AssemblyName>ReportingApi</AssemblyName>
+    <RootNamespace>ReportingApi</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>ReportingAPI.xml</DocumentationFile>
+    <DocumentationFile>ReportingApi.xml</DocumentationFile>
     <NoWarn>1701;1702;1591</NoWarn>
   
 	 
@@ -15,9 +15,17 @@
 
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>ReportingAPI.xml</DocumentationFile>
+    <DocumentationFile>ReportingApi.xml</DocumentationFile>
 	<NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
+
+  
+  <ItemGroup>
+    <Compile Remove="Entities\**" />
+    <Content Remove="Entities\**" />
+    <EmbeddedResource Remove="Entities\**" />
+    <None Remove="Entities\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
@@ -41,7 +49,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Entities\" />
     <Folder Include="Services\Requirements\" />
   </ItemGroup>
 

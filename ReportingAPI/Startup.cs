@@ -20,10 +20,11 @@ using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Net.Http.Headers;
-using ReportingAPI.Services;
-using ReportingAPI.Models;
+using ReportingApi.Services;
+using ReportingApi.Models;
+using System.Text.Json.Serialization;
 
-namespace ReportingAPI
+namespace ReportingApi
 {
     public class Startup
     {
@@ -40,6 +41,12 @@ namespace ReportingAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            /*services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+            });*/
+
+
             services.AddCors(options =>
             {
                 
@@ -54,8 +61,8 @@ namespace ReportingAPI
                                       .WithHeaders("Access-Control-Allow-Origin")
                                       .SetPreflightMaxAge(TimeSpan.FromSeconds(86400)
                                       )
-                                          //.WithHeaders("Vary: Origin", "Origin", "X-Requested-With", "Content-Type", "Accept", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials")
-                                          //.WithMethods("GET", "POST", "OPTIONS", "PUT", "DELETE")
+                                          /*.WithHeaders("Vary: Origin", "Origin", "X-Requested-With", "Content-Type", "Accept", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials")
+                                          .WithMethods("GET", "POST", "OPTIONS", "PUT", "DELETE")*/
                                           ;
                                   });
                
@@ -79,8 +86,8 @@ namespace ReportingAPI
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "reporting-api", Version = "v1" });
                 var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, xmlFile);
-                //c.AddServer(new OpenApiServer { Url = "http://localhost:63169", Description = "Developer server" });
-                //c.AddServer(new OpenApiServer { Url = "https://krr-tst-padev02/ReportingAPI", Description = "Test server" });
+                c.AddServer(new OpenApiServer { Url = "http://localhost:63169/", Description = "Developer server" });
+                //c.AddServer(new OpenApiServer { Url = "https://krr-tst-padev02/ReportingApi", Description = "Test server" });
                 c.IncludeXmlComments(xmlPath);
                 c.EnableAnnotations();
                 /*****************************************************************************************/
@@ -119,7 +126,6 @@ namespace ReportingAPI
                 {
                     c.SwaggerEndpoint("./v1/swagger.json", "reporting-api V1");
                     c.DefaultModelsExpandDepth(-1);
-
                 });
 
 
@@ -133,6 +139,7 @@ namespace ReportingAPI
             app.Use(async (context, next) =>
             {
                 context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+               // context.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:8080");
                 await next();
             });
             //app.UseMiddleware<RequestResponseLoggingMiddleware>();

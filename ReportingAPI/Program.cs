@@ -8,7 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace ReportingAPI
+namespace ReportingApi
 {
     public class Program
     {

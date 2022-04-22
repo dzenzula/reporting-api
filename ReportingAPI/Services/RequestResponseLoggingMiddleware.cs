@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReportingAPI.Services
+namespace ReportingApi.Services
 {
         public class RequestResponseLoggingMiddleware
         {
