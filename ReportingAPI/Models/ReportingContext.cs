@@ -31,12 +31,12 @@ namespace ReportingApi.Models
             /*modelBuilder.Entity<Category>()
                       .HasMany(j => j.Reports)
                       .WithOne(j => j.Parent)
-                      .HasForeignKey(j => j.ParentId);
+                      .HasForeignKey(j => j.ParentId);*/
 
             modelBuilder.Entity<Category>()
                       .HasMany(j => j.Categories)
                       .WithOne(j => j.Parent)
-                      .HasForeignKey(j => j.ParentId);*/
+                      .HasForeignKey(j => j.ParentId);
 
         }
 

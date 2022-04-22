@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ReportingApi.Models
 {
-    public class Category : ITreeItem
+    public class Category 
     {
         public int Id { get; set; }
         public string Text { get; set; }
@@ -16,13 +16,13 @@ namespace ReportingApi.Models
         public string Type { get => "folder"; }
         [NotMapped]
         public Data Data { get => null; }
-        [JsonIgnore]
+       // [JsonIgnore]
         public int? ParentId { get; set; }
         [NotMapped]
         [JsonIgnore]
         public virtual Category Parent { get; set; }
 
-        [NotMapped]
+        /*[NotMapped]
         [JsonIgnore]
         public ICollection<ITreeItem> Children
         {
@@ -39,11 +39,11 @@ namespace ReportingApi.Models
                 }
                 return tree;
             }
-        }
+        }*/
 
         [JsonIgnore]
         public ICollection<Category> Categories { get; set; }
-        [JsonIgnore]
-        public ICollection<Report> Reports { get; set; }
+        /*[JsonIgnore]
+        public ICollection<Report> Reports { get; set; }*/
     }
 }

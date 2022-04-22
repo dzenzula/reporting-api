@@ -15,7 +15,7 @@ namespace ReportingApi.Models
         public string Text { get; set; }
         [NotMapped]
         public string Type { get => "file"; }
-        [JsonIgnore]
+       // [JsonIgnore]
         public int? ParentId { get; set; }
         [NotMapped]
         [JsonIgnore]
