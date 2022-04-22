@@ -87,7 +87,7 @@ namespace ReportingApi
                 var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.AddServer(new OpenApiServer { Url = "http://localhost:63169/", Description = "Developer server" });
-                //c.AddServer(new OpenApiServer { Url = "https://krr-tst-padev02/ReportingApi", Description = "Test server" });
+                c.AddServer(new OpenApiServer { Url = "https://krr-tst-padev02.europe.mittalco.com/reporting-api/", Description = "Test server" });
                 c.IncludeXmlComments(xmlPath);
                 c.EnableAnnotations();
                 /*****************************************************************************************/
