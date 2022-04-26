@@ -69,7 +69,7 @@ namespace ReportingApi
             });
             services.AddAutoMapper(typeof(Startup));
             services.AddControllers();
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+          //  services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             /*services.AddDbContext<KRRPAMONSCALESContext>(
                 options =>
                 options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"])
