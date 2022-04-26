@@ -41,12 +41,6 @@ namespace ReportingApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            /*services.AddControllers().AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-            });*/
-
-
             services.AddCors(options =>
             {
                 
@@ -69,7 +63,7 @@ namespace ReportingApi
             });
             services.AddAutoMapper(typeof(Startup));
             services.AddControllers();
-          //  services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+           // services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             /*services.AddDbContext<KRRPAMONSCALESContext>(
                 options =>
                 options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"])
@@ -134,7 +128,7 @@ namespace ReportingApi
             app.UseRouting();
 
             app.UseCors(AllowSpecificOrigins);
-           // app.UseAuthentication();
+            app.UseAuthentication();
             //app.UseAuthorization();
             app.Use(async (context, next) =>
             {

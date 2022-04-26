@@ -9,7 +9,7 @@ namespace ReportingApi.Models
 {
     public class ReportingContext : DbContext
     {
-        /*private readonly IHttpContextAccessor _httpContextAccessor;
+      /* private readonly IHttpContextAccessor _httpContextAccessor;
 
         public ReportingApiContext(DbContextOptions<ReportingApiContext> options, IHttpContextAccessor httpContextAccessor)
             : base(options)
@@ -19,7 +19,7 @@ namespace ReportingApi.Models
 
         public ReportingContext(DbContextOptions<ReportingContext> options) : base(options)
         {
-           
+            
         }
 
         public DbSet<Category> Categories { get; set; }
