@@ -134,7 +134,7 @@ namespace ReportingApi
             app.UseRouting();
 
             app.UseCors(AllowSpecificOrigins);
-            app.UseAuthentication();
+           // app.UseAuthentication();
             //app.UseAuthorization();
             app.Use(async (context, next) =>
             {
