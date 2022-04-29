@@ -48,12 +48,19 @@ namespace ReportingApi
                                   builder =>
                                   {
                                       builder
-                                      .WithOrigins("http://localhost:8080", "https://krr-app-palbp01.europe.mittalco.com", "https://krr-tst-padev02.europe.mittalco.com")
-                                      .SetIsOriginAllowed(origin => true)
+                                      .WithOrigins("http://localhost:63169", "http://localhost:8080", "https://krr-app-palbp01.europe.mittalco.com", "https://krr-tst-padev02.europe.mittalco.com")
+                                      .WithExposedHeaders("Accept,Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Access-Control-Allow-Methods", "Access-Control-Allow-Credentials")
+                                      .AllowAnyMethod()
+                                      .AllowAnyHeader()
+                                      .AllowCredentials()
+                                      //.WithHeaders("Access-Control-Allow-Credentials")
+                                      .SetPreflightMaxAge(TimeSpan.FromSeconds(86400)
+
+                                      /*.SetIsOriginAllowed(origin => true)
                                       .WithExposedHeaders()
                                       .AllowAnyMethod()
                                       .WithHeaders("Access-Control-Allow-Origin")
-                                      .SetPreflightMaxAge(TimeSpan.FromSeconds(86400)
+                                      .SetPreflightMaxAge(TimeSpan.FromSeconds(86400)*/
                                       )
                                           /*.WithHeaders("Vary: Origin", "Origin", "X-Requested-With", "Content-Type", "Accept", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials")
                                           .WithMethods("GET", "POST", "OPTIONS", "PUT", "DELETE")*/
@@ -80,8 +87,8 @@ namespace ReportingApi
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "reporting-api", Version = "v1" });
                 var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.AddServer(new OpenApiServer { Url = "http://localhost:63169/", Description = "Developer server" });
-                c.AddServer(new OpenApiServer { Url = "https://krr-tst-padev02.europe.mittalco.com/reporting-api/", Description = "Test server" });
+               // c.AddServer(new OpenApiServer { Url = "http://localhost:63169/", Description = "Developer server" });
+               // c.AddServer(new OpenApiServer { Url = "https://krr-tst-padev02.europe.mittalco.com/reporting-api/", Description = "Test server" });
                 c.IncludeXmlComments(xmlPath);
                 c.EnableAnnotations();
                 /*****************************************************************************************/
@@ -128,21 +135,48 @@ namespace ReportingApi
             app.UseRouting();
 
             app.UseCors(AllowSpecificOrigins);
+            //app.UseCors(
+            //    builder =>
+            //    {
+            //        builder
+            //        .WithOrigins("http://localhost:63169", "http://localhost:8080", "https://krr-app-paweb01.europe.mittalco.com", "https://krr-tst-padev02.europe.mittalco.com")
+            //        //.SetIsOriginAllowed((host) => true)
+            //        .WithExposedHeaders("Accept,Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Access-Control-Allow-Methods")
+            //        .AllowAnyMethod()
+            //        .AllowAnyHeader()
+            //        //.WithHeaders("Access-Control-Allow-Origin")
+            //        .SetPreflightMaxAge(TimeSpan.FromSeconds(86400)
+            //        )
+            //            //.WithHeaders("Vary: Origin", "Origin", "X-Requested-With", "Content-Type", "Accept", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials")
+            //            //.WithMethods("GET", "POST", "OPTIONS", "PUT", "DELETE")
+            //            ;
+            //    });
+
             app.UseAuthentication();
             //app.UseAuthorization();
             app.Use(async (context, next) =>
             {
-                context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-               // context.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:8080");
+              //  string host = context.Request.Host.Value;
+               /* if (host == "OPTIONS")
+                {
+                    context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+                }*/
+                context.Response.Headers.Add("Access-Control-Allow-Origin", "https://krr-tst-padev02.europe.mittalco.com");
+                //context.Response.Headers.Add("Access-Control-Allow-Method", "GET,PUT,DELETE,POST,OPTIONS,HEAD");
+                context.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
+
+                //    /*context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+                //    context.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
+                //     context.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:8080");*/
                 await next();
             });
+            
+            app.UseAuthorization();
             //app.UseMiddleware<RequestResponseLoggingMiddleware>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers().RequireCors(AllowSpecificOrigins);
             });
-        }
-
-     
+        }     
     }
 }
