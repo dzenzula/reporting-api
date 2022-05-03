@@ -13,6 +13,10 @@ namespace ReportingApi.MappingProfiles
         public DtoMapping()
         {
             CreateMap<UpdateCategory, Category>().ReverseMap();
+            CreateMap<UpdateReport, Report>().ReverseMap();
+
+            CreateMap<Category, AddCategory>().ReverseMap();
+            CreateMap<Report, AddReport>().ReverseMap();
         }
     }
 }

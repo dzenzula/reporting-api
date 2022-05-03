@@ -50,6 +50,7 @@ namespace ReportingApi
                                       builder
                                       .WithOrigins("http://localhost:63169", "http://localhost:8080", "https://krr-app-palbp01.europe.mittalco.com", "https://krr-tst-padev02.europe.mittalco.com")
                                       .WithExposedHeaders("Accept,Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Access-Control-Allow-Methods", "Access-Control-Allow-Credentials")
+                                     // .WithMethods("GET", "POST")
                                       .AllowAnyMethod()
                                       .AllowAnyHeader()
                                       .AllowCredentials()
@@ -156,12 +157,13 @@ namespace ReportingApi
             //app.UseAuthorization();
             app.Use(async (context, next) =>
             {
-              //  string host = context.Request.Host.Value;
-               /* if (host == "OPTIONS")
-                {
-                    context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-                }*/
-                context.Response.Headers.Add("Access-Control-Allow-Origin", "https://krr-tst-padev02.europe.mittalco.com");
+                //  string host = context.Request.Host.Value;
+                /* if (host == "OPTIONS")
+                 {
+                     context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+                 }*/
+                // context.Response.Headers.Add("Access-Control-Allow-Origin", "https://krr-tst-padev02.europe.mittalco.com");
+                context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
                 //context.Response.Headers.Add("Access-Control-Allow-Method", "GET,PUT,DELETE,POST,OPTIONS,HEAD");
                 context.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
 

@@ -65,6 +65,35 @@ namespace ReportingApi.Controllers
            // return Ok();
         }
 
+        // POST: api/Categories
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult> PostCategory(AddCategory newCategory)
+        {
+            Category category = _mapper.Map<Category>(newCategory);
+
+            try
+            {
+                _context.Categories.Add(category);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e.InnerException.Message);
+            }
+
+            //int id = category.Id;
+            return Ok(category.Id);
+        }
+
+        // DELETE: api/Categories/5
+        [HttpDelete("{id}")]
+        public async Task<int> DeleteCategory(int id)
+        {
+            
+            return 100;
+        }
             // GET: api/StaticGet
             /*[HttpGet]
             public string StaticGet()
