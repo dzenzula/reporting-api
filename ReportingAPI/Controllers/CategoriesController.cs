@@ -30,8 +30,8 @@ namespace ReportingApi.Controllers
         [HttpGet]
         public async Task<List<Category>> GetCategories()
         {
-           // var temp = await _context.Categories.Include(x => x.Reports).ToListAsync();
-          //  var result = temp.Where(x => x.ParentId == null).ToList();
+            // var temp = await _context.Categories.Include(x => x.Reports).ToListAsync();
+            //  var result = temp.Where(x => x.ParentId == null).ToList();
 
             return await _context.Categories.ToListAsync();
         }
@@ -51,7 +51,7 @@ namespace ReportingApi.Controllers
 
             /*Console.WriteLine(category);
             return Ok();*/
-           try
+            try
             {
                 await _context.SaveChangesAsync();
                 return Ok();
@@ -62,7 +62,7 @@ namespace ReportingApi.Controllers
             }
 
             //   var tst = Ok();
-           // return Ok();
+            // return Ok();
         }
 
         // POST: api/Categories
@@ -87,58 +87,54 @@ namespace ReportingApi.Controllers
             return Ok(category.Id);
         }
 
+        // PUT: api/PutParentId
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<ActionResult> PutParentId(int id, [FromBody] int? parentId)
+        {
+            var category = await _context.Categories.FindAsync(id);
+
+            parentId = parentId == 0 ? null : parentId;
+
+            category.ParentId = parentId;
+            _context.Categories.Update(category);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         // DELETE: api/Categories/5
         [HttpDelete("{id}")]
-        public async Task<int> DeleteCategory(int id)
+        public async Task<ActionResult> DeleteCategory(int id)
         {
-            
-            return 100;
-        }
-            // GET: api/StaticGet
-            /*[HttpGet]
-            public string StaticGet()
+            var HasCategory = _context.Categories.Any(x => id == x.ParentId);
+            var HasReport = _context.Reports.Any(x => id == x.ParentId);
+            List<string> ExceptionTextHasChildren = new List<string>() { "Удаление невозможно, элемент имеет дочерние элементы!",
+                "Рекомендации: удалите все дочерние элементы." };
+
+            if (HasReport || HasCategory)
             {
-                string json = @"
-    [
-        {
-            ""id"": 1,
-            ""text"": ""Root node"",
-            ""type"": ""folder"",
-            ""children"": [
-                {
-                    ""id"": 2,
-                    ""text"": ""Child node 1"",
-                    ""type"": ""file"",
-                    ""data"": {
-                        ""url"": ""test data2""
-                    }
-                },
-                {
-                    ""id"": 3,
-                    ""text"": ""Child node 2"",
-                    ""type"": ""folder"",
-                    ""children"": [
-                        {
-                            ""id"": 6,
-                            ""text"": ""test child"",
-                            ""type"": ""folder""
-                        }
-                    ]
-                },
-                {
-                    ""id"": 4,
-                    ""text"": ""Test node 3"",
-                    ""type"": ""file""
-                }
-            ]
-        },
-        {
-            ""id"": 5,
-            ""text"": ""root 2"",
-            ""type"": ""folder""
+                return BadRequest(ExceptionTextHasChildren);
+            }
+            var category = await _context.Categories.FindAsync(id);
+            try
+            {
+                _context.Categories.Remove(category);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e.InnerException.Message);
+            }
         }
-    ]";
-                return json;
-            }*/
-        }
+    }
 }

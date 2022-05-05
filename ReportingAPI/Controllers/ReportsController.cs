@@ -32,21 +32,34 @@ namespace ReportingApi.Controllers
             return await _context.Reports.ToListAsync();
         }
 
-        // PUT: api/PutCategory
+        // PUT: api/PutReport
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
         public async Task<ActionResult> PutReport(UpdateReport report)
         {
-            /*category.ParentId = null;
-            category.Id = 7;
-            category.Text = "test";*/ // Origin: test
-
             Report Reports = _mapper.Map<Report>(report);
             _context.Entry(Reports).State = EntityState.Modified;
 
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
-            /*Console.WriteLine(category);
-            return Ok();*/
+        // PUT: api/PutParentId
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<ActionResult> PutParentId(int id, [FromBody] int? parentId)
+        {
+            var report = await _context.Reports.FindAsync(id);
+            report.ParentId = parentId;
+            _context.Reports.Update(report);
+
             try
             {
                 await _context.SaveChangesAsync();
@@ -84,10 +97,17 @@ namespace ReportingApi.Controllers
         {
             var report = await _context.Reports.FindAsync(id);
 
-            _context.Reports.Remove(report);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Reports.Remove(report);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception e)
+            {
 
-            return Ok();
+                return BadRequest(e.InnerException.Message);
+            }
         }
     }
 }
