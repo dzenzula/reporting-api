@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text.Json.Serialization;
@@ -17,6 +17,7 @@ namespace ReportingApi.Models
         public string Type { get => "file"; }
        // [JsonIgnore]
         public int? ParentId { get; set; }
+        public bool Visible { get; set; } = true;
         [NotMapped]
         [JsonIgnore]
         public virtual Category Parent { get; set; }

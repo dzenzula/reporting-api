@@ -8,7 +8,8 @@ namespace ReportingApi.Dtos
     public class UpdateCategory
     {
         public int Id { get; set; }
-        public int? ParentId { get; set; }
         public string Text { get; set; }
+        public int? ParentId { get; set; }
+        public bool Visible { get; set; } = true;
     }
 }

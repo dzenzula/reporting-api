@@ -30,8 +30,8 @@ namespace ReportingApi.Controllers
         [HttpGet]
         public async Task<List<Category>> GetCategories()
         {
-            // var temp = await _context.Categories.Include(x => x.Reports).ToListAsync();
-            //  var result = temp.Where(x => x.ParentId == null).ToList();
+             /*var temp = await _context.Categories.Include(x => x.Reports).ToListAsync();
+              var result = temp.Where(x => x.ParentId == null).ToList();*/
 
             return await _context.Categories.ToListAsync();
         }
@@ -87,7 +87,7 @@ namespace ReportingApi.Controllers
             return Ok(category.Id);
         }
 
-        // PUT: api/PutParentId
+        // PUT: api/PutParentId (updating parentId)
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<ActionResult> PutParentId(int id, [FromBody] int? parentId)

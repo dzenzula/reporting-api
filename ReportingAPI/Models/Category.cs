@@ -18,6 +18,7 @@ namespace ReportingApi.Models
         public Data Data { get => null; }
        // [JsonIgnore]
         public int? ParentId { get; set; }
+        public bool Visible { get; set; } 
         [NotMapped]
         [JsonIgnore]
         public virtual Category Parent { get; set; }
