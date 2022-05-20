@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text.Json.Serialization;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ReportingApi.Models
 {
-    public class Report : ITreeItem
+    public class Report : ITreeItem, ITrackerChanges
     {
         /* [Column("ReportId")]*/
         public int Id { get; set; }
@@ -27,6 +28,11 @@ namespace ReportingApi.Models
         public Data Data { get => new Data(URL); }
 
         public ICollection<ITreeItem> Children { get => null; }
+
+        public string CreatedBy { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public string UpdatedBy { get; set; }
     }
     public class Data
     {

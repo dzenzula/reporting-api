@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ReportingApi.Models
 {
-    public class Category 
+    public class Category : ITrackerChanges
     {
         public int Id { get; set; }
         public string Text { get; set; }
@@ -22,6 +22,11 @@ namespace ReportingApi.Models
         [NotMapped]
         [JsonIgnore]
         public virtual Category Parent { get; set; }
+
+        public string CreatedBy { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public string UpdatedBy { get; set; }
 
         /*[NotMapped]
         [JsonIgnore]

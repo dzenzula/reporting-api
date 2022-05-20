@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReportingApi.Dtos;
@@ -14,7 +15,7 @@ namespace ReportingApi.Controllers
     [SwaggerTag("Каталог")]
     [Route("api/[controller]")]
     [ApiController]
-
+    [Authorize]
     public class TreeController : ControllerBase
     {
         private readonly ReportingContext _context;
