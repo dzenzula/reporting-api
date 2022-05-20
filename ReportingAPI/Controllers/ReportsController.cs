@@ -15,7 +15,7 @@ namespace ReportingApi.Controllers
     [SwaggerTag("Отчеты")]
     [Route("api/[controller]")]
     [ApiController]
-   // [Authorize]
+    [Authorize]
     public class ReportsController : ControllerBase
     {
         private readonly ReportingContext _context;
