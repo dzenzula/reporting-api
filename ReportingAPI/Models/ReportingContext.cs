@@ -40,6 +40,10 @@ namespace ReportingApi.Models
                       .WithOne(j => j.Parent)
                       .HasForeignKey(j => j.ParentId);
 
+            modelBuilder.Entity<Report>()
+                .HasIndex(c => c.Alias)
+                .IsUnique();
+
         }
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
@@ -68,36 +72,46 @@ namespace ReportingApi.Models
 
                 // TODO use name to set the shadow property value like in the following post: https://www.meziantou.net/2017/07/03/entity-framework-core-generate-tracking-columns
             }
-            /*var entries = ChangeTracker
-                .Entries()
-                .Where(e =>
-                        e.State == EntityState.Added
-                        || e.State == EntityState.Modified);*/
-            var addedAuditedEntities = ChangeTracker.Entries<Category>()
-                   .Where(p => p.State == EntityState.Added)
-                   .Select(p => p.Entity);
-
-            var modifiedAuditedEntities = ChangeTracker.Entries<Report>()
-                   .Where(p => p.State == EntityState.Modified)
-                   .Select(p => p.Entity);
 
             var now = DateTime.Now;
 
-            foreach (var added in addedAuditedEntities)
+            var entries = ChangeTracker
+                .Entries()
+                .Where(e =>
+                        e.State == EntityState.Added
+                        || e.State == EntityState.Modified);
+
+            foreach (var entityEntry in entries)
             {
-                added.CreatedBy = authenticatedUserName;
-                added.UpdatedBy = authenticatedUserName;
-                added.CreatedAt = now;
-                added.UpdatedAt = now;
+                /*bool audited_dt_insert = false;
+                bool audited_insert = false;
+                bool audited_update = false;
+                bool audited_dt_update = false;
+                foreach (var item in entityEntry.Members)
+                {
+                    if (audited_dt_insert == false) audited_dt_insert = item.Metadata.PropertyInfo.Name == "DtInsert" ? true : false;
+                    if (audited_insert == false) audited_insert = item.Metadata.PropertyInfo.Name == "CreatedOn" ? true : false;
+                    if (audited_update == false) audited_update = item.Metadata.PropertyInfo.Name == "ModifyBy" ? true : false;
+                    if (audited_dt_update == false) audited_dt_update = item.Metadata.PropertyInfo.Name == "DtUpdate" ? true : false;
+                }*/
+                if (entityEntry.State == EntityState.Modified)
+                {
+                    entityEntry.Property("UpdatedAt").CurrentValue = now;
+                    entityEntry.Property("UpdatedBy").CurrentValue = authenticatedUserName;
+                    entityEntry.Property("CreatedAt").IsModified = false;
+                    entityEntry.Property("CreatedBy").IsModified = false;
+                }
+
+                if (entityEntry.State == EntityState.Added)
+                {
+                    entityEntry.Property("UpdatedAt").IsModified = false;
+                    entityEntry.Property("UpdatedBy").IsModified = false;
+                    entityEntry.Property("CreatedAt").CurrentValue = now;
+                    entityEntry.Property("CreatedBy").CurrentValue = authenticatedUserName;
+                }
             }
 
-            foreach (var modified in modifiedAuditedEntities)
-            {
-                modified.UpdatedAt = now;
-                modified.UpdatedBy = authenticatedUserName;
-            }
         }
-
 
     }
 }

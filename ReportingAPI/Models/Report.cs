@@ -13,6 +13,8 @@ namespace ReportingApi.Models
     {
         /* [Column("ReportId")]*/
         public int Id { get; set; }
+        // атрибут Unique для Alias задан через modelBuilder в ReportingContext
+        public string Alias { get; set; }
         public string Text { get; set; }
         [NotMapped]
         public string Type { get => "file"; }
@@ -31,7 +33,7 @@ namespace ReportingApi.Models
 
         public string CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
         public string UpdatedBy { get; set; }
     }
     public class Data

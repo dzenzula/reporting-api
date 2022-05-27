@@ -16,12 +16,14 @@ namespace ReportingApi.Controllers
     {
         // GET: api/WeightPlatforms
         [HttpGet]
-        public async Task<string> GetUsername()
+        public async Task<string> GetUserName()
         {
-           // base.User.Identity.Name != null && HttpContext.User.Identity.IsAuthenticated;
+            // base.User.Identity.Name != null && HttpContext.User.Identity.IsAuthenticated;
             //var tst = base.User.Identity.Name;
             //var tst2 = base.User.Identity.IsAuthenticated;
+
             return base.User.Identity.Name;
+           // return BadRequest("tstadad");
         }
         
         

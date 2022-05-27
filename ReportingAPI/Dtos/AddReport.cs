@@ -8,6 +8,7 @@ namespace ReportingApi.Dtos
     public class AddReport
     {
         public string Text { get; set; }
+        public string Alias { get; set; }
         public int? ParentId { get; set; }
         public bool Visible { get; set; } = true;
     }

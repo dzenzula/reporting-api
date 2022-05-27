@@ -9,6 +9,7 @@ namespace ReportingApi.Dtos
     {
         public int Id { get; set; }
         public string Text { get; set; }
+        public string Alias { get; set; }
         public int? ParentId { get; set; }
         public bool Visible { get; set; } = true;
         public string URL { get; set; }

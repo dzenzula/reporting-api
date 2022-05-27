@@ -9,7 +9,7 @@ namespace ReportingApi.Models
     {
         string CreatedBy { get; set; }
         DateTime CreatedAt { get; set; }
-        DateTime UpdatedAt { get; set; }
+        DateTime? UpdatedAt { get; set; }
         string UpdatedBy { get; set; }
     }
 }

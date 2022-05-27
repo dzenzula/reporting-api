@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using ReportingApi.Dtos;
 using ReportingApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
@@ -30,11 +31,13 @@ namespace ReportingApi.Controllers
         // GET: api/Categories
         [HttpGet]
         public async Task<List<Category>> GetCategories()
+       // public async Task<ActionResult> GetCategories() 
         {
-             /*var temp = await _context.Categories.Include(x => x.Reports).ToListAsync();
-              var result = temp.Where(x => x.ParentId == null).ToList();*/
+            /*var temp = await _context.Categories.Include(x => x.Reports).ToListAsync();
+             var result = temp.Where(x => x.ParentId == null).ToList();*/
 
             return await _context.Categories.ToListAsync();
+           // return BadRequest("tst bad req mess");
         }
 
         // PUT: api/PutCategory
@@ -46,6 +49,9 @@ namespace ReportingApi.Controllers
             category.Id = 7;
             category.Text = "test";*/ // Origin: test
 
+            /*List<UpdateCategory> tst = new List<UpdateCategory> { };
+            tst.i*/
+            
             Category Categories = _mapper.Map<Category>(category);
             _context.Entry(Categories).State = EntityState.Modified;
 
@@ -90,7 +96,7 @@ namespace ReportingApi.Controllers
 
         // PUT: api/PutParentId (updating parentId)
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut("{id}, {parentId}")]
         public async Task<ActionResult> PutParentId(int id, [FromBody] int? parentId)
         {
             var category = await _context.Categories.FindAsync(id);
