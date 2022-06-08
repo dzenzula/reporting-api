@@ -7,6 +7,7 @@ using ReportingApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,7 +16,7 @@ namespace ReportingApi.Controllers
     [SwaggerTag("Отчеты")]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = @"EUROPE\KRR-LG_Inet_Users")]
     public class ReportsController : ControllerBase
     {
         private readonly ReportingContext _context;
@@ -39,6 +40,15 @@ namespace ReportingApi.Controllers
         public async Task<ActionResult> PutReport(UpdateReport report)
         {
             Report Reports = _mapper.Map<Report>(report);
+            var results = new List<ValidationResult>();
+            var context = new System.ComponentModel.DataAnnotations.ValidationContext(report);
+            if (!Validator.TryValidateObject(report, context, results, true))
+            {
+                foreach (var error in results)
+                {
+                    Console.WriteLine(error.ErrorMessage);
+                }
+            }
             _context.Entry(Reports).State = EntityState.Modified;
 
             try

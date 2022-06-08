@@ -16,7 +16,7 @@ namespace ReportingApi.Controllers
     [SwaggerTag("Категории")]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles =@"EUROPE\AAA")]
     public class CategoriesController : ControllerBase
     {
         private readonly ReportingContext _context;
