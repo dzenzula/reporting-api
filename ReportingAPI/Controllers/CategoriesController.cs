@@ -16,7 +16,7 @@ namespace ReportingApi.Controllers
     [SwaggerTag("Категории")]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles =@"EUROPE\AAA")]
+    
     public class CategoriesController : ControllerBase
     {
         private readonly ReportingContext _context;
@@ -27,7 +27,7 @@ namespace ReportingApi.Controllers
             _context = context;
             _mapper = mapper;
         }
-
+        [AllowAnonymous]
         // GET: api/Categories
         [HttpGet]
         public async Task<List<Category>> GetCategories()
@@ -74,6 +74,7 @@ namespace ReportingApi.Controllers
 
         // POST: api/Categories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = @"EUROPE\KRR-LG_Inet_Users")]
         [HttpPost]
         public async Task<ActionResult> PostCategory(AddCategory newCategory)
         {
