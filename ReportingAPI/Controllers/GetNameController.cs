@@ -25,8 +25,7 @@ namespace ReportingApi.Controllers
             return base.User.Identity.Name;
            // return BadRequest("tstadad");
         }
-        
-        
+
         /*private readonly ReportingContext _context;
         public IMapper _mapper;
         public ReportsController(ReportingContext context, IMapper mapper)

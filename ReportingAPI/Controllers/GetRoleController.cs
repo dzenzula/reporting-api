@@ -11,7 +11,7 @@ namespace ReportingApi.Controllers
     [SwaggerTag("Получить роль пользователя")]
     [Route("api/[controller]")]
     [ApiController]
-    [AllowAnonymous]
+
     public class GetRoleController : ControllerBase
     {
         // GET: api/GetRole
@@ -29,8 +29,8 @@ namespace ReportingApi.Controllers
                 @"EUROPE\dsguk", 
                 @"EUROPE\evpavlovskaya"
             };
-
-            string Username = base.User.Identity.Name;
+            
+            string Username = User.Identity.Name;
             string Role = Admins.Contains(Username) ? "admin" : "guest";
 
             return Role;

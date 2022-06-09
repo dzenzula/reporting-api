@@ -16,7 +16,7 @@ namespace ReportingApi.Controllers
     [SwaggerTag("Категории")]
     [Route("api/[controller]")]
     [ApiController]
-    
+    [Authorize(Roles = @"EUROPE\KRR-LG_Inet_Users")]
     public class CategoriesController : ControllerBase
     {
         private readonly ReportingContext _context;
@@ -27,8 +27,9 @@ namespace ReportingApi.Controllers
             _context = context;
             _mapper = mapper;
         }
-        //[AllowAnonymous]
+
         // GET: api/Categories
+        [AllowAnonymous]
         [HttpGet]
         public async Task<List<Category>> GetCategories()
        // public async Task<ActionResult> GetCategories() 
@@ -41,7 +42,6 @@ namespace ReportingApi.Controllers
         }
 
         // PUT: api/PutCategory
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
         public async Task<ActionResult> PutCategory(UpdateCategory category)
         {
@@ -67,14 +67,9 @@ namespace ReportingApi.Controllers
             {
                 return BadRequest(ex.Message);
             }
-
-            //   var tst = Ok();
-            // return Ok();
         }
 
         // POST: api/Categories
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = @"EUROPE\KRR-LG_Inet_Users")]
         [HttpPost]
         public async Task<ActionResult> PostCategory(AddCategory newCategory)
         {
@@ -96,8 +91,6 @@ namespace ReportingApi.Controllers
         }
 
         // PUT: api/PutParentId (updating parentId)
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = @"EUROPE\KRR-LG_Inet_Users")]
         [HttpPut("{id}, {parentId}")]
         public async Task<ActionResult> PutParentId(int id, [FromBody] int? parentId)
         {
@@ -118,7 +111,7 @@ namespace ReportingApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [Authorize(Roles = @"EUROPE\KRR-LG_Inet_Users")]
+
         // DELETE: api/Categories/5
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCategory(int id)

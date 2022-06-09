@@ -16,7 +16,7 @@ namespace ReportingApi.Controllers
     [SwaggerTag("Отчеты")]
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = @"EUROPE\KRR-LG_Inet_Users")]
+    [Authorize(Roles = @"EUROPE\KRR-LG_Inet_Users")]
     public class ReportsController : ControllerBase
     {
         private readonly ReportingContext _context;
@@ -27,15 +27,15 @@ namespace ReportingApi.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/WeightPlatforms
+        [AllowAnonymous]
+        // GET: api/Reports
         [HttpGet]
         public async Task<List<Report>> GetReports()
         {
             return await _context.Reports.ToListAsync();
         }
-        [Authorize(Roles = @"EUROPE\KRR-LG_Inet_Users")]
+
         // PUT: api/PutReport
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
         public async Task<ActionResult> PutReport(UpdateReport report)
         {
@@ -61,9 +61,8 @@ namespace ReportingApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [Authorize(Roles = @"EUROPE\KRR-LG_Inet_Users")]
+
         // PUT: api/PutParentId
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<ActionResult> PutParentId(int id, [FromBody] int? parentId)
         {
@@ -81,9 +80,8 @@ namespace ReportingApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [Authorize(Roles = @"EUROPE\KRR-LG_Inet_Users")]
+        
         // POST: api/Reports
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult> PostReport(AddReport newReport)
         {
@@ -101,7 +99,7 @@ namespace ReportingApi.Controllers
 
             return Ok(report.Id);
         }
-        [Authorize(Roles = @"EUROPE\KRR-LG_Inet_Users")]
+
         // DELETE: api/Categories/5
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteReport(int id)
