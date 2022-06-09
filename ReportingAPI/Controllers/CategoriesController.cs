@@ -27,7 +27,7 @@ namespace ReportingApi.Controllers
             _context = context;
             _mapper = mapper;
         }
-        [AllowAnonymous]
+        //[AllowAnonymous]
         // GET: api/Categories
         [HttpGet]
         public async Task<List<Category>> GetCategories()
@@ -97,6 +97,7 @@ namespace ReportingApi.Controllers
 
         // PUT: api/PutParentId (updating parentId)
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = @"EUROPE\KRR-LG_Inet_Users")]
         [HttpPut("{id}, {parentId}")]
         public async Task<ActionResult> PutParentId(int id, [FromBody] int? parentId)
         {
@@ -117,7 +118,7 @@ namespace ReportingApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
+        [Authorize(Roles = @"EUROPE\KRR-LG_Inet_Users")]
         // DELETE: api/Categories/5
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCategory(int id)

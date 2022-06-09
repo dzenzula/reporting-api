@@ -33,7 +33,7 @@ namespace ReportingApi.Controllers
         {
             return await _context.Reports.ToListAsync();
         }
-
+        [Authorize(Roles = @"EUROPE\KRR-LG_Inet_Users")]
         // PUT: api/PutReport
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
@@ -61,7 +61,7 @@ namespace ReportingApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
+        [Authorize(Roles = @"EUROPE\KRR-LG_Inet_Users")]
         // PUT: api/PutParentId
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -81,7 +81,7 @@ namespace ReportingApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
+        [Authorize(Roles = @"EUROPE\KRR-LG_Inet_Users")]
         // POST: api/Reports
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -101,7 +101,7 @@ namespace ReportingApi.Controllers
 
             return Ok(report.Id);
         }
-
+        [Authorize(Roles = @"EUROPE\KRR-LG_Inet_Users")]
         // DELETE: api/Categories/5
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteReport(int id)
