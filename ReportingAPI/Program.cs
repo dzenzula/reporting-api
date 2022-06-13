@@ -26,6 +26,8 @@ namespace ReportingApi
                 }).ConfigureAppConfiguration(appConfig =>
                 {
                     appConfig.AddJsonFile($"appsettings.json", false, true);
+                    if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").Length < 3)
+                        throw new Exception("Missing Environment Variable(ASPNETCORE_ENVIRONMENT)");
                     appConfig.AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", false, true);
                 });
     }

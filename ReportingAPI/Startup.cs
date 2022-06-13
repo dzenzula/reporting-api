@@ -106,6 +106,7 @@ namespace ReportingApi
             // IHttpContextAccessor is no longer wired up by default, you have to register it yourself
             services.AddHttpContextAccessor();
 
+            services.AddAuthorization();
 
             /*****************************************************************************************/
             // Set the comments path for the Swagger JSON and UI.

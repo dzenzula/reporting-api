@@ -14,7 +14,7 @@ namespace ReportingApi.Controllers
     [AllowAnonymous]
     public class GetNameController : ControllerBase
     {
-        // GET: api/WeightPlatforms
+        // GET: api/GetName
         [HttpGet]
         public async Task<string> GetUserName()
         {
@@ -25,20 +25,29 @@ namespace ReportingApi.Controllers
             return base.User.Identity.Name;
            // return BadRequest("tstadad");
         }
-
-        /*private readonly ReportingContext _context;
-        public IMapper _mapper;
-        public ReportsController(ReportingContext context, IMapper mapper)
+        [Authorize(Roles = @"EUROPE\KRR-LG_Inet_Users")]
+        [HttpGet("{id}")]
+        public async Task <List<string>> GetUser()
         {
-            _context = context;
-            _mapper = mapper;
-        }*/
+            //List<string> User = new List<string>();
+            var User = new List<string>();
+            var tst = HttpContext.Request.Headers.ToArray();
+            /*foreach(string t in tst)
+            {
 
-        // GET: api/WeightPlatforms
-        /*[HttpGet]
-        public async Task<List<Report>> GetReports()
-        {
-            return await _context.Reports.ToListAsync();
-        }*/
+            }*/
+            for(int i =0; i< tst.Length; i++)
+            {
+                User.Add(tst[i].ToString());
+                //Console.WriteLine(tst[i]);
+            }
+            User.Add("Name: " + base.User.Identity.Name);
+
+            
+            //User.Add(HttpContext.User.Identities.ToString());
+            //User.Add(HttpContext.User.Identity.Name);
+            //User.Add(HttpContext.Request.Headers.ToList().ToArray<string>);
+            return User;
+        }
     }
 }
