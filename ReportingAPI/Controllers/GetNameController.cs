@@ -25,7 +25,7 @@ namespace ReportingApi.Controllers
             return base.User.Identity.Name;
            // return BadRequest("tstadad");
         }
-        [Authorize(Roles = @"EUROPE\KRR-LG_Inet_Users")]
+
         [HttpGet("{id}")]
         public async Task <List<string>> GetUser()
         {
@@ -36,7 +36,7 @@ namespace ReportingApi.Controllers
             {
 
             }*/
-            for(int i =0; i< tst.Length; i++)
+            for(int i = 0; i< tst.Length; i++)
             {
                 User.Add(tst[i].ToString());
                 //Console.WriteLine(tst[i]);
