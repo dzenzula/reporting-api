@@ -24,7 +24,7 @@ namespace ReportingApi.Controllers
             string[] Admins = { 
                 @"EUROPE\saarhipov", 
                 @"EUROPE\fdeluca", 
-               // @"EUROPE\vlvshevchuk", 
+                @"EUROPE\vlvshevchuk", 
                 @"EUROPE\vgstotskiy", 
                 @"EUROPE\dsguk", 
                 @"EUROPE\evpavlovskaya"

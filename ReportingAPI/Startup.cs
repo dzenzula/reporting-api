@@ -48,7 +48,7 @@ namespace ReportingApi
                                   builder =>
                                   {
                                       builder
-                                      .WithOrigins("http://localhost:63169", "http://localhost:8080", "https://krr-app-palbp01.europe.mittalco.com", "https://krr-tst-padev02.europe.mittalco.com")
+                                      .WithOrigins("http://localhost:63169", "http://localhost:8080", "https://krr-app-paweb01.europe.mittalco.com/", "https://krr-tst-padev02.europe.mittalco.com")
                                       .WithExposedHeaders("Accept,Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Access-Control-Allow-Methods", "Access-Control-Allow-Credentials")
                                      // .WithMethods("GET", "POST")
                                       .AllowAnyMethod()
