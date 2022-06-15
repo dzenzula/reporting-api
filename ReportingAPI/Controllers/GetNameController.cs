@@ -11,7 +11,7 @@ namespace ReportingApi.Controllers
     [SwaggerTag("Получить имя пользователя")]
     [Route("api/[controller]")]
     [ApiController]
-    [AllowAnonymous]
+    //[AllowAnonymous]
     public class GetNameController : ControllerBase
     {
         // GET: api/GetName
