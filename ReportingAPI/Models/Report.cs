@@ -16,6 +16,7 @@ namespace ReportingApi.Models
         // атрибут Unique для Alias задан через modelBuilder в ReportingContext
         public string Alias { get; set; }
         public string Text { get; set; }
+        public string Description { get; set; }
         [NotMapped]
         public string Type { get => "file"; }
        // [JsonIgnore]
@@ -30,10 +31,13 @@ namespace ReportingApi.Models
         public Data Data { get => new Data(URL); }
 
         public ICollection<ITreeItem> Children { get => null; }
-
+        [JsonIgnore]
         public string CreatedBy { get; set; }
+        [JsonIgnore]
         public DateTime CreatedAt { get; set; }
+        [JsonIgnore]
         public DateTime? UpdatedAt { get; set; }
+        [JsonIgnore]
         public string UpdatedBy { get; set; }
     }
     public class Data

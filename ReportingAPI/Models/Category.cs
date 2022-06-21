@@ -12,6 +12,7 @@ namespace ReportingApi.Models
     {
         public int Id { get; set; }
         public string Text { get; set; }
+        public string Description { get; set; }
         [NotMapped]
         public string Type { get => "folder"; }
         [NotMapped]
@@ -22,10 +23,13 @@ namespace ReportingApi.Models
         [NotMapped]
         [JsonIgnore]
         public virtual Category Parent { get; set; }
-
+        [JsonIgnore]
         public string CreatedBy { get; set; }
+        [JsonIgnore]
         public DateTime CreatedAt { get; set; }
+        [JsonIgnore]
         public DateTime? UpdatedAt { get; set; }
+        [JsonIgnore]
         public string UpdatedBy { get; set; }
 
         /*[NotMapped]
@@ -49,7 +53,7 @@ namespace ReportingApi.Models
 
         [JsonIgnore]
         public ICollection<Category> Categories { get; set; }
-        /*[JsonIgnore]
-        public ICollection<Report> Reports { get; set; }*/
+        [JsonIgnore]
+        public ICollection<Report> Reports { get; set; }
     }
 }

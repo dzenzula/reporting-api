@@ -47,7 +47,7 @@ namespace ReportingApi
                 options.AddPolicy(name: AllowSpecificOrigins,
                                   builder =>
                                   {
-                                      builder
+                                     builder
                                       .WithOrigins("http://localhost:63169", "http://localhost:8080", "https://krr-app-paweb01.europe.mittalco.com/", "https://krr-tst-padev02.europe.mittalco.com")
                                       .WithExposedHeaders("Accept,Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Access-Control-Allow-Methods", "Access-Control-Allow-Credentials")
                                      // .WithMethods("GET", "POST")
@@ -55,17 +55,18 @@ namespace ReportingApi
                                       .AllowAnyHeader()
                                       .AllowCredentials()
                                       //.WithHeaders("Access-Control-Allow-Credentials")
-                                      .SetPreflightMaxAge(TimeSpan.FromSeconds(86400)
+                                       .SetPreflightMaxAge(TimeSpan.FromSeconds(86400))
 
                                       /*.SetIsOriginAllowed(origin => true)
                                       .WithExposedHeaders()
                                       .AllowAnyMethod()
                                       .WithHeaders("Access-Control-Allow-Origin")
                                       .SetPreflightMaxAge(TimeSpan.FromSeconds(86400)*/
-                                      )
+                                    //  )
                                           /*.WithHeaders("Vary: Origin", "Origin", "X-Requested-With", "Content-Type", "Accept", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials")
                                           .WithMethods("GET", "POST", "OPTIONS", "PUT", "DELETE")*/
-                                          ;
+                                 
+                                       ;
                                   });
                
             });
