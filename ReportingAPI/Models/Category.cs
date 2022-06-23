@@ -53,7 +53,10 @@ namespace ReportingApi.Models
 
         [JsonIgnore]
         public ICollection<Category> Categories { get; set; }
+
         [JsonIgnore]
         public ICollection<Report> Reports { get; set; }
+        /*[JsonIgnore]
+        public ICollection<Report> Reports { get; set; }*/
     }
 }

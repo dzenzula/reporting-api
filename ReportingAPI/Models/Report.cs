@@ -22,7 +22,7 @@ namespace ReportingApi.Models
        // [JsonIgnore]
         public int? ParentId { get; set; }
         public bool Visible { get; set; } = true;
-        [NotMapped]
+        [NotMapped] 
         [JsonIgnore]
         public virtual Category Parent { get; set; }
         [JsonIgnore]
@@ -30,6 +30,7 @@ namespace ReportingApi.Models
         [NotMapped]
         public Data Data { get => new Data(URL); }
 
+        //public ICollection<ITreeItem> Children { get => null; }
         public ICollection<ITreeItem> Children { get => null; }
         [JsonIgnore]
         public string CreatedBy { get; set; }
@@ -39,6 +40,9 @@ namespace ReportingApi.Models
         public DateTime? UpdatedAt { get; set; }
         [JsonIgnore]
         public string UpdatedBy { get; set; }
+
+        [JsonIgnore]
+        public ICollection<Category> Categories { get; set; }
     }
     public class Data
     {

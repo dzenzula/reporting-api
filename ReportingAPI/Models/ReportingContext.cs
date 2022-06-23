@@ -30,19 +30,30 @@ namespace ReportingApi.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
-            modelBuilder.Entity<Category>()
+            /*modelBuilder.Entity<Category>()
                       .HasMany(j => j.Reports)
                       .WithOne(j => j.Parent)
-                      .HasForeignKey(j => j.ParentId);
+                      .HasForeignKey(j => j.ParentId);*/
 
-            modelBuilder.Entity<Category>()
+            /*modelBuilder.Entity<Category>()
                       .HasMany(j => j.Categories)
                       .WithOne(j => j.Parent)
-                      .HasForeignKey(j => j.ParentId);
+                      .HasForeignKey(j => j.ParentId);*/
+            modelBuilder.Entity<Category>()
+                      .HasMany(j => j.Reports)
+                      .WithMany(j => j.Categories)
+                      .UsingEntity(j => j.ToTable("CategoryReports"));
+            modelBuilder.Entity<Category>()
+                .HasMany(k => k.Categories)
+                .WithOne(k => k.Parent)
+                .HasForeignKey(k => k.ParentId);
 
             modelBuilder.Entity<Report>()
                 .HasIndex(c => c.Alias)
                 .IsUnique();
+/*
+            modelBuilder.Entity<Report>()
+                .HasMany(c => c.Categories);*/
 
         }
 

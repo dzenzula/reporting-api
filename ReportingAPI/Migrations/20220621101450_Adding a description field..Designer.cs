@@ -3,36 +3,23 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ReportingApi.Models;
 
 namespace ReportingApi.Migrations
 {
     [DbContext(typeof(ReportingContext))]
-    partial class ReportingContextModelSnapshot : ModelSnapshot
+    [Migration("20220621101450_Adding a description field.")]
+    partial class Addingadescriptionfield
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.8")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("CategoryReport", b =>
-                {
-                    b.Property<int>("CategoriesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ReportsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CategoriesId", "ReportsId");
-
-                    b.HasIndex("ReportsId");
-
-                    b.ToTable("CategoryReports");
-                });
 
             modelBuilder.Entity("ReportingApi.Models.Category", b =>
                 {
@@ -115,22 +102,9 @@ namespace ReportingApi.Migrations
                         .IsUnique()
                         .HasFilter("[Alias] IS NOT NULL");
 
+                    b.HasIndex("ParentId");
+
                     b.ToTable("Reports");
-                });
-
-            modelBuilder.Entity("CategoryReport", b =>
-                {
-                    b.HasOne("ReportingApi.Models.Category", null)
-                        .WithMany()
-                        .HasForeignKey("CategoriesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ReportingApi.Models.Report", null)
-                        .WithMany()
-                        .HasForeignKey("ReportsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ReportingApi.Models.Category", b =>
@@ -142,9 +116,20 @@ namespace ReportingApi.Migrations
                     b.Navigation("Parent");
                 });
 
+            modelBuilder.Entity("ReportingApi.Models.Report", b =>
+                {
+                    b.HasOne("ReportingApi.Models.Category", "Parent")
+                        .WithMany("Reports")
+                        .HasForeignKey("ParentId");
+
+                    b.Navigation("Parent");
+                });
+
             modelBuilder.Entity("ReportingApi.Models.Category", b =>
                 {
                     b.Navigation("Categories");
+
+                    b.Navigation("Reports");
                 });
 #pragma warning restore 612, 618
         }
