@@ -11,6 +11,7 @@ namespace ReportingApi.Models
     public class Category : ITrackerChanges
     {
         public int Id { get; set; }
+        [Required]
         public string Text { get; set; }
         public string Description { get; set; }
         [NotMapped]
@@ -54,9 +55,15 @@ namespace ReportingApi.Models
         [JsonIgnore]
         public ICollection<Category> Categories { get; set; }
 
-        [JsonIgnore]
+        /*[JsonIgnore]*/
         public ICollection<Report> Reports { get; set; }
         /*[JsonIgnore]
         public ICollection<Report> Reports { get; set; }*/
+
+        public Category()
+        {
+            Categories = new List<Category>();
+            Reports = new List<Report>();
+        }
     }
 }

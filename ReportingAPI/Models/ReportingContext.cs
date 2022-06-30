@@ -48,12 +48,27 @@ namespace ReportingApi.Models
                 .WithOne(k => k.Parent)
                 .HasForeignKey(k => k.ParentId);
 
+
+            /*modelBuilder.Entity<Report>()
+                .HasMany(l => l.Categories)
+                .WithMany(l => l.Reports);*/
+
+
+            modelBuilder.Entity<Report>()
+                .HasIndex(c => c.Text)
+                .IsUnique();
+
             modelBuilder.Entity<Report>()
                 .HasIndex(c => c.Alias)
                 .IsUnique();
-/*
+
             modelBuilder.Entity<Report>()
-                .HasMany(c => c.Categories);*/
+                .HasIndex(c => c.URL)
+                .IsUnique();
+
+            /*
+                        modelBuilder.Entity<Report>()
+                            .HasMany(c => c.Categories);*/
 
         }
 
@@ -89,8 +104,8 @@ namespace ReportingApi.Models
             var entries = ChangeTracker
                 .Entries()
                 .Where(e =>
-                        e.State == EntityState.Added
-                        || e.State == EntityState.Modified);
+                        (e.State == EntityState.Added
+                        || e.State == EntityState.Modified) && e is ITrackerChanges);
 
             foreach (var entityEntry in entries)
             {
