@@ -13,6 +13,7 @@ namespace ReportingApi.Models
         public int Id { get; set; }
         [Required]
         public string Text { get; set; }
+        [MaxLength(150)]
         public string Description { get; set; }
         [NotMapped]
         public string Type { get => "folder"; }

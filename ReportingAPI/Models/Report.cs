@@ -18,6 +18,7 @@ namespace ReportingApi.Models
         public string Alias { get; set; }
         [Required]
         public string Text { get; set; }
+        [MaxLength(150)]
         public string Description { get; set; }
         [NotMapped]
         public string Type { get => "file"; }

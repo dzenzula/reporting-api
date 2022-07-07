@@ -16,7 +16,7 @@ namespace ReportingApi.Controllers
     [SwaggerTag("Отчеты")]
     [Route("api/[controller]")]
     [ApiController]
-   // [Authorize(Roles = @"EUROPE\KRR-LG_Inet_Users")]
+    [Authorize(Roles = @"EUROPE\KRR-LG_Inet_Users")]
     public class ReportsController : ControllerBase
     {
         private readonly ReportingContext _context;
@@ -36,7 +36,7 @@ namespace ReportingApi.Controllers
             List<Report> reports = await _context.Reports.Include(x => x.Categories).AsNoTracking().ToListAsync();
             List<Report> outRep = new();
 
-            foreach(var report in reports)
+            foreach (var report in reports)
                 foreach (var category in report.Categories)
                 {
                     Report temp = report.Clone();
@@ -44,10 +44,10 @@ namespace ReportingApi.Controllers
                     outRep.Add(temp);
                 }
 
-                    return outRep;
-           //     ToListAsync();
+            return outRep;
+            //     ToListAsync();
         }
-        
+
         // PUT: api/PutReport
         [HttpPut]
         public async Task<ActionResult> PutReport(UpdateReport report)
@@ -79,7 +79,7 @@ namespace ReportingApi.Controllers
                 Alias = DuplicateByURL.First().Alias;
                 return BadRequest($"Отчет с такой ссылкой уже существует.\nПсевдоним отчета: {Alias}");
             }
- 
+
             Reports.Text = report.Text;
             Reports.URL = report.URL;
             _context.Entry(Reports).State = EntityState.Modified;
@@ -133,16 +133,104 @@ namespace ReportingApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        
+
+        //POST: api/Reports/AddReportRelation
+        [HttpPost("AddReportRelation/{id}")]
+        public async Task<ActionResult> PostReportRelation(int id, [FromBody] int toCat)
+        {
+            Report report = _context.Reports.Include(c => c.Categories).FirstOrDefault(x => x.Id == id);
+            if (report is null)
+                return BadRequest("Отчета с таким id не существует.");
+
+            Category category = _context.Categories.FirstOrDefault(x => x.Id == toCat);
+            if (category is null)
+                return BadRequest("Указанонй категории не существует.");
+
+            Category dublicateReport = report.Categories.FirstOrDefault(cat => cat.Id == toCat);
+            //var matchingReports = report.Categories.Any(cat => cat.Id == toCat);
+            if (dublicateReport is not null)
+                return BadRequest("В указанной категории данный отчет уже существует.");
+
+            report.Categories.Add(category);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.InnerException.Message);
+            }
+
+            return Ok();
+
+            /*var matchingReportsCount = _context.Reports.Include(x => x.Categories).Where(y => y.Text == reportData.Text || y.Alias == reportData.Alias || y.URL == reportData.URL).Count();
+
+
+
+            if (matchingReportsCount == 0)
+            {
+                Report newReport = _mapper.Map<Report>(reportData);
+                var category = _context.Categories.FirstOrDefault(x => x.Id == reportData.ParentId);
+                if (category is not null)
+                    newReport.Categories.Add(category);
+                else
+                    return BadRequest("Категории не существует");
+            }*/
+
+            
+
+        }
+
         // POST: api/Reports
         [HttpPost]
-        public async Task<ActionResult> PostReport(AddReport newReport)
+        public async Task<ActionResult> PostReport(AddReport reportData)
         {
-            Report report = _mapper.Map<Report>(newReport);
+            var query = _context.Reports.Include(x => x.Categories);
+
+            var matchingUrl = query.FirstOrDefault(y => y.URL == reportData.URL);
+            if (matchingUrl is not null)
+                return BadRequest($"Отчет с такой ссылкой уже существует под псевдонимом: {matchingUrl.Alias}");
+
+            var matchingAlias = query.FirstOrDefault(y => y.Alias == reportData.Alias);
+            if (matchingAlias is not null)
+                return BadRequest($"Отчет с таким псевдонимом уже существует.");
+
+            var matchingText = query.FirstOrDefault(y => y.Text == reportData.Text);
+            if (matchingText is not null)
+                return BadRequest($"Отчет с таким названием уже существует под псевдонимом: {matchingText.Alias}");
+
+            // var matchingReportsCount = _context.Reports.Include(x => x.Categories).Where(y => y.Text == reportData.Text || y.Alias == reportData.Alias || y.URL == reportData.URL).Count();
+
+            //TODO: показать псевдонимы отчетов
+            //if(matchingReportsCount != 0)
+            //    return BadRequest("Отчет с таким названием/псевдонимом или ссылкой уже существует.");
+
+            var category = _context.Categories.FirstOrDefault(x => x.Id == reportData.ParentId);
+
+            if(category is null)
+                return BadRequest("Указанной категории не существует.");
+
+            Report newReport = _mapper.Map<Report>(reportData);
+            newReport.Categories.Add(category);
+            _context.Reports.Add(newReport);
+            
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.InnerException.Message);
+            }
+
+            return Ok(newReport.Id);
+
+           /* Report report = _mapper.Map<Report>(newReport);
             try
             {
                 Category category = _context.Categories.FirstOrDefault(x => x.Id == newReport.ParentId);
-                if(category == null)
+                if (category == null)
                 {
                     return BadRequest("Категория не существует.");
                 }
@@ -158,15 +246,29 @@ namespace ReportingApi.Controllers
                 return BadRequest(e.InnerException.Message);
             }
 
-            return Ok(report.Id);
+            return Ok(report.Id);*/
         }
 
         // DELETE: api/Categories/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteReport(int id)
+        public async Task<ActionResult> DeleteReport(int id, [FromBody] int fromCat)
         {
-            var report = await _context.Reports.FindAsync(id);
+            var removingReport = _context.Reports.Include(x => x.Categories).FirstOrDefault(p => p.Id == id);
+            if (removingReport is null)
+                return BadRequest("Отчета с таким Id не существует.");
 
+            var category = removingReport.Categories.FirstOrDefault(x => x.Id == fromCat);
+            if (category is null)
+                return BadRequest("Отчета в указанной категории не существует.");
+
+            removingReport.Categories.Remove(category);
+
+            var count = removingReport.Categories.Count();
+
+            if (count == 0)
+                _context.Remove(removingReport);
+
+            //var reports = _context.Reports.Include(x => x.Categories).Where(y => y.Categories.Where(p => p.Id == fromCat))
 
             /*Report report = _context.Reports.Include(x => x.Categories).FirstOrDefault(x => x.Id == CategoryReports.id && x.Categories.Any(y => y.Id == CategoryReports.fromCat));
             Console.WriteLine("Test: " + report.Categories.Count());
@@ -182,13 +284,12 @@ namespace ReportingApi.Controllers
 
             try
             {
-                _context.Reports.Remove(report);
-              //  await _context.SaveChangesAsync();
+              //  _context.Reports.Remove(report);
+                await _context.SaveChangesAsync();
                 return Ok();
             }
             catch (Exception e)
             {
-
                 return BadRequest(e.InnerException.Message);
             }
         }
