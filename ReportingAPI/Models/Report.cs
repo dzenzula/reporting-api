@@ -14,10 +14,12 @@ namespace ReportingApi.Models
         /* [Column("ReportId")]*/
         public int Id { get; set; }
         // атрибут Unique для Alias задан через modelBuilder в ReportingContext
+        [MaxLength(50)]
         [Required]
         public string Alias { get; set; }
         [Required]
         public string Text { get; set; }
+        //, ErrorMessage = "Описание не может содержать больше 150 символов.")
         [MaxLength(150)]
         public string Description { get; set; }
         [NotMapped]

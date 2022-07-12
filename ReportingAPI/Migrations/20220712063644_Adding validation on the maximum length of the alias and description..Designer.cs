@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ReportingApi.Models;
 
 namespace ReportingApi.Migrations
 {
     [DbContext(typeof(ReportingContext))]
-    partial class ReportingContextModelSnapshot : ModelSnapshot
+    [Migration("20220712063644_Adding validation on the maximum length of the alias and description.")]
+    partial class Addingvalidationonthemaximumlengthofthealiasanddescription
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

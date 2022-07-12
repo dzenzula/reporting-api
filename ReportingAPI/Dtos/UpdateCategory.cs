@@ -14,7 +14,7 @@ namespace ReportingApi.Dtos
             ErrorMessage = "Наименование элемента может содержать: латиницу, кириллицу, цифры, дефис, пробел, точку, \"|\"")]
         public string Text { get; set; }
 
-        [MaxLength(150)]
+        [MaxLength(150, ErrorMessage = "Описание не может содержать больше 150 символов.")]
         public string Description { get; set; }
         /*[Required(ErrorMessage = "Нужно указать описание элемента")]
         [RegularExpression(@"^[а-яА-ЯёЁЇїІіЄєҐґa-zA-Z0-9-\s]+$", ErrorMessage = "Наименование элемента может содержать только латиницу, кириллицу, цифры и дефис")]
