@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ReportingApi.Services.Handlers;
 using System;
@@ -102,10 +102,10 @@ namespace ReportingApi.Models
             var now = DateTime.Now;
 
             var entries = ChangeTracker
-                .Entries()
+                .Entries<ITrackerChanges>()
                 .Where(e =>
                         (e.State == EntityState.Added
-                        || e.State == EntityState.Modified) && e is ITrackerChanges);
+                        || e.State == EntityState.Modified));
 
             foreach (var entityEntry in entries)
             {
