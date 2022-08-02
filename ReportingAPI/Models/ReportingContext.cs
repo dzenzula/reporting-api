@@ -29,7 +29,6 @@ namespace ReportingApi.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
             /*modelBuilder.Entity<Category>()
                       .HasMany(j => j.Reports)
                       .WithOne(j => j.Parent)
@@ -47,7 +46,6 @@ namespace ReportingApi.Models
                 .HasMany(k => k.Categories)
                 .WithOne(k => k.Parent)
                 .HasForeignKey(k => k.ParentId);
-
 
             /*modelBuilder.Entity<Report>()
                 .HasMany(l => l.Categories)
@@ -102,10 +100,10 @@ namespace ReportingApi.Models
             var now = DateTime.Now;
 
             var entries = ChangeTracker
-                .Entries()
+                .Entries<ITrackerChanges>()
                 .Where(e =>
                         (e.State == EntityState.Added
-                        || e.State == EntityState.Modified) && e is ITrackerChanges);
+                        || e.State == EntityState.Modified));
 
             foreach (var entityEntry in entries)
             {

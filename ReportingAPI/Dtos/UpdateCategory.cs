@@ -9,16 +9,18 @@ namespace ReportingApi.Dtos
     public class UpdateCategory
     {
         public int Id { get; set; }
+
         [Required(ErrorMessage = "Нужно указать наименование элемента")]
-        [RegularExpression(@"^[а-яА-ЯёЁЇїІіЄєҐґa-zA-Z0-9-\s\|\.]+$", 
-            ErrorMessage = "Наименование элемента может содержать: латиницу, кириллицу, цифры, дефис, пробел, точку, \"|\"")]
+        [RegularExpression(@"^[а-яА-ЯёЁЇїІіЄєҐґa-zA-Z0-9-\.,|;\s\|\№\/\']+$",
+            ErrorMessage = "Наименование элемента может содержать латиницу, кириллицу, цифры, пробел, символы: '-.,;/|№")]
+        [MaxLength(150, ErrorMessage = "Наименование элемента не должно содержать больше 150 символов.")]
         public string Text { get; set; }
 
-        [MaxLength(150, ErrorMessage = "Описание не может содержать больше 150 символов.")]
+        [RegularExpression(@"[^\@\[\]\{\}\~\\\{\}\&]+",
+            ErrorMessage = "Описание элемента НЕ может содержать фигурные скобки и символы: @,[],|,\\,~,&")]
+        [MaxLength(150, ErrorMessage = "Описание не должно содержать больше 150 символов.")]
         public string Description { get; set; }
-        /*[Required(ErrorMessage = "Нужно указать описание элемента")]
-        [RegularExpression(@"^[а-яА-ЯёЁЇїІіЄєҐґa-zA-Z0-9-\s]+$", ErrorMessage = "Наименование элемента может содержать только латиницу, кириллицу, цифры и дефис")]
-        public string Description { get; set; }*/
+
         public int? ParentId { get; set; }
         public bool Visible { get; set; } = true;
     }

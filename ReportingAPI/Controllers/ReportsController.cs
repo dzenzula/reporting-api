@@ -52,7 +52,6 @@ namespace ReportingApi.Controllers
         [HttpPut]
         public async Task<ActionResult> PutReport(UpdateReport report)
         {
-            //Report Reports = _mapper.Map<Report>(report);
             Report Reports = await _context.Reports.FirstOrDefaultAsync(x => x.Id == report.Id);
             var results = new List<ValidationResult>();
             var context = new System.ComponentModel.DataAnnotations.ValidationContext(report);
@@ -102,7 +101,6 @@ namespace ReportingApi.Controllers
         public async Task<ActionResult> PutParentId(UpdateCategoryReports CategoryReports = null)
         {
             Report report = _context.Reports.Include(x => x.Categories).FirstOrDefault(x => x.Id == CategoryReports.id && x.Categories.Any(y => y.Id == CategoryReports.fromCat));
-            //Console.WriteLine("Test: " + report.Categories.Count());
             Category fromCategory = report.Categories.FirstOrDefault(y => y.Id == CategoryReports.fromCat);
             if (report == null || fromCategory == null)
             {
@@ -214,7 +212,8 @@ namespace ReportingApi.Controllers
             Report newReport = _mapper.Map<Report>(reportData);
             newReport.Categories.Add(category);
             _context.Reports.Add(newReport);
-            
+
+
             try
             {
                 await _context.SaveChangesAsync();

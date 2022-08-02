@@ -41,13 +41,10 @@ namespace ReportingApi.Controllers
         // PUT: api/PutCategory
         [HttpPut]
         public async Task<ActionResult> PutCategory(UpdateCategory category)
-        {        
+        {
             Category Categories = _mapper.Map<Category>(category);
             _context.Entry(Categories).State = EntityState.Modified;
 
-
-            /*Console.WriteLine(category);
-            return Ok();*/
             try
             {
                 await _context.SaveChangesAsync();

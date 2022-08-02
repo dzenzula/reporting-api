@@ -34,7 +34,7 @@ namespace ReportingApi.Controllers
             string Role = Admins.Contains(Username) ? "admin" : "guest";
 
             return Role;
-            // return BadRequest("tstadad");
+          //  return "admin";
         }
     }
 }

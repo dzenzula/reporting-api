@@ -23,7 +23,6 @@ namespace ReportingApi.Controllers
             //var tst2 = base.User.Identity.IsAuthenticated;
 
             return base.User.Identity.Name;
-           // return BadRequest("tstadad");
         }
 
         [HttpGet("{id}")]
