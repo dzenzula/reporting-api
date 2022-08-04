@@ -23,7 +23,7 @@ namespace ReportingApi.Controllers
             //var tst2 = base.User.Identity.IsAuthenticated;
             string[] Admins = { 
                 @"EUROPE\saarhipov", 
-                @"EUROPE\fdeluca", 
+                @"EUROPE\fdeluka", 
                 @"EUROPE\vlvshevchuk", 
                 @"EUROPE\vgstotskiy", 
                 @"EUROPE\dsguk", 

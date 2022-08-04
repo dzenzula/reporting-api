@@ -18,6 +18,7 @@ namespace ReportingApi.Models
         [Required]
         public string Alias { get; set; }
         [Required]
+        [MaxLength(150)]
         public string Text { get; set; }
         //, ErrorMessage = "Описание не может содержать больше 150 символов.")
         [MaxLength(150)]
@@ -32,6 +33,7 @@ namespace ReportingApi.Models
         [JsonIgnore]
         public virtual Category Parent { get; set; }
         [Required]
+        [MaxLength(1000)]
         [JsonIgnore]
         public string URL { get; set; }
         [NotMapped]

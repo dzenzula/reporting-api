@@ -12,6 +12,7 @@ namespace ReportingApi.Models
     {
         public int Id { get; set; }
         [Required]
+        [MaxLength(150)]
         public string Text { get; set; }
         [MaxLength(150)]
         public string Description { get; set; }

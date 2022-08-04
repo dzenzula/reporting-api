@@ -81,6 +81,7 @@ namespace ReportingApi.Controllers
 
             Reports.Text = report.Text;
             Reports.URL = report.URL;
+            Reports.Visible = report.Visible;
             _context.Entry(Reports).State = EntityState.Modified;
 
             try
