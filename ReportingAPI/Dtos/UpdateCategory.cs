@@ -21,7 +21,7 @@ namespace ReportingApi.Dtos
         [MaxLength(150, ErrorMessage = "Описание не должно содержать больше 150 символов.")]
         public string Description { get; set; }
 
-        public int? ParentId { get; set; }
+       // public int? ParentId { get; set; }
         public bool Visible { get; set; } = true;
     }
 }

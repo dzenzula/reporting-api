@@ -13,12 +13,6 @@ namespace ReportingApi.Models
     {  
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-       /* public ReportingApiContext(DbContextOptions<ReportingApiContext> options, IHttpContextAccessor httpContextAccessor)
-            : base(options)
-        {
-            _httpContextAccessor = httpContextAccessor;
-        }*/
-
         public ReportingContext(DbContextOptions<ReportingContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
         {
             _httpContextAccessor = httpContextAccessor;
@@ -103,38 +97,9 @@ namespace ReportingApi.Models
                 .Entries<ITrackerChanges>()
                 .Where(e =>
                         (e.State == EntityState.Added
-                        || e.State == EntityState.Modified));
+                        || e.State == EntityState.Modified)).ToList();
 
-            foreach (var entityEntry in entries)
-            {
-                /*bool audited_dt_insert = false;
-                bool audited_insert = false;
-                bool audited_update = false;
-                bool audited_dt_update = false;
-                foreach (var item in entityEntry.Members)
-                {
-                    if (audited_dt_insert == false) audited_dt_insert = item.Metadata.PropertyInfo.Name == "DtInsert" ? true : false;
-                    if (audited_insert == false) audited_insert = item.Metadata.PropertyInfo.Name == "CreatedOn" ? true : false;
-                    if (audited_update == false) audited_update = item.Metadata.PropertyInfo.Name == "ModifyBy" ? true : false;
-                    if (audited_dt_update == false) audited_dt_update = item.Metadata.PropertyInfo.Name == "DtUpdate" ? true : false;
-                }*/
-                if (entityEntry.State == EntityState.Modified)
-                {
-                    entityEntry.Property("UpdatedAt").CurrentValue = now;
-                    entityEntry.Property("UpdatedBy").CurrentValue = authenticatedUserName;
-                    entityEntry.Property("CreatedAt").IsModified = false;
-                    entityEntry.Property("CreatedBy").IsModified = false;
-                }
-
-                if (entityEntry.State == EntityState.Added)
-                {
-                    entityEntry.Property("UpdatedAt").IsModified = false;
-                    entityEntry.Property("UpdatedBy").IsModified = false;
-                    entityEntry.Property("CreatedAt").CurrentValue = now;
-                    entityEntry.Property("CreatedBy").CurrentValue = authenticatedUserName;
-                }
-            }
-
+            ITrackerChanges.UpdateTrackerData(ref entries, authenticatedUserName);
         }
 
     }
