@@ -40,10 +40,17 @@ namespace ReportingApi.Controllers
 
         // PUT: api/PutCategory
         [HttpPut]
-        public async Task<ActionResult> PutCategory(UpdateCategory category)
+        public async Task<ActionResult> PutCategory(UpdateCategory categoryData)
         {
-            Category Categories = _mapper.Map<Category>(category);
-            _context.Entry(Categories).State = EntityState.Modified;
+            Category category = await _context.Categories.FindAsync(categoryData.Id);
+
+            if (category == null)
+                return BadRequest("Категории с указанным id не существует");
+            category.Text = categoryData.Text;
+            category.Description = categoryData.Description;
+            category.Visible = categoryData.Visible;
+
+            _context.Categories.Update(category);
 
             try
             {
@@ -73,7 +80,6 @@ namespace ReportingApi.Controllers
                 return BadRequest(e.InnerException.Message);
             }
 
-            //int id = category.Id;
             return Ok(category.Id);
         }
 
@@ -83,7 +89,7 @@ namespace ReportingApi.Controllers
         public async Task<ActionResult> PutParentId(UpdateCategoryParent CategoryParent = null)
         {
 
-            var category = await _context.Categories.FindAsync(CategoryParent.id);
+            Category category = await _context.Categories.FindAsync(CategoryParent.id);
             if (category == null)
                 return BadRequest("Категории с указанным id не существует");
             CategoryParent.toCat = CategoryParent.toCat == 0 ? null : CategoryParent.toCat;
@@ -105,14 +111,8 @@ namespace ReportingApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCategory(int id)
         {
-           // var HasCategory = _context.Categories.Any(x => id == x.ParentId);
-            //var HasReport = _context.Reports.Any(x => id == x.ParentId);
-
             Category category = _context.Categories.Include(x => x.Reports).FirstOrDefault(x => x.Id == id);
-          //  var t = await _context.Categories.Where(x => x.Id == id);
-          //  var a = ;
 
-            //var HasCategory = category.Categories.Count() > 0;
             var HasCategory = category.Categories.Any();
             var HasReport = category.Reports.Any();
 
@@ -123,7 +123,7 @@ namespace ReportingApi.Controllers
             {
                 return BadRequest(ExceptionTextHasChildren);
             }
-            //var category = await _context.Categories.FindAsync(id);
+
             try
             {
                 _context.Categories.Remove(category);
