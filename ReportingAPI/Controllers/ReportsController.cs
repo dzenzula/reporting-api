@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ReportingApi.BL;
 using ReportingApi.Dtos;
 using ReportingApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
@@ -52,6 +53,11 @@ namespace ReportingApi.Controllers
         [HttpPut]
         public async Task<ActionResult> PutReport(UpdateReport report)
         {
+            if (ActiveDirectoryFunction.CheckUserMail(report.Owner) is false)
+            {
+                return BadRequest("Указанный e-mail не найден.");
+            }
+
             Report Reports = await _context.Reports.FirstOrDefaultAsync(x => x.Id == report.Id);
             var results = new List<ValidationResult>();
             var context = new System.ComponentModel.DataAnnotations.ValidationContext(report);
@@ -80,8 +86,10 @@ namespace ReportingApi.Controllers
             }
 
             Reports.Text = report.Text;
+            Reports.Description = report.Description;
             Reports.URL = report.URL;
             Reports.Visible = report.Visible;
+            Reports.Owner = report.Owner;
             _context.Entry(Reports).State = EntityState.Modified;
 
             try
@@ -185,6 +193,11 @@ namespace ReportingApi.Controllers
         [HttpPost]
         public async Task<ActionResult> PostReport(AddReport reportData)
         {
+            if (ActiveDirectoryFunction.CheckUserMail(reportData.Owner) is false)
+            {
+                return BadRequest("Указанный e-mail не найден.");
+            }
+
             var query = _context.Reports.Include(x => x.Categories);
 
             var matchingUrl = query.FirstOrDefault(y => y.URL == reportData.URL);

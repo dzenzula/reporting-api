@@ -10,7 +10,7 @@ namespace ReportingApi.Dtos
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Нужно указать наименование элемента")]
+        [Required(ErrorMessage = "Нужно указать наименование элемента!")]
         [RegularExpression(@"^[а-яА-ЯёЁЇїІіЄєҐґa-zA-Z0-9-\.,|;\s\|\№\/\']+$",
             ErrorMessage = "Наименование элемента может содержать латиницу, кириллицу, цифры, пробел, символы: '-.,;/|№")]
         [MaxLength(150, ErrorMessage = "Наименование элемента не должно содержать больше 150 символов.")]
@@ -21,6 +21,8 @@ namespace ReportingApi.Dtos
         [MaxLength(150, ErrorMessage = "Описание не должно содержать больше 150 символов.")]
         public string Description { get; set; } = "default";
 
+        [Required(ErrorMessage ="Нужно указать владельца отчета!")]
+        public string Owner { get; set; }
         public bool Visible { get; set; } = true;
         public string URL { get; set; }
     }

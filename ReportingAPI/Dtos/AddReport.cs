@@ -24,6 +24,7 @@ namespace ReportingApi.Dtos
             ErrorMessage = "Псевдоним может содержать только латиницу, цифры, дефис и содержать от 4 до 50 символов.")]
         public string Alias { get; set; }
 
+        public string Owner { get; set; }
         public int? ParentId { get; set; }
         public string URL { get; set; }
         public bool Visible { get; set; } = true;

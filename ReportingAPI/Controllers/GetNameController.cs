@@ -21,6 +21,7 @@ namespace ReportingApi.Controllers
             //var tst = base.User.Identity.Name;
             //var tst2 = base.User.Identity.IsAuthenticated;
 
+
             return base.User.Identity.Name;
         }
 
@@ -28,20 +29,17 @@ namespace ReportingApi.Controllers
         public async Task <List<string>> GetUser()
         {
             //List<string> User = new List<string>();
+
             var User = new List<string>();
             var tst = HttpContext.Request.Headers.ToArray();
-            /*foreach(string t in tst)
-            {
 
-            }*/
-            for(int i = 0; i< tst.Length; i++)
+            for (int i = 0; i < tst.Length; i++)
             {
                 User.Add(tst[i].ToString());
-                //Console.WriteLine(tst[i]);
             }
             User.Add("Name: " + base.User.Identity.Name);
 
-            
+
             //User.Add(HttpContext.User.Identities.ToString());
             //User.Add(HttpContext.User.Identity.Name);
             //User.Add(HttpContext.Request.Headers.ToList().ToArray<string>);

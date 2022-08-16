@@ -36,6 +36,8 @@ namespace ReportingApi.Models
         [MaxLength(1000)]
         [JsonIgnore]
         public string URL { get; set; }
+        [Required]
+        public string Owner { get; set; }
         [NotMapped]
         public Data Data { get => new Data(URL); }
 
