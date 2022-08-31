@@ -106,7 +106,7 @@ namespace ReportingApi.Controllers
         // PUT: api/PutParentId
         //[AllowAnonymous]
         [HttpPut("UpdateCategoryReports")]
-        ///api/Reports/UpdateCategoryReports
+        //api/Reports/UpdateCategoryReports
         public async Task<ActionResult> PutParentId(UpdateCategoryReports CategoryReports = null)
         {
             Report report = _context.Reports.Include(x => x.Categories).FirstOrDefault(x => x.Id == CategoryReports.id && x.Categories.Any(y => y.Id == CategoryReports.fromCat));

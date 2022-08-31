@@ -15,21 +15,14 @@ namespace ReportingApi.Controllers
     {
         // GET: api/GetName
         [HttpGet]
-        public async Task<string> GetUserName()
+        public string GetUserName()
         {
-            // base.User.Identity.Name != null && HttpContext.User.Identity.IsAuthenticated;
-            //var tst = base.User.Identity.Name;
-            //var tst2 = base.User.Identity.IsAuthenticated;
-
-
             return base.User.Identity.Name;
         }
 
         [HttpGet("{id}")]
-        public async Task <List<string>> GetUser()
+        public List<string> GetUser()
         {
-            //List<string> User = new List<string>();
-
             var User = new List<string>();
             var tst = HttpContext.Request.Headers.ToArray();
 

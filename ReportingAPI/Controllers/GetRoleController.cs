@@ -16,25 +16,25 @@ namespace ReportingApi.Controllers
     {
         // GET: api/GetRole
         [HttpGet]
-        public async Task<string> GetUserRole()
+        public string GetUserRole()
         {
             // base.User.Identity.Name != null && HttpContext.User.Identity.IsAuthenticated;
             //var tst = base.User.Identity.Name;
             //var tst2 = base.User.Identity.IsAuthenticated;
-            string[] Admins = { 
-                @"EUROPE\saarhipov", 
-                @"EUROPE\fdeluka", 
-                @"EUROPE\vlvshevchuk", 
-                @"EUROPE\vgstotskiy", 
-                @"EUROPE\dsguk", 
+            string[] Admins = {
+                @"EUROPE\saarhipov",
+                @"EUROPE\fdeluka",
+                @"EUROPE\vlvshevchuk",
+                @"EUROPE\vgstotskiy",
+                @"EUROPE\dsguk",
                 @"EUROPE\evpavlovskaya"
             };
-            
+
             string Username = User.Identity.Name;
             string Role = Admins.Contains(Username) ? "admin" : "guest";
 
             return Role;
-          //  return "admin";
+            //  return "admin";
         }
     }
 }
