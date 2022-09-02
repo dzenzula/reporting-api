@@ -48,9 +48,6 @@ namespace ReportingApi.Controllers
             {
                 return BadRequest(ex.Message);
             }
-
-         //   var tst = Ok();
-            return Ok();
         }
     }
 }

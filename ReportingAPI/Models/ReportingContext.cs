@@ -1,6 +1,7 @@
+using amkr.csharp_common_libs.Security;
+using amkr.csharp_common_libs.TrackerChanges;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using ReportingApi.Services.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,29 +78,14 @@ namespace ReportingApi.Models
 
         public void OnBeforeSaving()
         {
-            var httpContext = _httpContextAccessor.HttpContext;
-            string authenticatedUserName = "";
-            string authenticatedUserDomain = "";
-            if (httpContext != null)
-            {
-                Security.GetUserNameDomain(httpContext.User, out authenticatedUserName, out authenticatedUserDomain);
-
-                // If it returns null, even when the user was authenticated, you may try to get the value of a specific claim 
-                //var authenticatedUserId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                // var authenticatedUserId = _httpContextAccessor.HttpContext.User.FindFirst("sub").Value
-
-                // TODO use name to set the shadow property value like in the following post: https://www.meziantou.net/2017/07/03/entity-framework-core-generate-tracking-columns
-            }
-
-            var now = DateTime.Now;
-
             var entries = ChangeTracker
                 .Entries<ITrackerChanges>()
                 .Where(e =>
                         (e.State == EntityState.Added
                         || e.State == EntityState.Modified)).ToList();
 
-            ITrackerChanges.UpdateTrackerData(ref entries, authenticatedUserName);
+            AuthUserData userData = DomainData.GetActiveDirectoryName(_httpContextAccessor.HttpContext.User);
+            ITrackerChanges.UpdateTrackerData(ref entries, userData);
         }
 
     }
