@@ -1,4 +1,5 @@
-﻿using System;
+﻿using amkr.csharp_common_libs.TrackerChanges;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ReportingApi.Models
 {
-    public class Report : /*ITreeItem,*/ ITrackerChanges
+    public class Report : ITrackerChanges
     {
         /* [Column("ReportId")]*/
         public int Id { get; set; }

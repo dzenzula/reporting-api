@@ -4,13 +4,6 @@
         <name>ReportingApi</name>
     </assembly>
     <members>
-        <member name="M:ReportingApi.Models.ITrackerChanges.UpdateTrackerData(System.Collections.Generic.List{Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry{ReportingApi.Models.ITrackerChanges}}@,System.String)">
-            <summary>
-            Может вернуть Exception, если authenticatedUserName == null
-            </summary>
-            <param name="entity"></param>
-            <param name="authenticatedUserName"></param>
-        </member>
         <member name="P:ReportingApi.Startup.Configuration">
             <summary>
             dotnet ef dbcontext scaffold "Server=KRR-TST-PAHWL02;Database=KRR-PA-MON-SCALES;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -o Models --ContexDir ContextDB
