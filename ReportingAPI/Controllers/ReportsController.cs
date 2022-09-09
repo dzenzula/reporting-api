@@ -145,6 +145,8 @@ namespace ReportingApi.Controllers
         [HttpPost("AddReportRelation/{id}")]
         public async Task<ActionResult> PostReportRelation(int id, [FromBody] int toCat)
         {
+            try
+            {
             Report report = _context.Reports.Include(c => c.Categories).FirstOrDefault(x => x.Id == id);
             if (report is null)
                 return BadRequest("Отчета с таким id не существует.");
@@ -160,8 +162,8 @@ namespace ReportingApi.Controllers
 
             report.Categories.Add(category);
 
-            try
-            {
+            /* try
+            { */
                 await _context.SaveChangesAsync();
             }
             catch (Exception e)
@@ -193,6 +195,8 @@ namespace ReportingApi.Controllers
         [HttpPost]
         public async Task<ActionResult> PostReport(AddReport reportData)
         {
+			try {
+
             if (ActiveDirectoryFunction.CheckUserMail(reportData.Owner) is false)
             {
                 return BadRequest("Указанный e-mail не найден.");
@@ -228,8 +232,8 @@ namespace ReportingApi.Controllers
             _context.Reports.Add(newReport);
 
 
-            try
-            {
+            //try
+            //{
                 await _context.SaveChangesAsync();
             }
             catch (Exception e)
