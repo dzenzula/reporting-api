@@ -165,13 +165,14 @@ namespace ReportingApi.Controllers
             /* try
             { */
                 await _context.SaveChangesAsync();
+                return Ok();
             }
             catch (Exception e)
             {
                 return BadRequest(e.InnerException.Message);
             }
 
-            return Ok();
+            
 
             /*var matchingReportsCount = _context.Reports.Include(x => x.Categories).Where(y => y.Text == reportData.Text || y.Alias == reportData.Alias || y.URL == reportData.URL).Count();
 
@@ -197,51 +198,52 @@ namespace ReportingApi.Controllers
         {
 			try {
 
-            if (ActiveDirectoryFunction.CheckUserMail(reportData.Owner) is false)
-            {
-                return BadRequest("Указанный e-mail не найден.");
-            }
+                if (ActiveDirectoryFunction.CheckUserMail(reportData.Owner) is false)
+                {
+                    return BadRequest("Указанный e-mail не найден.");
+                }
 
-            var query = _context.Reports.Include(x => x.Categories);
+                var query = _context.Reports.Include(x => x.Categories);
 
-            var matchingUrl = query.FirstOrDefault(y => y.URL == reportData.URL);
-            if (matchingUrl is not null)
-                return BadRequest($"Отчет с такой ссылкой уже существует под псевдонимом: {matchingUrl.Alias}");
+                var matchingUrl = query.FirstOrDefault(y => y.URL == reportData.URL);
+                if (matchingUrl is not null)
+                    return BadRequest($"Отчет с такой ссылкой уже существует под псевдонимом: {matchingUrl.Alias}");
 
-            var matchingAlias = query.FirstOrDefault(y => y.Alias == reportData.Alias);
-            if (matchingAlias is not null)
-                return BadRequest($"Отчет с таким псевдонимом уже существует.");
+                var matchingAlias = query.FirstOrDefault(y => y.Alias == reportData.Alias);
+                if (matchingAlias is not null)
+                    return BadRequest($"Отчет с таким псевдонимом уже существует.");
 
-            var matchingText = query.FirstOrDefault(y => y.Text == reportData.Text);
-            if (matchingText is not null)
-                return BadRequest($"Отчет с таким названием уже существует под псевдонимом: {matchingText.Alias}");
+                var matchingText = query.FirstOrDefault(y => y.Text == reportData.Text);
+                if (matchingText is not null)
+                    return BadRequest($"Отчет с таким названием уже существует под псевдонимом: {matchingText.Alias}");
 
-            // var matchingReportsCount = _context.Reports.Include(x => x.Categories).Where(y => y.Text == reportData.Text || y.Alias == reportData.Alias || y.URL == reportData.URL).Count();
+                // var matchingReportsCount = _context.Reports.Include(x => x.Categories).Where(y => y.Text == reportData.Text || y.Alias == reportData.Alias || y.URL == reportData.URL).Count();
 
-            //TODO: показать псевдонимы отчетов
-            //if(matchingReportsCount != 0)
-            //    return BadRequest("Отчет с таким названием/псевдонимом или ссылкой уже существует.");
+                //TODO: показать псевдонимы отчетов
+                //if(matchingReportsCount != 0)
+                //    return BadRequest("Отчет с таким названием/псевдонимом или ссылкой уже существует.");
 
-            var category = _context.Categories.FirstOrDefault(x => x.Id == reportData.ParentId);
+                var category = _context.Categories.FirstOrDefault(x => x.Id == reportData.ParentId);
 
-            if(category is null)
-                return BadRequest("Указанной категории не существует.");
+                if(category is null)
+                    return BadRequest("Указанной категории не существует.");
 
-            Report newReport = _mapper.Map<Report>(reportData);
-            newReport.Categories.Add(category);
-            _context.Reports.Add(newReport);
+                Report newReport = _mapper.Map<Report>(reportData);
+                newReport.Categories.Add(category);
+                _context.Reports.Add(newReport);
 
 
             //try
             //{
                 await _context.SaveChangesAsync();
+                return Ok(newReport.Id);
             }
             catch (Exception e)
             {
                 return BadRequest(e.InnerException.Message);
             }
 
-            return Ok(newReport.Id);
+            
 
            /* Report report = _mapper.Map<Report>(newReport);
             try
