@@ -10,6 +10,8 @@ namespace ReportingApi.BL
     {
         public static bool CheckUserMail(string mail)
         {
+            if (mail == null)
+                return false;
             //139.53.2.13:389
             //var parentEntry = new DirectoryEntry("LDAP://" + Environment.UserDomainName);
             var parentEntry = new DirectoryEntry("LDAP://EUROPE");
@@ -17,9 +19,9 @@ namespace ReportingApi.BL
             var directorySearch = new DirectorySearcher(parentEntry);
 
             directorySearch.Filter = "(&(objectClass=user)(anr=" + mail +"))";
-          //  directorySearch.PropertiesToLoad.Add("mail");
 
             var user = directorySearch.FindOne();
+
             if (user is null)
                 return false;
 
