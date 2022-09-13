@@ -196,7 +196,6 @@ namespace ReportingApi.Controllers
         [HttpPost]
         public async Task<ActionResult> PostReport(AddReport reportData)
         {
-            //return Ok();
 			try {
 
                 if (ActiveDirectoryFunction.CheckUserMail(reportData.Owner) is false)
