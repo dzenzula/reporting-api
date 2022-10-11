@@ -53,7 +53,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ext\csharp-common-libs\csharp-common-libs.csproj" />
+    <ProjectReference Include="..\ext\authorization-api-handler\authorization-api-handler\authorization-api-handler.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>

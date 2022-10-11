@@ -23,6 +23,8 @@ using Microsoft.Net.Http.Headers;
 using ReportingApi.Services;
 using ReportingApi.Models;
 using System.Text.Json.Serialization;
+using AuthorizationApiHandler;
+using AuthorizationApiHandler.Context;
 
 namespace ReportingApi
 {
@@ -81,6 +83,12 @@ namespace ReportingApi
                 options =>
                 options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"])
                 );
+            services.AddDbContext<AuthContext>(
+                options =>
+                options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"])
+                );
+
+            services.AddAuthorizeHandler();
             //services.AddTransient();
 
             services.AddSwaggerGen(c =>
@@ -116,6 +124,7 @@ namespace ReportingApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseAuthorizeHandler();
             if (env.IsDevelopment() || env.IsStaging())
             {
                 app.UseDeveloperExceptionPage();
