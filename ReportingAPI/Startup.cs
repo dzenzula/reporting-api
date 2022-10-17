@@ -43,6 +43,16 @@ namespace ReportingApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Service ID (from table Auth.Service)
+            //AuthorizeExtensions.AuthServiceID = 15;
+            try
+            {
+                AuthorizeExtensions.AuthServiceID = Convert.ToInt32(Configuration["AuthServiceID"]) == 0 ? null : Convert.ToInt32(Configuration["AuthServiceID"]);
+            }
+            catch (Exception)
+            {
+                AuthorizeExtensions.AuthServiceID = null;
+            }
             services.AddCors(options =>
             {
                 
@@ -52,33 +62,16 @@ namespace ReportingApi
                                      builder
                                       .WithOrigins("http://localhost:63169", "http://localhost:8080", "https://krr-app-paweb01.europe.mittalco.com/", "https://krr-tst-padev02.europe.mittalco.com")
                                       .WithExposedHeaders("Accept,Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Access-Control-Allow-Methods", "Access-Control-Allow-Credentials")
-                                     // .WithMethods("GET", "POST")
                                       .AllowAnyMethod()
                                       .AllowAnyHeader()
                                       .AllowCredentials()
-                                      //.WithHeaders("Access-Control-Allow-Credentials")
-                                       .SetPreflightMaxAge(TimeSpan.FromSeconds(86400))
-
-                                      /*.SetIsOriginAllowed(origin => true)
-                                      .WithExposedHeaders()
-                                      .AllowAnyMethod()
-                                      .WithHeaders("Access-Control-Allow-Origin")
-                                      .SetPreflightMaxAge(TimeSpan.FromSeconds(86400)*/
-                                    //  )
-                                          /*.WithHeaders("Vary: Origin", "Origin", "X-Requested-With", "Content-Type", "Accept", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials")
-                                          .WithMethods("GET", "POST", "OPTIONS", "PUT", "DELETE")*/
-                                 
+                                      .SetPreflightMaxAge(TimeSpan.FromSeconds(86400))         
                                        ;
                                   });
                
             });
             services.AddAutoMapper(typeof(Startup));
             services.AddControllers();
-           // services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            /*services.AddDbContext<KRRPAMONSCALESContext>(
-                options =>
-                options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"])
-                );*/
             services.AddDbContext<ReportingContext>(
                 options =>
                 options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"])
@@ -89,8 +82,6 @@ namespace ReportingApi
                 );
 
             services.AddAuthorizeHandler();
-            //services.AddTransient();
-
             services.AddSwaggerGen(c =>
             {
                 
@@ -107,16 +98,11 @@ namespace ReportingApi
                 {
                     {"Bearer", new string[] { }},
                 };
-
-               
                 /*****************************************************************************************/
-
             });
             // IHttpContextAccessor is no longer wired up by default, you have to register it yourself
             services.AddHttpContextAccessor();
-
             services.AddAuthorization();
-
             /*****************************************************************************************/
             // Set the comments path for the Swagger JSON and UI.
         }
@@ -129,26 +115,13 @@ namespace ReportingApi
             {
                 app.UseDeveloperExceptionPage();
             }
-            /*
-            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-            {
-                var context = serviceScope.ServiceProvider.GetService<KRRPAMONSCALESContext>();
-                context.Database.Migrate();
-            }
-            */
             app.UseSwagger();
-            
             app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("./v1/swagger.json", "reporting-api V1");
                     c.DefaultModelsExpandDepth(-1);
                 });
-
-
-
-           
             app.UseRouting();
-
             app.UseCors(AllowSpecificOrigins);
             //app.UseCors(
             //    builder =>
@@ -168,27 +141,15 @@ namespace ReportingApi
             //    });
 
             app.UseAuthentication();
-            //app.UseAuthorization();
             app.Use(async (context, next) =>
             {
-                //  string host = context.Request.Host.Value;
-                /* if (host == "OPTIONS")
-                 {
-                     context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-                 }*/
                 // context.Response.Headers.Add("Access-Control-Allow-Origin", "https://krr-tst-padev02.europe.mittalco.com");
                 context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
                 //context.Response.Headers.Add("Access-Control-Allow-Method", "GET,PUT,DELETE,POST,OPTIONS,HEAD");
                 context.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
-
-                //    /*context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-                //    context.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
-                //     context.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:8080");*/
                 await next();
-            });
-            
+            });  
             app.UseAuthorization();
-            //app.UseMiddleware<RequestResponseLoggingMiddleware>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers().RequireCors(AllowSpecificOrigins);
