@@ -20,6 +20,7 @@ namespace ReportingApi.Models
         [NotMapped]
         public string Type { get => "folder"; }
         [NotMapped]
+        [JsonIgnore]
         public Data Data { get => null; }
        // [JsonIgnore]
         public int? ParentId { get; set; }
@@ -58,7 +59,7 @@ namespace ReportingApi.Models
         [JsonIgnore]
         public ICollection<Category> Categories { get; set; }
 
-        /*[JsonIgnore]*/
+        [JsonIgnore]
         public ICollection<Report> Reports { get; set; }
         /*[JsonIgnore]
         public ICollection<Report> Reports { get; set; }*/

@@ -12,6 +12,9 @@ namespace ReportingApi.Models
 {
     public class Report : ITrackerChanges
     {
+        [NotMapped]
+        [JsonIgnore]
+        public ICollection<FavoriteReport> FavoriteReports { get; set; }
         /* [Column("ReportId")]*/
         public int Id { get; set; }
         // атрибут Unique для Alias задан через modelBuilder в ReportingContext
@@ -42,8 +45,6 @@ namespace ReportingApi.Models
         [NotMapped]
         public Data Data { get => new Data(URL); }
 
-        //public ICollection<ITreeItem> Children { get => null; }
-        //public ICollection<ITreeItem> Children { get => null; }
         [JsonIgnore]
         public string CreatedBy { get; set; }
         [JsonIgnore]
@@ -55,6 +56,8 @@ namespace ReportingApi.Models
 
         [JsonIgnore]
         public ICollection<Category> Categories { get; set; }
+
+        
 
         public Report()
         {

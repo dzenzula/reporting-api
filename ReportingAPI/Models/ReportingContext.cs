@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace ReportingApi.Models
 {
     public class ReportingContext : DbContext
-    {  
+    {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public ReportingContext(DbContextOptions<ReportingContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
@@ -21,6 +21,7 @@ namespace ReportingApi.Models
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<Report> Reports { get; set; }
+        public DbSet<FavoriteReport> FavoriteReports { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -59,10 +60,9 @@ namespace ReportingApi.Models
                 .HasIndex(c => c.URL)
                 .IsUnique();
 
-            /*
-                        modelBuilder.Entity<Report>()
-                            .HasMany(c => c.Categories);*/
-
+            modelBuilder.Entity<FavoriteReport>()
+                .HasIndex(c => new { c.Login, c.ReportId })
+                .IsUnique();
         }
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
@@ -84,9 +84,17 @@ namespace ReportingApi.Models
                         (e.State == EntityState.Added
                         || e.State == EntityState.Modified)).ToList();
 
-            AuthUserData userData = DomainData.GetActiveDirectoryName(_httpContextAccessor.HttpContext.User);
-            ITrackerChanges.UpdateTrackerData(ref entries, userData);
-        }
+            if (entries.Count > 0)
+            {
+                AuthUserData userData = new AuthUserData();
 
+                userData.DisplayName = _httpContextAccessor.HttpContext.Session.GetString("USER_NAME");
+                userData.Name = _httpContextAccessor.HttpContext.Session.GetString("USER_DOMAIN_NAME");
+                userData.Type = _httpContextAccessor.HttpContext.Session.GetString("USER_TYPE");
+                userData.Domain = _httpContextAccessor.HttpContext.Session.GetString("USER_DOMAIN");
+                userData.AuthStatus = _httpContextAccessor.HttpContext.Session.GetInt32("USER_IS_AUTH");
+                ITrackerChanges.UpdateTrackerData(ref entries, userData);
+            }
+        }
     }
 }
