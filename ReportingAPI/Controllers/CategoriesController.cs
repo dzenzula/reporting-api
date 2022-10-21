@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AuthorizationApiHandler.PolicysAuthorize;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,6 @@ namespace ReportingApi.Controllers
     [SwaggerTag("Категории")]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = @"EUROPE\KRR-LG_Inet_Users")]
     public class CategoriesController : ControllerBase
     {
         private readonly ReportingContext _context;
@@ -29,7 +29,7 @@ namespace ReportingApi.Controllers
         }
 
         // GET: api/Categories
-        [AllowAnonymous]
+       // [AllowAnonymous]
         [HttpGet]
         public async Task<List<Category>> GetCategories()
        // public async Task<ActionResult> GetCategories() 
@@ -37,8 +37,8 @@ namespace ReportingApi.Controllers
             return await _context.Categories.ToListAsync();
            // return BadRequest("tst bad req mess");
         }
-
         // PUT: api/PutCategory
+        [MultiplePolicysAuthorize("access_to_admin_page")]
         [HttpPut]
         public async Task<ActionResult> PutCategory(UpdateCategory categoryData)
         {
@@ -62,8 +62,8 @@ namespace ReportingApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
         // POST: api/Categories
+        [MultiplePolicysAuthorize("access_to_admin_page")]
         [HttpPost]
         public async Task<ActionResult> PostCategory(AddCategory newCategory)
         {
@@ -82,8 +82,8 @@ namespace ReportingApi.Controllers
 
             return Ok(category.Id);
         }
-
         // PUT: api/PutParentId (перемещение категории)
+        [MultiplePolicysAuthorize("access_to_admin_page")]
         [HttpPut("UpdateCategoryParent")]
         //public async Task<ActionResult> PutParentId(int id, [FromBody] int? toCategory)
         public async Task<ActionResult> PutParentId(UpdateCategoryParent CategoryParent = null)
@@ -106,8 +106,8 @@ namespace ReportingApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
         // DELETE: api/Categories/5
+        [MultiplePolicysAuthorize("access_to_admin_page")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCategory(int id)
         {

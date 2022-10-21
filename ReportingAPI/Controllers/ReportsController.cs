@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AuthorizationApiHandler.PolicysAuthorize;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,6 @@ namespace ReportingApi.Controllers
     [SwaggerTag("Отчеты")]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = @"EUROPE\KRR-LG_Inet_Users")]
     public class ReportsController : ControllerBase
     {
         private readonly ReportingContext _context;
@@ -29,7 +29,7 @@ namespace ReportingApi.Controllers
         }
 
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         // GET: api/Reports
         [HttpGet]
         public async Task<List<Report>> GetReports()
@@ -48,8 +48,8 @@ namespace ReportingApi.Controllers
             return outRep;
             //     ToListAsync();
         }
-
         // PUT: api/PutReport
+        [MultiplePolicysAuthorize("access_to_admin_page")]
         [HttpPut]
         public async Task<ActionResult> PutReport(UpdateReport report)
         {
