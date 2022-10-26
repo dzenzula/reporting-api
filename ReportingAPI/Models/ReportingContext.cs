@@ -1,5 +1,6 @@
 using amkr.csharp_common_libs.Security;
 using amkr.csharp_common_libs.TrackerChanges;
+using AuthorizationApiHandler.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;

@@ -31,6 +31,9 @@ namespace ReportingApi
     public class Startup
     {
         readonly string AllowSpecificOrigins = "TestAllowSpecificOrigins";
+        public static int AuthServiceId { get; private set; }
+        public static string ADMIN_OPERATION_NAME;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -47,7 +50,8 @@ namespace ReportingApi
             //AuthorizeExtensions.AuthServiceID = 15;
             try
             {
-                AuthorizeExtensions.AuthServiceID = Convert.ToInt32(Configuration["AuthServiceID"]) == 0 ? null : Convert.ToInt32(Configuration["AuthServiceID"]);
+                ADMIN_OPERATION_NAME = Configuration["ADMIN_OPERATION_NAME"].ToString();
+                AuthorizeExtensions.AuthServiceID = Convert.ToInt32(Configuration["AuthServiceID"]);
             }
             catch (Exception)
             {

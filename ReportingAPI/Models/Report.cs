@@ -1,4 +1,5 @@
 ﻿using amkr.csharp_common_libs.TrackerChanges;
+using AuthorizationApiHandler.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -42,6 +43,8 @@ namespace ReportingApi.Models
         public string URL { get; set; }
         [Required]
         public string Owner { get; set; }
+        [Required]
+        public string Operation_name { get; set; }
         [NotMapped]
         public Data Data { get => new Data(URL); }
 

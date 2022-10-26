@@ -1,6 +1,9 @@
-﻿using AuthorizationApiHandler.PolicysAuthorize;
+﻿using AuthorizationApiHandler;
+using AuthorizationApiHandler.Context;
+using AuthorizationApiHandler.PolicysAuthorize;
+using AuthorizationApiHandler.Worker;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReportingApi.BL;
@@ -22,20 +25,35 @@ namespace ReportingApi.Controllers
     {
         private readonly ReportingContext _context;
         public IMapper _mapper;
-        public ReportsController(ReportingContext context, IMapper mapper)
+        private readonly AuthContext _authContext;
+        IHttpContextAccessor _httpContextAccessor = null;
+        public ReportsController(ReportingContext context, IMapper mapper, AuthContext authContext, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _mapper = mapper;
+            _authContext = authContext;
+            _httpContextAccessor = httpContextAccessor;
         }
-
 
         //[AllowAnonymous]
         // GET: api/Reports
         [HttpGet]
         public async Task<List<Report>> GetReports()
         {
-            List<Report> reports = await _context.Reports.Include(x => x.Categories).AsNoTracking().ToListAsync();
+            const string PUBLIC_REPORT_OPERATION = "public";
             List<Report> outRep = new();
+            Auth auth = new Auth(_httpContextAccessor, _authContext, AuthorizeExtensions.AuthServiceID.GetValueOrDefault());
+            bool IsAuth = auth.Authorize();
+            List<string> MyPermissions = auth.GetAllowedPermissions();
+            auth.Close();
+            bool IsAdmin = MyPermissions.Contains(Startup.ADMIN_OPERATION_NAME);
+            List <Report> reports = await _context.Reports.Include(x => x.Categories)
+                .AsNoTracking()
+                .Where(x =>
+                IsAdmin
+                || x.Operation_name == PUBLIC_REPORT_OPERATION
+                || MyPermissions.Contains(x.Operation_name))
+                .ToListAsync();
 
             foreach (var report in reports)
                 foreach (var category in report.Categories)
@@ -44,15 +62,15 @@ namespace ReportingApi.Controllers
                     temp.ParentId = category.Id;
                     outRep.Add(temp);
                 }
-
             return outRep;
-            //     ToListAsync();
         }
         // PUT: api/PutReport
         [MultiplePolicysAuthorize("access_to_admin_page")]
         [HttpPut]
         public async Task<ActionResult> PutReport(UpdateReport report)
         {
+            report.Owner = report.Owner.ToLower().Trim();
+
             if (ActiveDirectoryFunction.CheckUserMail(report.Owner) is false)
             {
                 return BadRequest("Указанный e-mail не найден.");
@@ -60,7 +78,13 @@ namespace ReportingApi.Controllers
 
             Report Reports = await _context.Reports.FirstOrDefaultAsync(x => x.Id == report.Id);
             var results = new List<ValidationResult>();
-            var context = new System.ComponentModel.DataAnnotations.ValidationContext(report);
+
+            report.Text = report.Text.Trim();
+            report.Description = report.Description;
+            report.URL = report.URL.Trim();
+            report.Operation_name = report.Operation_name.ToLower().Trim();
+
+            var context = new ValidationContext(report);
             if (!Validator.TryValidateObject(report, context, results, true))
             {
                 foreach (var error in results)
@@ -84,12 +108,13 @@ namespace ReportingApi.Controllers
                 Alias = DuplicateByURL.First().Alias;
                 return BadRequest($"Отчет с такой ссылкой уже существует.\nПсевдоним отчета: {Alias}");
             }
-
             Reports.Text = report.Text;
             Reports.Description = report.Description;
             Reports.URL = report.URL;
             Reports.Visible = report.Visible;
             Reports.Owner = report.Owner;
+            Reports.Operation_name = report.Operation_name;
+
             _context.Entry(Reports).State = EntityState.Modified;
 
             try
@@ -104,9 +129,9 @@ namespace ReportingApi.Controllers
         }
 
         // PUT: api/PutParentId
-        //[AllowAnonymous]
-        [HttpPut("UpdateCategoryReports")]
         //api/Reports/UpdateCategoryReports
+        [MultiplePolicysAuthorize("access_to_admin_page")]
+        [HttpPut("UpdateCategoryReports")]
         public async Task<ActionResult> PutParentId(UpdateCategoryReports CategoryReports = null)
         {
             Report report = _context.Reports.Include(x => x.Categories).FirstOrDefault(x => x.Id == CategoryReports.id && x.Categories.Any(y => y.Id == CategoryReports.fromCat));
@@ -142,6 +167,7 @@ namespace ReportingApi.Controllers
         }
 
         //POST: api/Reports/AddReportRelation
+        [MultiplePolicysAuthorize("access_to_admin_page")]
         [HttpPost("AddReportRelation/{id}")]
         public async Task<ActionResult> PostReportRelation(int id, [FromBody] int toCat)
         {
@@ -170,37 +196,24 @@ namespace ReportingApi.Controllers
             }
 
             return Ok();
-
-            /*var matchingReportsCount = _context.Reports.Include(x => x.Categories).Where(y => y.Text == reportData.Text || y.Alias == reportData.Alias || y.URL == reportData.URL).Count();
-
-
-
-            if (matchingReportsCount == 0)
-            {
-                Report newReport = _mapper.Map<Report>(reportData);
-                var category = _context.Categories.FirstOrDefault(x => x.Id == reportData.ParentId);
-                if (category is not null)
-                    newReport.Categories.Add(category);
-                else
-                    return BadRequest("Категории не существует");
-            }*/
-
-            
-
         }
 
         // POST: api/Reports
+        [MultiplePolicysAuthorize("access_to_admin_page")]
         [HttpPost]
         public async Task<ActionResult> PostReport(AddReport reportData)
         {
+            reportData.Owner = reportData.Owner.ToLower().Trim();
+
             if (ActiveDirectoryFunction.CheckUserMail(reportData.Owner) is false)
             {
                 return BadRequest("Указанный e-mail не найден.");
             }
 
             var query = _context.Reports.Include(x => x.Categories);
-
+            reportData.URL = reportData.URL.Trim();
             var matchingUrl = query.FirstOrDefault(y => y.URL == reportData.URL);
+
             if (matchingUrl is not null)
                 return BadRequest($"Отчет с такой ссылкой уже существует под псевдонимом: {matchingUrl.Alias}");
 
@@ -213,20 +226,16 @@ namespace ReportingApi.Controllers
                 return BadRequest($"Отчет с таким названием уже существует под псевдонимом: {matchingText.Alias}");
 
             // var matchingReportsCount = _context.Reports.Include(x => x.Categories).Where(y => y.Text == reportData.Text || y.Alias == reportData.Alias || y.URL == reportData.URL).Count();
-
-            //TODO: показать псевдонимы отчетов
-            //if(matchingReportsCount != 0)
-            //    return BadRequest("Отчет с таким названием/псевдонимом или ссылкой уже существует.");
-
             var category = _context.Categories.FirstOrDefault(x => x.Id == reportData.ParentId);
 
-            if(category is null)
+            if (category is null)
                 return BadRequest("Указанной категории не существует.");
 
+            reportData.Operation_name = reportData.Operation_name.ToLower().Trim();
+            reportData.Text = reportData.Text.Trim();
             Report newReport = _mapper.Map<Report>(reportData);
             newReport.Categories.Add(category);
             _context.Reports.Add(newReport);
-
 
             try
             {
@@ -238,31 +247,10 @@ namespace ReportingApi.Controllers
             }
 
             return Ok(newReport.Id);
-
-           /* Report report = _mapper.Map<Report>(newReport);
-            try
-            {
-                Category category = _context.Categories.FirstOrDefault(x => x.Id == newReport.ParentId);
-                if (category == null)
-                {
-                    return BadRequest("Категория не существует.");
-                }
-
-                report.Categories.Add(category);
-
-                _context.Reports.Add(report);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-
-                return BadRequest(e.InnerException.Message);
-            }
-
-            return Ok(report.Id);*/
         }
 
         // DELETE: api/Categories/5
+        [MultiplePolicysAuthorize("access_to_admin_page")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteReport(int id, [FromBody] int fromCat)
         {
@@ -297,7 +285,6 @@ namespace ReportingApi.Controllers
 
             try
             {
-              //  _context.Reports.Remove(report);
                 await _context.SaveChangesAsync();
                 return Ok();
             }

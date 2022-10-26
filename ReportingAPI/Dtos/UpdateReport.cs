@@ -25,5 +25,9 @@ namespace ReportingApi.Dtos
         public string Owner { get; set; }
         public bool Visible { get; set; } = true;
         public string URL { get; set; }
+        [Required(ErrorMessage = "Не указана группа отчета")]
+        [RegularExpression(@"[a-z0-9_]{3,40}",
+            ErrorMessage = "Псевдоним может содержать только латиницу, цифры, дефис и содержать от 3 до 40 символов.")]
+        public string Operation_name { get; set; }
     }
 }
