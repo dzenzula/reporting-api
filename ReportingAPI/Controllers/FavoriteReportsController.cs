@@ -1,21 +1,14 @@
-﻿using amkr.csharp_common_libs.Security;
-using AuthorizationApiHandler.Models;
-using AuthorizationApiHandler.PolicysAuthorize;
+﻿using AuthorizationApiHandler.PolicysAuthorize;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReportingApi.Models;
-using SQLitePCL;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
-using System.DirectoryServices.ActiveDirectory;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace ReportingApi.Controllers
 {
@@ -99,11 +92,8 @@ namespace ReportingApi.Controllers
 
         private string GetLogin()
         {
-            //string DisplayName = _httpContextAccessor.HttpContext.Session.GetString("USER_NAME");
             string Name = _httpContextAccessor.HttpContext.Session.GetString("USER_DOMAIN_NAME");
-            //string Type = _httpContextAccessor.HttpContext.Session.GetString("USER_TYPE");
             string Domain = _httpContextAccessor.HttpContext.Session.GetString("USER_DOMAIN");
-           // int? AuthStatus = _httpContextAccessor.HttpContext.Session.GetInt32("USER_IS_AUTH");
 
             return Domain + @"\" + Name;
         }

@@ -1,7 +1,6 @@
 ﻿using AuthorizationApiHandler;
 using AuthorizationApiHandler.Context;
 using AuthorizationApiHandler.PolicysAuthorize;
-using AuthorizationApiHandler.Worker;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -42,10 +41,8 @@ namespace ReportingApi.Controllers
         {
             const string PUBLIC_REPORT_OPERATION = "public";
             List<Report> outRep = new();
-            Auth auth = new Auth(_httpContextAccessor, _authContext, AuthorizeExtensions.AuthServiceID.GetValueOrDefault());
-            bool IsAuth = auth.Authorize();
-            List<string> MyPermissions = auth.GetAllowedPermissions();
-            auth.Close();
+            AuthorizeHelper auth = new AuthorizeHelper(_httpContextAccessor, _authContext);
+            List<string> MyPermissions = auth.Init().GetAllowedPermissions();
             bool IsAdmin = MyPermissions.Contains(Startup.ADMIN_OPERATION_NAME);
             List <Report> reports = await _context.Reports.Include(x => x.Categories)
                 .AsNoTracking()
