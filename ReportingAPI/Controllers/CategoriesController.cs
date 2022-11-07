@@ -1,4 +1,6 @@
-﻿using AuthorizationApiHandler.PolicysAuthorize;
+﻿using AuthorizationApiHandler.Context;
+using AuthorizationApiHandler;
+using AuthorizationApiHandler.PolicysAuthorize;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace ReportingApi.Controllers
 {
@@ -21,21 +24,44 @@ namespace ReportingApi.Controllers
     {
         private readonly ReportingContext _context;
         private IMapper _mapper;
+        private readonly AuthContext _authContext;
+        IHttpContextAccessor _httpContextAccessor = null;
 
-        public CategoriesController(ReportingContext context, IMapper mapper)
+        public CategoriesController(ReportingContext context, IMapper mapper, AuthContext authContext, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _mapper = mapper;
+            _authContext = authContext;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        // GET: api/Categories/GetCategoriesForAdmin
+        [MultiplePolicysAuthorize("access_to_admin_page")]
+        [HttpGet("GetCategoriesForAdmin")]
+        public async Task<List<Category>> GetCategoriesAdmin()
+        {
+            return await _context.Categories.ToListAsync();
         }
 
         // GET: api/Categories
-       // [AllowAnonymous]
+        // [AllowAnonymous]
         [HttpGet]
-        public async Task<List<Category>> GetCategories()
-       // public async Task<ActionResult> GetCategories() 
+        public async Task<List<Category>> GetCategoriesMain()
         {
-            return await _context.Categories.ToListAsync();
-           // return BadRequest("tst bad req mess");
+            const string PUBLIC_REPORT_OPERATION = "public";
+            AuthorizeHelper auth = new AuthorizeHelper(_httpContextAccessor, _authContext);
+            List<string> MyPermissions = auth.Init().GetAllowedPermissions();
+            bool IsAdmin = MyPermissions.Contains(Startup.ADMIN_OPERATION_NAME);
+            List<Category> categories = await _context.Categories.Include(x => x.Reports)
+                .Where(x => x.Reports
+                .Where(y => 
+                (IsAdmin || y.Operation_name == PUBLIC_REPORT_OPERATION 
+                || MyPermissions.Contains(y.Operation_name)) 
+                && y.Visible == true)
+                .Count() > 0 && x.Visible == true)
+                .ToListAsync();
+
+            return categories;
         }
         // PUT: api/PutCategory
         [MultiplePolicysAuthorize("access_to_admin_page")]
