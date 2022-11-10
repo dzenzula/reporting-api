@@ -7,7 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ReportingApi.Models
 {
-   // [Index(nameof(Login), nameof(Report), IsUnique = true)]
+    // [Index(nameof(Login), nameof(Report), IsUnique = true)]
+    [Table("FavoriteReports", Schema = "dbo")]
     public class FavoriteReport
     {
         [JsonIgnore]
