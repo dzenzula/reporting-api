@@ -52,16 +52,29 @@ namespace ReportingApi.Controllers
             AuthorizeHelper auth = new AuthorizeHelper(_httpContextAccessor, _authContext);
             List<string> MyPermissions = auth.Init().GetAllowedPermissions();
             bool IsAdmin = MyPermissions.Contains(Startup.ADMIN_OPERATION_NAME);
+            // Выборка категорий в котрых есть отчеты
             List<Category> categories = await _context.Categories.Include(x => x.Reports)
                 .Where(x => x.Reports
-                .Where(y => 
-                (IsAdmin || y.Operation_name == PUBLIC_REPORT_OPERATION 
-                || MyPermissions.Contains(y.Operation_name)) 
+                .Where(y =>
+                (IsAdmin || y.Operation_name == PUBLIC_REPORT_OPERATION
+                || MyPermissions.Contains(y.Operation_name))
                 && y.Visible == true)
                 .Count() > 0 && x.Visible == true)
                 .ToListAsync();
 
-            return categories;
+            // Добавление родительских категорий
+            List<Category> allCategories = categories.ToList();
+            foreach (Category category in categories)
+            {
+                var isCategoryListed = allCategories.Any(x => category.ParentId == x.Id || category.ParentId == null);
+                if (!isCategoryListed)
+                {
+                    Category parentCategory = _context.Categories.First(x => x.Id == category.ParentId);
+                    allCategories.Add(parentCategory);
+                }
+            }
+
+            return allCategories;
         }
         // PUT: api/PutCategory
         [MultiplePolicysAuthorize("access_to_admin_page")]
