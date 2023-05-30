@@ -1,3 +1,5 @@
 [submodule "ext/authorization-api-handler"]
 	path = ext/authorization-api-handler
 	url = https://krr-app-gitlab01.europe.mittalco.com/pait/modules/csharp/authorization-api-handler.git
+	ignore = dirty
+	branch = master
