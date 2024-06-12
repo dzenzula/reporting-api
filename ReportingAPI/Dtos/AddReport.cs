@@ -9,8 +9,8 @@ namespace ReportingApi.Dtos
     public class AddReport
     {
         [Required(ErrorMessage = "Нужно указать наименование элемента")]
-        [RegularExpression(@"^[а-яА-ЯёЁЇїІіЄєҐґa-zA-Z0-9-\.,|;\s\|\№\/\']+$",
-              ErrorMessage = "Наименование элемента может содержать латиницу, кириллицу, цифры, пробел, символы: '-.,;/|№")]
+        [RegularExpression(@"^[а-яА-ЯёЁЇїІіЄєҐґa-zA-Z0-9-\.,|;\s\|\№\/\'()]+$",
+              ErrorMessage = "Наименование элемента может содержать латиницу, кириллицу, цифры, пробел, символы: '-.,;/|№()")]
         [MaxLength(150, ErrorMessage = "Наименование элемента не должно содержать больше 150 символов.")]
         public string Text { get; set; }
 
