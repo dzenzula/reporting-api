@@ -1,0 +1,300 @@
+basePath: /reporting-api/
+definitions:
+  models.AuthUserData:
+    properties:
+      authStatus:
+        type: integer
+      displayName:
+        type: string
+      domain:
+        type: string
+      name:
+        type: string
+      permission:
+        items:
+          $ref: '#/definitions/models.MyPermission'
+        type: array
+      type:
+        type: string
+    type: object
+  models.FavoriteReport:
+    properties:
+      id:
+        type: integer
+      login:
+        type: string
+      reportId:
+        type: integer
+    type: object
+  models.GetCategory:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      parentId:
+        type: integer
+      text:
+        type: string
+      type:
+        type: string
+      visible:
+        type: boolean
+    type: object
+  models.InsertCategory:
+    properties:
+      description:
+        type: string
+      parentId:
+        type: integer
+      text:
+        type: string
+      visible:
+        type: boolean
+    type: object
+  models.MyPermission:
+    properties:
+      name:
+        type: string
+      permission:
+        type: integer
+    type: object
+  models.UpdateCategory:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      text:
+        type: string
+      visible:
+        type: boolean
+    type: object
+  models.UpdateCategoryParent:
+    properties:
+      fromCat:
+        type: integer
+      id:
+        type: integer
+      toCat:
+        type: integer
+    type: object
+  models.UserData:
+    properties:
+      domain:
+        type: string
+      login:
+        type: string
+      password:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This is a sample server for reporting API.
+  title: Reporting API
+  version: "1.0"
+paths:
+  /api/Authorization/GetCurrentUserInfo:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AuthUserData'
+      tags:
+      - Authorization
+  /api/Authorization/LogInAuthorization:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные пользователя
+        in: body
+        name: userdata
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AuthUserData'
+      tags:
+      - Authorization
+  /api/Authorization/LogOutAuthorization:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      tags:
+      - Authorization
+  /api/Categories:
+    delete:
+      consumes:
+      - application/json
+      description: Удалить категорию
+      parameters:
+      - description: Id категории
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Delete Category
+      tags:
+      - Categories
+    get:
+      consumes:
+      - application/json
+      description: Получение списка категорий
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.GetCategory'
+            type: array
+      summary: Get Categories
+      tags:
+      - Categories
+    post:
+      consumes:
+      - application/json
+      description: Создать категорию
+      parameters:
+      - description: Новая категория
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.InsertCategory'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Insert Category
+      tags:
+      - Categories
+    put:
+      consumes:
+      - application/json
+      description: Обновить категорию
+      parameters:
+      - description: Обновленная категория
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateCategory'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Update Category
+      tags:
+      - Categories
+  /api/Categories/GetCategoriesForAdmin:
+    get:
+      consumes:
+      - application/json
+      description: Получение списка категорий для администратора
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.GetCategory'
+            type: array
+      summary: Get Categories for Admin
+      tags:
+      - Categories
+  /api/Categories/UpdateCategoryParent:
+    put:
+      consumes:
+      - application/json
+      description: Обновить родительскую категорию
+      parameters:
+      - description: Обновленный родительский айди
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateCategoryParent'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Update Parent Category
+      tags:
+      - Categories
+  /api/FavoriteReports/AddReport:
+    post:
+      description: Add a report to favorites by report ID
+      parameters:
+      - description: Report ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Add a report to favorites
+      tags:
+      - FavoriteReports
+  /api/FavoriteReports/DeleteReport:
+    delete:
+      description: Remove a report from favorites by report ID
+      parameters:
+      - description: Report ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Remove a report from favorites
+      tags:
+      - FavoriteReports
+  /api/FavoriteReports/GetReports:
+    get:
+      description: Get a list of all favorite reports
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.FavoriteReport'
+            type: array
+      summary: Get all favorite reports
+      tags:
+      - FavoriteReports
+swagger: "2.0"
