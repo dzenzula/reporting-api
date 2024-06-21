@@ -9,7 +9,6 @@ require (
 	github.com/swaggo/gin-swagger v1.6.0
 	github.com/swaggo/swag v1.16.3
 	gopkg.in/yaml.v2 v2.4.0
-	gorm.io/driver/sqlserver v1.5.3
 	gorm.io/gorm v1.25.10
 	krr-app-gitlab01.europe.mittalco.com/pait/modules/go/authorization v0.0.0
 	krr-app-gitlab01.europe.mittalco.com/pait/modules/go/logging v0.0.0
@@ -23,6 +22,7 @@ require (
 	github.com/jackc/puddle/v2 v2.2.1 // indirect
 	golang.org/x/sync v0.7.0 // indirect
 	gopkg.in/asn1-ber.v1 v1.0.0-20181015200546-f715ec2f112d // indirect
+	gorm.io/driver/sqlserver v1.5.3 // indirect
 )
 
 require (
@@ -49,6 +49,7 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/kardianos/service v1.2.2
 	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/mailru/easyjson v0.7.6 // indirect
