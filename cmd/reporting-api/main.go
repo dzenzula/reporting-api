@@ -11,7 +11,7 @@ import (
 // @title Reporting API
 // @version 1.0
 // @description This is a sample server for reporting API.
-// @BasePath /reporting-api/
+// @BasePath /reporting-api
 
 func main() {
 	err := c.Load()
