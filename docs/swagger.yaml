@@ -1,4 +1,4 @@
-basePath: /reporting-api/
+basePath: /reporting-api
 definitions:
   models.AuthUserData:
     properties:

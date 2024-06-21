@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "basePath": "/reporting-api/",
+    "basePath": "/reporting-api",
     "paths": {
         "/api/Authorization/GetCurrentUserInfo": {
             "get": {

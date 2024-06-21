@@ -773,7 +773,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "",
-	BasePath:         "/reporting-api/",
+	BasePath:         "/reporting-api",
 	Schemes:          []string{},
 	Title:            "Reporting API",
 	Description:      "This is a sample server for reporting API.",
