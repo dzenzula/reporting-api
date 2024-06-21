@@ -1,4 +1,4 @@
-internal/config/config.yml
+internal/config/config.yaml
 logs
 .vscode
 *.exe
