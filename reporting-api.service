@@ -1,0 +1,14 @@
+[Unit]
+Description = reporting-api daemon
+After = network.target
+
+[Service]
+Type = simple
+WorkingDirectory = /home/services/reporting-api
+ExecStart = /home/services/reporting-api/reporting-api
+Restart = always
+RestartSec = 30
+TimeoutStopSec = 5
+
+[Install]
+WantedBy = multi-user.target
