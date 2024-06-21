@@ -5,15 +5,21 @@ permissions:
 postgres_reporting:
   host: "krr-sql-pgnode01"
   port: 5432
-  username: "aadzenzura"
-  password: "h)#X2Ubu04Qm6"
+  username: "%PG_LOGIN%"
+  password: "%PG_PASSWORD%"
   dbname: "krr-pa-analytics-data"
   sslmode: "disable"
 
+mssql:
+  server: "KRR-TST-PAHWL02"
+  username: "EUROPE\\%MSSQL_LOGIN%"
+  password: "%MSSQL_PASSWORD%"
+  database: "KRR-PA-Reporting"
+
 mssql_auth:
   server: "KRR-TST-PAHWL02" ## Тестовый сервер
-  username: "EUROPE\\aadzenzura"
-  password: "h)#X2Ubu04Qm6"
+  username: "EUROPE\\%MSSQL_LOGIN%"
+  password: "%MSSQL_PASSWORD%"
   database: "KRR-PA-ACS"
 
 ad_address: "KRR-DC-EU01.europe.mittalco.com:636"

@@ -11,7 +11,7 @@ import (
 
 func FetchAllCategoriesForAdmin() ([]models.GetCategory, error) {
 	var categories []models.GetCategory
-	if err := DB.Table("dbo.Categories").Find(&categories).Error; err != nil {
+	if err := DB.Find(&categories).Error; err != nil {
 		log.Error(fmt.Sprintf("failed to query categories: %v", err))
 		return nil, err
 	}
@@ -26,11 +26,11 @@ func FetchAllCategoriesForAdmin() ([]models.GetCategory, error) {
 func FetchVisiblePublicCategories() ([]models.GetCategory, error) {
 	var categories []models.GetCategory
 
-	err := DB.Table("Categories c").
+	err := DB.Table("\"sys-reporting\".\"Categories\" AS c").
 		Select("DISTINCT c.*").
-		Joins("JOIN CategoryReports cr ON cr.CategoriesId = c.Id").
-		Joins("JOIN Reports r ON cr.ReportsId = r.Id AND r.Operation_name = ?", "public").
-		Where("c.Visible = ?", true).
+		Joins("JOIN \"sys-reporting\".\"CategoryReports\" cr ON cr.\"CategoriesId\" = c.\"Id\"").
+		Joins("JOIN \"sys-reporting\".\"Reports\" r ON cr.\"ReportsId\" = r.\"Id\" AND r.\"OperationName\" = ?", "public").
+		Where("c.\"Visible\" = ?", true).
 		Find(&categories).Error
 	if err != nil {
 		log.Error(fmt.Sprintf("failed to query categories: %v", err))
@@ -54,7 +54,7 @@ func CreateCategory(newCategory models.InsertCategory) error {
 		CreatedAt:   time.Now(),
 	}
 
-	if err := DB.Table("Categories").Create(&category).Error; err != nil {
+	if err := DB.Create(&category).Error; err != nil {
 		log.Error(fmt.Sprintf("failed to insert category: %v", err))
 		return err
 	}
@@ -62,16 +62,17 @@ func CreateCategory(newCategory models.InsertCategory) error {
 }
 
 func UpdateCategory(updatedCategory models.UpdateCategory) error {
-	category := models.Category{
-		Id:          updatedCategory.Id,
-		Text:        updatedCategory.Text,
-		Description: updatedCategory.Description,
-		Visible:     updatedCategory.Visible,
-		CreatedBy:   authorization.ReturnDomainUser(),
-		CreatedAt:   time.Now(),
+	updateData := map[string]interface{}{
+		"Text":        updatedCategory.Text,
+		"Description": updatedCategory.Description,
+		"Visible":     updatedCategory.Visible,
+		"UpdatedBy":   authorization.ReturnDomainUser(),
+		"UpdatedAt":   time.Now(),
 	}
 
-	if err := DB.Table("Categories").Save(&category).Error; err != nil {
+	if err := DB.Model(&models.Category{}).
+		Where("\"Id\" = ?", updatedCategory.Id).
+		Updates(updateData).Error; err != nil {
 		log.Error(fmt.Sprintf("failed to update category: %v", err))
 		return err
 	}
@@ -79,7 +80,15 @@ func UpdateCategory(updatedCategory models.UpdateCategory) error {
 }
 
 func ChangeCategoryParent(updateParent models.UpdateCategoryParent) error {
-	if err := DB.Table("Categories").Where("Id = ?", updateParent.Id).Update("ParentId", updateParent.ToCat).Update("UpdatedBy", authorization.ReturnDomainUser()).Error; err != nil {
+	updateData := map[string]interface{}{
+		"ParentId":  updateParent.ToCat,
+		"UpdatedBy": authorization.ReturnDomainUser(),
+		"UpdatedAt": time.Now(), // Обновляем время
+	}
+
+	if err := DB.Model(&models.Category{}).
+		Where("\"Id\" = ?", updateParent.Id).
+		Updates(updateData).Error; err != nil {
 		log.Error(fmt.Sprintf("failed to update category parent: %v", err))
 		return err
 	}
@@ -87,7 +96,7 @@ func ChangeCategoryParent(updateParent models.UpdateCategoryParent) error {
 }
 
 func RemoveCategoryById(categoryId int) error {
-	if err := DB.Table("Categories").Where("Id = ?", categoryId).Delete(&models.Category{}).Error; err != nil {
+	if err := DB.Where("\"Id\" = ?", categoryId).Delete(&models.Category{}).Error; err != nil {
 		log.Error(fmt.Sprintf("failed to delete category: %v", err))
 		return err
 	}

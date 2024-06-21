@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"cmd/reporting-api/internal/config"
+	"cmd/reporting-api/internal/models"
 	"cmd/reporting-api/internal/services"
 	"net/http"
 	"strconv"
@@ -75,31 +77,178 @@ func RemoveFavoriteReportHandler(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
+// GetReportsHandler godoc
+// @Summary Get all reports
+// @Description Get a list of all reports
+// @Tags Reports
+// @Produce json
+// @Success 200 {array} models.Report
+// @Router /api/Reports [get]
 func GetReportsHandler(c *gin.Context) {
-	/*reports, err := services.GetAllReports()
+	auth.Init(c)
+	reports, err := services.GetAllReports()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, reports)*/
+	c.JSON(http.StatusOK, reports)
 }
 
+// UpdateReportHandler godoc
+// @Summary Update a report
+// @Description Update an existing report
+// @Tags Reports
+// @Accept json
+// @Produce json
+// @Param report body models.UpdateReport true "Report to update"
+// @Success 200 {string} string "ok"
+// @Router /api/Reports [put]
 func UpdateReportHandler(c *gin.Context) {
+	permissions := []string{config.GlobalConfig.Permissions.AdminAccess}
+	if !checkPermissions(c, permissions) {
+		return
+	}
 
+	var data models.UpdateReport
+	if err := c.ShouldBindJSON(&data); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := services.UpdateReport(data); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.Status(http.StatusOK)
 }
 
+// CreateReportHandler godoc
+// @Summary Create a new report
+// @Description Create a new report
+// @Tags Reports
+// @Accept json
+// @Produce json
+// @Param report body models.CreateReport true "Report to create"
+// @Success 200 {string} string "ok"
+// @Router /api/Reports [post]
 func CreateReportHandler(c *gin.Context) {
+	permissions := []string{config.GlobalConfig.Permissions.AdminAccess}
+	if !checkPermissions(c, permissions) {
+		return
+	}
 
+	var data models.CreateReport
+	if err := c.ShouldBindJSON(&data); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := services.CreateReport(data); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.Status(http.StatusOK)
 }
 
+// UpdateCategoryReportsHandler godoc
+// @Summary Update category reports
+// @Description Update the category of a report
+// @Tags Reports
+// @Accept json
+// @Produce json
+// @Param data body models.UpdateCategoryParent true "Category data"
+// @Success 200 {string} string "ok"
+// @Router /api/CategoryReports [put]
 func UpdateCategoryReportsHandler(c *gin.Context) {
+	permissions := []string{config.GlobalConfig.Permissions.AdminAccess}
+	if !checkPermissions(c, permissions) {
+		return
+	}
 
+	var data models.UpdateCategoryParent
+	if err := c.ShouldBindJSON(&data); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := services.UpdateCategoryReport(data); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.Status(http.StatusOK)
 }
 
+// AddReportRelationHandler godoc
+// @Summary Add report relation
+// @Description Add a report to a category
+// @Tags Reports
+// @Accept json
+// @Produce json
+// @Param reportId query int true "Report ID"
+// @Param categoryId body int true "Category ID"
+// @Success 200 {string} string "ok"
+// @Router /api/Reports/AddReportRelation [post]
 func AddReportRelationHandler(c *gin.Context) {
+	permissions := []string{config.GlobalConfig.Permissions.AdminAccess}
+	if !checkPermissions(c, permissions) {
+		return
+	}
 
+	reportId, err := strconv.Atoi(c.Query("reportId"))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	var categoryId int
+	if err := c.ShouldBind(&categoryId); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := services.AddReportRelation(reportId, categoryId); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.Status(http.StatusOK)
 }
 
+// RemoveReportHandler godoc
+// @Summary Remove a report
+// @Description Remove a report from a category
+// @Tags Reports
+// @Accept json
+// @Produce json
+// @Param reportId query int true "Report ID"
+// @Param categoryId body int true "Category ID"
+// @Success 200 {string} string "ok"
+// @Router /api/Reports [delete]
 func RemoveReportHandler(c *gin.Context) {
+	permissions := []string{config.GlobalConfig.Permissions.AdminAccess}
+	if !checkPermissions(c, permissions) {
+		return
+	}
 
+	reportId, err := strconv.Atoi(c.Query("reportId"))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	var categoryId int
+	if err := c.ShouldBind(&categoryId); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := services.RemoveReportById(reportId, categoryId); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.Status(http.StatusOK)
 }

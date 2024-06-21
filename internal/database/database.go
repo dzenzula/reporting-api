@@ -7,29 +7,43 @@ import (
 
 	log "krr-app-gitlab01.europe.mittalco.com/pait/modules/go/logging"
 
-	"gorm.io/driver/sqlserver"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
 var DB *gorm.DB
 
-func ConnectToMSDataBase() error {
+func ConnectToPGDataBase() error {
 	var err error
-	connString := fmt.Sprintf("server=%s;user=%s;password=%s;database=%s;schema=auth;encrypt=disable",
-		c.GlobalConfig.MssqlConnection.Server,
-		c.GlobalConfig.MssqlConnection.User,
-		c.GlobalConfig.MssqlConnection.Password,
-		c.GlobalConfig.MssqlConnection.Database,
+	connString := fmt.Sprintf(
+		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
+		c.GlobalConfig.PgConnection.Host,
+		c.GlobalConfig.PgConnection.Port,
+		c.GlobalConfig.PgConnection.UserName,
+		c.GlobalConfig.PgConnection.Password,
+		c.GlobalConfig.PgConnection.DbName,
+		c.GlobalConfig.PgConnection.SSLMode,
 	)
 
-	DB, err = gorm.Open(sqlserver.Open(connString), &gorm.Config{})
+	DB, err = gorm.Open(postgres.Open(connString), &gorm.Config{})
 	if err != nil {
 		return err
 	}
 
 	DB.Logger.LogMode(logger.Info)
 
+	return nil
+}
+
+func IsDBConnected() error {
+	sqlDB, err := DB.DB()
+	if err != nil {
+		return err
+	}
+	if err := sqlDB.Ping(); err != nil {
+		return err
+	}
 	return nil
 }
 

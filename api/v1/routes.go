@@ -26,6 +26,7 @@ func NewRouter() *gin.Engine {
 
 	r.Use(gin.Recovery())
 	r.Use(middleware.Logger())
+	r.Use(middleware.DBConnectionChecker())
 
 	store := cookie.NewStore([]byte("secret"))
 	store.Options(sessions.Options{
@@ -61,6 +62,17 @@ func NewRouter() *gin.Engine {
 		favRepGroup.GET("/GetReports", handlers.GetFavoriteReportsHandler)
 		favRepGroup.POST("/AddReport", handlers.AddFavoriteReportHandler)
 		favRepGroup.DELETE("/DeleteReport", handlers.RemoveFavoriteReportHandler)
+	}
+
+	repGroup := r.Group("/reporting-api/api/Reports")
+	repGroup.Use(auth.AuthRequired)
+	{
+		repGroup.GET("", handlers.GetReportsHandler)
+		repGroup.PUT("", handlers.UpdateReportHandler)
+		repGroup.POST("", handlers.CreateReportHandler)
+		repGroup.PUT("/UpdateCategoryReports", handlers.UpdateCategoryReportsHandler)
+		repGroup.POST("/AddReportRelation", handlers.AddReportRelationHandler)
+		repGroup.DELETE("", handlers.RemoveReportHandler)
 	}
 
 	return r

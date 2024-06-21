@@ -17,6 +17,30 @@ definitions:
       type:
         type: string
     type: object
+  models.CreateReport:
+    properties:
+      alias:
+        type: string
+      description:
+        type: string
+      operation_name:
+        type: string
+      owner:
+        type: string
+      parentId:
+        type: integer
+      text:
+        type: string
+      url:
+        type: string
+      visible:
+        type: boolean
+    type: object
+  models.DataField:
+    properties:
+      url:
+        type: string
+    type: object
   models.FavoriteReport:
     properties:
       id:
@@ -59,6 +83,29 @@ definitions:
       permission:
         type: integer
     type: object
+  models.Report:
+    properties:
+      alias:
+        type: string
+      data:
+        $ref: '#/definitions/models.DataField'
+      description:
+        type: string
+      id:
+        type: integer
+      operation_name:
+        type: string
+      owner:
+        type: string
+      parentId:
+        type: integer
+      text:
+        type: string
+      type:
+        type: string
+      visible:
+        type: boolean
+    type: object
   models.UpdateCategory:
     properties:
       description:
@@ -78,6 +125,23 @@ definitions:
         type: integer
       toCat:
         type: integer
+    type: object
+  models.UpdateReport:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      operation_name:
+        type: string
+      owner:
+        type: string
+      text:
+        type: string
+      url:
+        type: string
+      visible:
+        type: boolean
     type: object
   models.UserData:
     properties:
@@ -248,6 +312,28 @@ paths:
       summary: Update Parent Category
       tags:
       - Categories
+  /api/CategoryReports:
+    put:
+      consumes:
+      - application/json
+      description: Update the category of a report
+      parameters:
+      - description: Category data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateCategoryParent'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Update category reports
+      tags:
+      - Reports
   /api/FavoriteReports/AddReport:
     post:
       description: Add a report to favorites by report ID
@@ -297,4 +383,114 @@ paths:
       summary: Get all favorite reports
       tags:
       - FavoriteReports
+  /api/Reports:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a report from a category
+      parameters:
+      - description: Report ID
+        in: query
+        name: reportId
+        required: true
+        type: integer
+      - description: Category ID
+        in: body
+        name: categoryId
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Remove a report
+      tags:
+      - Reports
+    get:
+      description: Get a list of all reports
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Report'
+            type: array
+      summary: Get all reports
+      tags:
+      - Reports
+    post:
+      consumes:
+      - application/json
+      description: Create a new report
+      parameters:
+      - description: Report to create
+        in: body
+        name: report
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateReport'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Create a new report
+      tags:
+      - Reports
+    put:
+      consumes:
+      - application/json
+      description: Update an existing report
+      parameters:
+      - description: Report to update
+        in: body
+        name: report
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateReport'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Update a report
+      tags:
+      - Reports
+  /api/Reports/AddReportRelation:
+    post:
+      consumes:
+      - application/json
+      description: Add a report to a category
+      parameters:
+      - description: Report ID
+        in: query
+        name: reportId
+        required: true
+        type: integer
+      - description: Category ID
+        in: body
+        name: categoryId
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Add report relation
+      tags:
+      - Reports
 swagger: "2.0"

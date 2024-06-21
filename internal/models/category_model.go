@@ -12,6 +12,11 @@ type Category struct {
 	UpdatedBy   string    `gorm:"column:UpdatedBy"`
 	UpdatedAt   time.Time `gorm:"column:UpdatedAt"`
 	Description string    `gorm:"column:Description"`
+	Reports     []Report  `gorm:"many2many:CategoryReports;"`
+}
+
+func (Category) TableName() string {
+	return "\"sys-reporting\".\"Categories\""
 }
 
 type GetCategory struct {
@@ -23,11 +28,19 @@ type GetCategory struct {
 	Visible     bool   `json:"visible" gorm:"column:Visible"`
 }
 
+func (GetCategory) TableName() string {
+	return "\"sys-reporting\".\"Categories\""
+}
+
 type UpdateCategory struct {
-	Id          int   `json:"id" gorm:"column:Id"`
+	Id          int    `json:"id" gorm:"column:Id"`
 	Text        string `json:"text" gorm:"column:Text"`
 	Description string `json:"description" gorm:"column:Description"`
 	Visible     bool   `json:"visible" gorm:"column:Visible"`
+}
+
+func (UpdateCategory) TableName() string {
+	return "\"sys-reporting\".\"Categories\""
 }
 
 type InsertCategory struct {
@@ -37,8 +50,25 @@ type InsertCategory struct {
 	Visible     bool   `json:"visible" gorm:"column:Visible"`
 }
 
+func (InsertCategory) TableName() string {
+	return "\"sys-reporting\".\"Categories\""
+}
+
 type UpdateCategoryParent struct {
 	Id      int `json:"id"`
 	FromCat int `json:"fromCat"`
 	ToCat   int `json:"toCat"`
+}
+
+func (UpdateCategoryParent) TableName() string {
+	return "\"sys-reporting\".\"Categories\""
+}
+
+type CategoryReport struct {
+	ReportID   int `gorm:"column:ReportsId"`
+	CategoryID int `gorm:"column:CategoriesId"`
+}
+
+func (CategoryReport) TableName() string {
+	return "\"sys-reporting\".\"CategoryReports\""
 }

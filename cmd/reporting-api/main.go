@@ -20,7 +20,12 @@ func main() {
 		return
 	}
 	log.LogInit(c.GlobalConfig.LogLevel)
-	database.ConnectToMSDataBase()
+	err = database.ConnectToPGDataBase()
+	if err != nil {
+		log.Error(err.Error())
+		return
+	}
+	defer database.Close()
 
 	r := routes.NewRouter()
 	//r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
