@@ -46,10 +46,10 @@ func NewRouter() *gin.Engine {
 	}
 
 	catGroup := r.Group("/api/Categories")
+	catGroup.GET("", handlers.GetCategoriesHandler)
 	catGroup.Use(auth.AuthRequired)
 	{
 		catGroup.GET("/GetCategoriesForAdmin", handlers.GetCategoriesForAdminHandler)
-		catGroup.GET("", handlers.GetCategoriesHandler)
 		catGroup.PUT("", handlers.UpdateCategoryHandler)
 		catGroup.POST("", handlers.CreateCategoryHandler)
 		catGroup.PUT("/UpdateCategoryParent", handlers.ChangeCategoryParentHandler)
@@ -59,15 +59,15 @@ func NewRouter() *gin.Engine {
 	favRepGroup := r.Group("/api/FavoriteReports")
 	favRepGroup.Use(auth.AuthRequired)
 	{
-		favRepGroup.GET("/GetReports", handlers.GetFavoriteReportsHandler)
+		favRepGroup.GET("/GetFavoriteReports", handlers.GetFavoriteReportsHandler)
 		favRepGroup.POST("/AddReport", handlers.AddFavoriteReportHandler)
 		favRepGroup.DELETE("/DeleteReport", handlers.RemoveFavoriteReportHandler)
 	}
 
 	repGroup := r.Group("/api/Reports")
+	repGroup.GET("", handlers.GetReportsHandler)
 	repGroup.Use(auth.AuthRequired)
 	{
-		repGroup.GET("", handlers.GetReportsHandler)
 		repGroup.PUT("", handlers.UpdateReportHandler)
 		repGroup.POST("", handlers.CreateReportHandler)
 		repGroup.PUT("/UpdateCategoryReports", handlers.UpdateCategoryReportsHandler)

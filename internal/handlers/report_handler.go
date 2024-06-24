@@ -17,7 +17,7 @@ import (
 // @Tags FavoriteReports
 // @Produce json
 // @Success 200 {array} models.FavoriteReport
-// @Router /api/FavoriteReports/GetReports [get]
+// @Router /api/FavoriteReports/GetFavoriteReports [get]
 func GetFavoriteReportsHandler(c *gin.Context) {
 	auth.Init(c)
 	favReports, err := services.GetAllFavoriteReports()
