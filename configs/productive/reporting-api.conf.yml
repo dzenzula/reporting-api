@@ -1,0 +1,29 @@
+permissions:
+  admin_access: "access_to_admin_page"
+  fav_reports: "work_with_favorite_reports"
+
+postgres_reporting:
+  host: "krr-sql-pgnode01"
+  port: 5432
+  username: "%PG_LOGIN%"
+  password: "%PG_PASSWORD%"
+  dbname: "krr-pa-analytics-data"
+  sslmode: "disable"
+
+mssql:
+  server: "KRR-SQL-PACLX02"
+  username: "EUROPE\\%MSSQL_LOGIN%"
+  password: "%MSSQL_PASSWORD%"
+  database: "KRR-PA-Reporting"
+
+mssql_auth:
+  server: "KRR-SQL-PACLX02" ## Тестовый сервер
+  username: "EUROPE\\%MSSQL_LOGIN%"
+  password: "%MSSQL_PASSWORD%"
+  database: "KRR-PA-ACS"
+
+ad_address: "KRR-DC-EU01.europe.mittalco.com:636"
+service_id: 15
+log_level: "debug"
+gin_mode: "debug"
+server_address: "127.0.0.1:5011"
