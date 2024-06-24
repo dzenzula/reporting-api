@@ -6,3 +6,4 @@
 [submodule "third_party/authorization"]
 	path = third_party/authorization
 	url = https://krr-app-gitlab01.europe.mittalco.com/pait/modules/go/authorization.git
+	branch = main_v2
