@@ -1,6 +1,6 @@
 BUILD_NAME ?= reporting-api
 DEST_DIR := deploy/
-DEPLOY_FILES := ${BUILD_NAME} internal/config/testing${BUILD_NAME}.conf.yml ${BUILD_NAME}.service
+DEPLOY_FILES := ${BUILD_NAME} configs/testing${BUILD_NAME}.conf.yml ${BUILD_NAME}.service
 
 build:
 	go build -ldflags "-s -w" -o ${BUILD_NAME} main.go
