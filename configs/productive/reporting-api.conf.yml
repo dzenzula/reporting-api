@@ -24,6 +24,6 @@ mssql_auth:
 
 ad_address: "KRR-DC-EU01.europe.mittalco.com:636"
 service_id: 15
-log_level: "debug"
-gin_mode: "debug"
+log_level: "release"
+gin_mode: "release"
 server_address: "127.0.0.1:5011"
