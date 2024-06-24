@@ -160,7 +160,7 @@ func CreateReportHandler(c *gin.Context) {
 // @Produce json
 // @Param data body models.UpdateCategoryParent true "Category data"
 // @Success 200 {string} string "ok"
-// @Router /api/CategoryReports [put]
+// @Router /api/Reports/UpdateCategoryReports [put]
 func UpdateCategoryReportsHandler(c *gin.Context) {
 	permissions := []string{config.GlobalConfig.Permissions.AdminAccess}
 	if !checkPermissions(c, permissions) {

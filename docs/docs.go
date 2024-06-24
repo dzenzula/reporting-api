@@ -254,40 +254,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/CategoryReports": {
-            "put": {
-                "description": "Update the category of a report",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Reports"
-                ],
-                "summary": "Update category reports",
-                "parameters": [
-                    {
-                        "description": "Category data",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.UpdateCategoryParent"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
         "/api/FavoriteReports/AddReport": {
             "post": {
                 "description": "Add a report to favorites by report ID",
@@ -517,6 +483,40 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/Reports/UpdateCategoryReports": {
+            "put": {
+                "description": "Update the category of a report",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Update category reports",
+                "parameters": [
+                    {
+                        "description": "Category data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdateCategoryParent"
                         }
                     }
                 ],

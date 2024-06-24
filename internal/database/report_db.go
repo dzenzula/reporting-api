@@ -113,16 +113,16 @@ func FetchAllReports() ([]models.Report, error) {
 
 	if isAdmin {
 		err = DB.Table("\"sys-reporting\".\"Reports\" AS r").
-			Joins("JOIN \"sys-reporting\".\"CategoryReports\" cr ON r.\"Id\" = cr.\"ReportsId\"").
-			Joins("JOIN \"sys-reporting\".\"Categories\" c ON cr.\"CategoriesId\" = c.\"Id\"").
-			Select("r.*, c.\"ParentId\"").
+			Joins("LEFT JOIN \"sys-reporting\".\"CategoryReports\" cr ON r.\"Id\" = cr.\"ReportsId\"").
+			Joins("LEFT JOIN \"sys-reporting\".\"Categories\" c ON cr.\"CategoriesId\" = c.\"Id\"").
+			Select("r.*, c.\"Id\" AS \"ParentId\"").
 			Find(&reportsWithParent).Error
 	} else {
 		err = DB.Table("\"sys-reporting\".\"Reports\" AS r").
-			Joins("JOIN \"sys-reporting\".\"CategoryReports\" cr ON r.\"Id\" = cr.\"ReportsId\"").
-			Joins("JOIN \"sys-reporting\".\"Categories\" c ON cr.\"CategoriesId\" = c.\"Id\"").
+			Joins("LEFT JOIN \"sys-reporting\".\"CategoryReports\" cr ON r.\"Id\" = cr.\"ReportsId\"").
+			Joins("LEFT JOIN \"sys-reporting\".\"Categories\" c ON cr.\"CategoriesId\" = c.\"Id\"").
 			Where("r.\"OperationName\" = ? OR r.\"OperationName\" IN (?)", "public", permissions).
-			Select("r.*", "c.\"ParentId\"").
+			Select("r.*", "c.\"Id\" AS \"ParentId\"").
 			Find(&reportsWithParent).Error
 	}
 

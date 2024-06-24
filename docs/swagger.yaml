@@ -312,28 +312,6 @@ paths:
       summary: Update Parent Category
       tags:
       - Categories
-  /api/CategoryReports:
-    put:
-      consumes:
-      - application/json
-      description: Update the category of a report
-      parameters:
-      - description: Category data
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/models.UpdateCategoryParent'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: ok
-          schema:
-            type: string
-      summary: Update category reports
-      tags:
-      - Reports
   /api/FavoriteReports/AddReport:
     post:
       description: Add a report to favorites by report ID
@@ -491,6 +469,28 @@ paths:
           schema:
             type: string
       summary: Add report relation
+      tags:
+      - Reports
+  /api/Reports/UpdateCategoryReports:
+    put:
+      consumes:
+      - application/json
+      description: Update the category of a report
+      parameters:
+      - description: Category data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateCategoryParent'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Update category reports
       tags:
       - Reports
 swagger: "2.0"
