@@ -203,24 +203,6 @@ paths:
       tags:
       - Authorization
   /api/Categories:
-    delete:
-      consumes:
-      - application/json
-      description: Удалить категорию
-      parameters:
-      - description: Id категории
-        in: query
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-      summary: Delete Category
-      tags:
-      - Categories
     get:
       consumes:
       - application/json
@@ -275,6 +257,25 @@ paths:
       summary: Update Category
       tags:
       - Categories
+  /api/Categories/{categoryId}:
+    delete:
+      consumes:
+      - application/json
+      description: Удалить категорию
+      parameters:
+      - description: Id категории
+        in: path
+        name: categoryId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Delete Category
+      tags:
+      - Categories
   /api/Categories/GetCategoriesForAdmin:
     get:
       consumes:
@@ -312,12 +313,12 @@ paths:
       summary: Update Parent Category
       tags:
       - Categories
-  /api/FavoriteReports/AddReport:
+  /api/FavoriteReports/AddReport/{reportId}:
     post:
       description: Add a report to favorites by report ID
       parameters:
       - description: Report ID
-        in: query
+        in: path
         name: id
         required: true
         type: integer
@@ -329,13 +330,13 @@ paths:
       summary: Add a report to favorites
       tags:
       - FavoriteReports
-  /api/FavoriteReports/DeleteReport:
+  /api/FavoriteReports/DeleteReport/{reportId}:
     delete:
       description: Remove a report from favorites by report ID
       parameters:
       - description: Report ID
-        in: query
-        name: id
+        in: path
+        name: reportId
         required: true
         type: integer
       produces:
@@ -362,32 +363,6 @@ paths:
       tags:
       - FavoriteReports
   /api/Reports:
-    delete:
-      consumes:
-      - application/json
-      description: Remove a report from a category
-      parameters:
-      - description: Report ID
-        in: query
-        name: reportId
-        required: true
-        type: integer
-      - description: Category ID
-        in: body
-        name: categoryId
-        required: true
-        schema:
-          type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: ok
-          schema:
-            type: string
-      summary: Remove a report
-      tags:
-      - Reports
     get:
       description: Get a list of all reports
       produces:
@@ -444,14 +419,41 @@ paths:
       summary: Update a report
       tags:
       - Reports
-  /api/Reports/AddReportRelation:
+  /api/Reports/{reportId}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a report from a category
+      parameters:
+      - description: Report ID
+        in: path
+        name: reportId
+        required: true
+        type: integer
+      - description: Category ID
+        in: body
+        name: categoryId
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Remove a report
+      tags:
+      - Reports
+  /api/Reports/AddReportRelation/{reportId}:
     post:
       consumes:
       - application/json
       description: Add a report to a category
       parameters:
       - description: Report ID
-        in: query
+        in: path
         name: reportId
         required: true
         type: integer

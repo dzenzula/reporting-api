@@ -168,33 +168,6 @@ const docTemplate = `{
                         "description": "OK"
                     }
                 }
-            },
-            "delete": {
-                "description": "Удалить категорию",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Categories"
-                ],
-                "summary": "Delete Category",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Id категории",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
             }
         },
         "/api/Categories/GetCategoriesForAdmin": {
@@ -254,7 +227,36 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/FavoriteReports/AddReport": {
+        "/api/Categories/{categoryId}": {
+            "delete": {
+                "description": "Удалить категорию",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Delete Category",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Id категории",
+                        "name": "categoryId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/FavoriteReports/AddReport/{reportId}": {
             "post": {
                 "description": "Add a report to favorites by report ID",
                 "produces": [
@@ -269,7 +271,7 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "Report ID",
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -280,7 +282,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/FavoriteReports/DeleteReport": {
+        "/api/FavoriteReports/DeleteReport/{reportId}": {
             "delete": {
                 "description": "Remove a report from favorites by report ID",
                 "produces": [
@@ -294,8 +296,8 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "description": "Report ID",
-                        "name": "id",
-                        "in": "query",
+                        "name": "reportId",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -414,48 +416,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "delete": {
-                "description": "Remove a report from a category",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Reports"
-                ],
-                "summary": "Remove a report",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Report ID",
-                        "name": "reportId",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "Category ID",
-                        "name": "categoryId",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
             }
         },
-        "/api/Reports/AddReportRelation": {
+        "/api/Reports/AddReportRelation/{reportId}": {
             "post": {
                 "description": "Add a report to a category",
                 "consumes": [
@@ -473,7 +436,7 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "Report ID",
                         "name": "reportId",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     },
                     {
@@ -517,6 +480,47 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/models.UpdateCategoryParent"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/Reports/{reportId}": {
+            "delete": {
+                "description": "Remove a report from a category",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Remove a report",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Report ID",
+                        "name": "reportId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Category ID",
+                        "name": "categoryId",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],

@@ -33,12 +33,12 @@ func GetFavoriteReportsHandler(c *gin.Context) {
 // @Description Add a report to favorites by report ID
 // @Tags FavoriteReports
 // @Produce json
-// @Param id query int true "Report ID"
+// @Param id path int true "Report ID"
 // @Success 200
-// @Router /api/FavoriteReports/AddReport [post]
+// @Router /api/FavoriteReports/AddReport/{reportId} [post]
 func AddFavoriteReportHandler(c *gin.Context) {
 	auth.Init(c)
-	id, err := strconv.Atoi(c.Query("id"))
+	id, err := strconv.Atoi(c.Param("reportId"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -58,11 +58,11 @@ func AddFavoriteReportHandler(c *gin.Context) {
 // @Description Remove a report from favorites by report ID
 // @Tags FavoriteReports
 // @Produce json
-// @Param id query int true "Report ID"
+// @Param reportId path int true "Report ID"
 // @Success 200
-// @Router /api/FavoriteReports/DeleteReport [delete]
+// @Router /api/FavoriteReports/DeleteReport/{reportId} [delete]
 func RemoveFavoriteReportHandler(c *gin.Context) {
-	id, err := strconv.Atoi(c.Query("id"))
+	id, err := strconv.Atoi(c.Param("reportId"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -187,17 +187,17 @@ func UpdateCategoryReportsHandler(c *gin.Context) {
 // @Tags Reports
 // @Accept json
 // @Produce json
-// @Param reportId query int true "Report ID"
+// @Param reportId path int true "Report ID"
 // @Param categoryId body int true "Category ID"
 // @Success 200 {string} string "ok"
-// @Router /api/Reports/AddReportRelation [post]
+// @Router /api/Reports/AddReportRelation/{reportId} [post]
 func AddReportRelationHandler(c *gin.Context) {
 	permissions := []string{config.GlobalConfig.Permissions.AdminAccess}
 	if !checkPermissions(c, permissions) {
 		return
 	}
 
-	reportId, err := strconv.Atoi(c.Query("reportId"))
+	reportId, err := strconv.Atoi(c.Param("reportId"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -223,17 +223,17 @@ func AddReportRelationHandler(c *gin.Context) {
 // @Tags Reports
 // @Accept json
 // @Produce json
-// @Param reportId query int true "Report ID"
+// @Param reportId path int true "Report ID"
 // @Param categoryId body int true "Category ID"
 // @Success 200 {string} string "ok"
-// @Router /api/Reports [delete]
+// @Router /api/Reports/{reportId} [delete]
 func RemoveReportHandler(c *gin.Context) {
 	permissions := []string{config.GlobalConfig.Permissions.AdminAccess}
 	if !checkPermissions(c, permissions) {
 		return
 	}
 
-	reportId, err := strconv.Atoi(c.Query("reportId"))
+	reportId, err := strconv.Atoi(c.Param("reportId"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

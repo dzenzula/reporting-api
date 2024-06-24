@@ -137,16 +137,16 @@ func ChangeCategoryParentHandler(c *gin.Context) {
 // @Tags Categories
 // @Accept  json
 // @Produce  json
-// @Param id query int true "Id категории"
+// @Param categoryId path int true "Id категории"
 // @Success 200
-// @Router /api/Categories [delete]
+// @Router /api/Categories/{categoryId} [delete]
 func RemoveCategoryHandler(c *gin.Context) {
 	permissions := []string{config.GlobalConfig.Permissions.AdminAccess}
 	if !checkPermissions(c, permissions) {
 		return
 	}
 
-	id, err := strconv.Atoi(c.Query("id"))
+	id, err := strconv.Atoi(c.Param("categoryId"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

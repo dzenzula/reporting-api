@@ -53,26 +53,26 @@ func NewRouter() *gin.Engine {
 		catGroup.PUT("", handlers.UpdateCategoryHandler)
 		catGroup.POST("", handlers.CreateCategoryHandler)
 		catGroup.PUT("/UpdateCategoryParent", handlers.ChangeCategoryParentHandler)
-		catGroup.DELETE("", handlers.RemoveCategoryHandler)
+		catGroup.DELETE("/:categoryId", handlers.RemoveCategoryHandler)
 	}
 
 	favRepGroup := r.Group("/api/FavoriteReports")
 	favRepGroup.Use(auth.AuthRequired)
 	{
 		favRepGroup.GET("/GetReports", handlers.GetFavoriteReportsHandler)
-		favRepGroup.POST("/AddReport", handlers.AddFavoriteReportHandler)
-		favRepGroup.DELETE("/DeleteReport", handlers.RemoveFavoriteReportHandler)
+		favRepGroup.POST("/AddReport/:reportId", handlers.AddFavoriteReportHandler)
+		favRepGroup.DELETE("/DeleteReport/:reportId", handlers.RemoveFavoriteReportHandler)
 	}
 
-	repGroup := r.Group("/api/Reports")
+	repGroup := r.Group("/reporting-api/api/Reports")
 	repGroup.GET("", handlers.GetReportsHandler)
 	repGroup.Use(auth.AuthRequired)
 	{
 		repGroup.PUT("", handlers.UpdateReportHandler)
 		repGroup.POST("", handlers.CreateReportHandler)
 		repGroup.PUT("/UpdateCategoryReports", handlers.UpdateCategoryReportsHandler)
-		repGroup.POST("/AddReportRelation", handlers.AddReportRelationHandler)
-		repGroup.DELETE("", handlers.RemoveReportHandler)
+		repGroup.POST("/AddReportRelation/:reportId", handlers.AddReportRelationHandler)
+		repGroup.DELETE("/:reportId", handlers.RemoveReportHandler)
 	}
 
 	return r
