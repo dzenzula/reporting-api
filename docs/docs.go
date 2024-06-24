@@ -340,7 +340,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/FavoriteReports/GetFavoriteReports": {
+        "/api/FavoriteReports/GetReports": {
             "get": {
                 "description": "Get a list of all favorite reports",
                 "produces": [
