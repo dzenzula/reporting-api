@@ -56,7 +56,7 @@ func NewRouter() *gin.Engine {
 		catGroup.DELETE("", handlers.RemoveCategoryHandler)
 	}
 
-	favRepGroup := r.Group("/reporting-api/api/FavoriteReports")
+	favRepGroup := r.Group("/api/FavoriteReports")
 	favRepGroup.Use(auth.AuthRequired)
 	{
 		favRepGroup.GET("/GetReports", handlers.GetFavoriteReportsHandler)
