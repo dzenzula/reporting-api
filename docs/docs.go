@@ -410,9 +410,9 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "ok",
+                        "description": "Created report ID",
                         "schema": {
-                            "type": "string"
+                            "type": "integer"
                         }
                     }
                 }

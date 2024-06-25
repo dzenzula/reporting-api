@@ -130,7 +130,7 @@ func UpdateReportHandler(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param report body models.CreateReport true "Report to create"
-// @Success 200 {string} string "ok"
+// @Success 200 {integer} int "Created report ID"
 // @Router /api/Reports [post]
 func CreateReportHandler(c *gin.Context) {
 	permissions := []string{config.GlobalConfig.Permissions.AdminAccess}
@@ -144,12 +144,17 @@ func CreateReportHandler(c *gin.Context) {
 		return
 	}
 
-	if err := services.CreateReport(data); err != nil {
+	reportId, err := services.CreateReport(data)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
+	var buf [20]byte
+	n := strconv.AppendInt(buf[:0], int64(*reportId), 10)
+
 	c.Status(http.StatusOK)
+	c.Writer.Write([]byte(n))
 }
 
 // UpdateCategoryReportsHandler godoc

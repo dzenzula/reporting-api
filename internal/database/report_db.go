@@ -259,85 +259,80 @@ func UpdateCategoryReport(uCatRep models.UpdateCategoryParent) error {
 
 func AddReportRelation(reportID, categoryID int) error {
 	var report models.Report
-	if err := DB.Preload("\"sys-reporting\".\"Categories\"").First(&report, reportID).Error; err != nil {
+	if err := DB.Where("\"Id\" = ?", reportID).First(&report).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			msg := fmt.Errorf("report with the specified id does not exist")
-			log.Error(msg.Error())
-			return msg
+			return fmt.Errorf("report with ID %d does not exist", reportID)
 		}
-		msg := fmt.Sprintf("error querying report: %v", err)
-		log.Error(msg)
-		return fmt.Errorf(msg)
+		return fmt.Errorf("error checking report existence: %v", err)
 	}
 
 	var category models.Category
-	if err := DB.First(&category, categoryID).Error; err != nil {
+	if err := DB.Where("\"Id\" = ?", categoryID).First(&category).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			msg := fmt.Errorf("category with the specified id does not exist")
-			log.Error(msg.Error())
-			return msg
+			return fmt.Errorf("category with ID %d does not exist", categoryID)
 		}
-		msg := fmt.Sprintf("error querying category: %v", err)
-		log.Error(msg)
-		return fmt.Errorf(msg)
+		return fmt.Errorf("error checking category existence: %v", err)
 	}
 
-	for _, cat := range report.Categories {
-		if cat.Id == categoryID {
-			msg := "the report already exists in the specified category"
-			log.Error(msg)
-			return fmt.Errorf(msg)
-		}
+	var catRep models.CategoryReport
+	err := DB.Where(&models.CategoryReport{ReportID: reportID, CategoryID: categoryID}).First(&catRep).Error
+	if err == nil {
+		return fmt.Errorf("relation between report %d and category %d already exists", reportID, categoryID)
+	} else if err != gorm.ErrRecordNotFound {
+
+		return fmt.Errorf("error checking existing relation: %v", err)
 	}
 
-	report.Categories = append(report.Categories, category)
-	if err := DB.Save(&report).Error; err != nil {
-		msg := fmt.Sprintf("failed to add report to category: %v", err)
-		log.Error(msg)
-		return fmt.Errorf(msg)
+	newCatRep := models.CategoryReport{
+		ReportID:   reportID,
+		CategoryID: categoryID,
+	}
+
+	if err := DB.Create(&newCatRep).Error; err != nil {
+		return fmt.Errorf("failed to add report relation: %v", err)
 	}
 
 	return nil
 }
 
-func CreateReport(report models.CreateReport) error {
+func CreateReport(report models.CreateReport) (*int, error) {
 	isMail, err := auth.CheckUserMail(report.Owner)
 	if !isMail {
 		if err != nil {
 			log.Error(err.Error())
-			return err
+			return nil, err
 		}
 		msg := "e-mail not found"
 		log.Error(msg)
-		return fmt.Errorf(msg)
+		return nil, fmt.Errorf(msg)
 	}
 
 	var duplicateByText models.Report
 	if err := DB.Where("\"Text\" = ?", report.Text).First(&duplicateByText).Error; err == nil {
 		msg := fmt.Sprintf("report with this name already exists. Report alias: %s", duplicateByText.Alias)
 		log.Error(msg)
-		return fmt.Errorf(msg)
+		return nil, fmt.Errorf(msg)
 	}
 
 	var duplicateByAlias models.Report
 	if err := DB.Where("\"Alias\" = ?", report.Alias).First(&duplicateByAlias).Error; err == nil {
 		msg := fmt.Sprintf("report with this alias already exists. Report alias: %s", duplicateByAlias.Alias)
 		log.Error(msg)
-		return fmt.Errorf(msg)
+		return nil, fmt.Errorf(msg)
 	}
 
 	var duplicateByURL models.Report
 	if err := DB.Where("\"URL\" = ?", report.URL).First(&duplicateByURL).Error; err == nil {
 		msg := fmt.Sprintf("report with this URL already exists. Report alias: %s", duplicateByURL.Alias)
 		log.Error(msg)
-		return fmt.Errorf(msg)
+		return nil, fmt.Errorf(msg)
 	}
 
 	var unknownCat models.Category
 	if err := DB.Where("\"Id\" = ?", report.ParentId).First(&unknownCat).Error; err != nil {
 		msg := fmt.Sprintf("category with this id %d does not exist", report.ParentId)
 		log.Error(msg)
-		return fmt.Errorf(msg)
+		return nil, fmt.Errorf(msg)
 	}
 
 	newReport := models.Report{
@@ -356,7 +351,7 @@ func CreateReport(report models.CreateReport) error {
 	if err := DB.Create(&newReport).Error; err != nil {
 		msg := fmt.Sprintf("failed to create report: %v", err)
 		log.Error(msg)
-		return fmt.Errorf(msg)
+		return nil, fmt.Errorf(msg)
 	}
 
 	categoryReport := models.CategoryReport{
@@ -366,10 +361,10 @@ func CreateReport(report models.CreateReport) error {
 	if err := DB.Create(&categoryReport).Error; err != nil {
 		msg := fmt.Sprintf("failed to create category report relation: %v", err)
 		log.Error(msg)
-		return fmt.Errorf(msg)
+		return nil, fmt.Errorf(msg)
 	}
 
-	return nil
+	return &newReport.ID, nil
 }
 
 func RemoveReportById(reportID, categoryID int) error {

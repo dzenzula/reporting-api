@@ -33,7 +33,7 @@ func AddReportRelation(reportID, categoryID int) error {
 	return database.AddReportRelation(reportID, categoryID)
 }
 
-func CreateReport(report models.CreateReport) error {
+func CreateReport(report models.CreateReport) (*int, error) {
 	return database.CreateReport(report)
 }
 
