@@ -165,7 +165,10 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "Created Category Id",
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
                 }
             }

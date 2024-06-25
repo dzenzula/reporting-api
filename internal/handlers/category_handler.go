@@ -54,7 +54,7 @@ func GetCategoriesHandler(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param data body models.InsertCategory true "Новая категория"
-// @Success 200
+// @Success 200 {integer} int "Created Category Id"
 // @Router /api/Categories [post]
 func CreateCategoryHandler(c *gin.Context) {
 	var data models.InsertCategory
@@ -68,12 +68,16 @@ func CreateCategoryHandler(c *gin.Context) {
 		return
 	}
 
-	err := services.CreateCategory(data)
+	categoryId, err := services.CreateCategory(data)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	var buf [20]byte
+	n := strconv.AppendInt(buf[:0], int64(*categoryId), 10)
+
 	c.Status(http.StatusOK)
+	c.Writer.Write([]byte(n))
 }
 
 // @Summary Update Category

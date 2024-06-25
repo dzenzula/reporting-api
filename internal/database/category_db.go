@@ -44,7 +44,7 @@ func FetchVisiblePublicCategories() ([]models.GetCategory, error) {
 	return categories, nil
 }
 
-func CreateCategory(newCategory models.InsertCategory) error {
+func CreateCategory(newCategory models.InsertCategory) (*int, error) {
 	category := models.Category{
 		Text:        newCategory.Text,
 		Description: newCategory.Description,
@@ -56,9 +56,9 @@ func CreateCategory(newCategory models.InsertCategory) error {
 
 	if err := DB.Create(&category).Error; err != nil {
 		log.Error(fmt.Sprintf("failed to insert category: %v", err))
-		return err
+		return nil, err
 	}
-	return nil
+	return &category.Id, nil
 }
 
 func UpdateCategory(updatedCategory models.UpdateCategory) error {

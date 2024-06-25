@@ -234,7 +234,9 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Created Category Id
+          schema:
+            type: integer
       summary: Insert Category
       tags:
       - Categories

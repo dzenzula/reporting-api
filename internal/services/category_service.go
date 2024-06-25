@@ -17,7 +17,7 @@ func UpdateCategory(updatedCategory models.UpdateCategory) error {
 	return database.UpdateCategory(updatedCategory)
 }
 
-func CreateCategory(newCategory models.InsertCategory) error {
+func CreateCategory(newCategory models.InsertCategory) (*int, error) {
 	return database.CreateCategory(newCategory)
 }
 
