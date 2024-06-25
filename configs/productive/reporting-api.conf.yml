@@ -3,21 +3,15 @@ permissions:
   fav_reports: "work_with_favorite_reports"
 
 postgres_reporting:
-  host: "krr-sql-pgnode01"
+  host: "KRR-SQL-PSGRE00"
   port: 5432
   username: "%PG_LOGIN%"
   password: "%PG_PASSWORD%"
   dbname: "krr-pa-analytics-data"
   sslmode: "disable"
 
-mssql:
-  server: "KRR-SQL-PACLX02"
-  username: "EUROPE\\%MSSQL_LOGIN%"
-  password: "%MSSQL_PASSWORD%"
-  database: "KRR-PA-Reporting"
-
 mssql_auth:
-  server: "KRR-SQL-PACLX02" ## Тестовый сервер
+  server: "KRR-SQL-PACLX02"
   username: "EUROPE\\%MSSQL_LOGIN%"
   password: "%MSSQL_PASSWORD%"
   database: "KRR-PA-ACS"

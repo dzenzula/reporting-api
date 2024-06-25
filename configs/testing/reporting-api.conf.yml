@@ -9,13 +9,7 @@ postgres_reporting:
   password: "%PG_PASSWORD%"
   dbname: "krr-pa-analytics-data"
   sslmode: "disable"
-
-mssql:
-  server: "KRR-TST-PAHWL02"
-  username: "EUROPE\\%MSSQL_LOGIN%"
-  password: "%MSSQL_PASSWORD%"
-  database: "KRR-PA-Reporting"
-
+  
 mssql_auth:
   server: "KRR-TST-PAHWL02" ## Тестовый сервер
   username: "EUROPE\\%MSSQL_LOGIN%"
