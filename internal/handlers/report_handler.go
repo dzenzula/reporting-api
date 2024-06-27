@@ -20,11 +20,15 @@ import (
 // @Router /api/FavoriteReports/GetReports [get]
 func GetFavoriteReportsHandler(c *gin.Context) {
 	auth.Init(c)
-	favReports, err := services.GetAllFavoriteReports()
+
+	favReports := []models.Report{}
+	res, err := services.GetAllFavoriteReports()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
+	favReports = append(favReports, res...)
 	c.JSON(http.StatusOK, favReports)
 }
 
