@@ -38,14 +38,14 @@ func NewRouter() *gin.Engine {
 	r.Use(sessions.Sessions("mysession", store))
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	authGroup := r.Group("/reporting-api/api/Authorization")
+	authGroup := r.Group("/api/Authorization")
 	{
 		authGroup.GET("/GetCurrentUserInfo", auth.GetCurrentUserInfo)
 		authGroup.POST("/LogInAuthorization", auth.LogInAuthorization)
 		authGroup.POST("/LogOutAuthorization", auth.LogOutAuthorization)
 	}
 
-	catGroup := r.Group("/reporting-api/api/Categories")
+	catGroup := r.Group("/api/Categories")
 	catGroup.GET("", handlers.GetCategoriesHandler)
 	catGroup.Use(auth.AuthRequired)
 	{
@@ -56,7 +56,7 @@ func NewRouter() *gin.Engine {
 		catGroup.DELETE("/:categoryId", handlers.RemoveCategoryHandler)
 	}
 
-	favRepGroup := r.Group("/reporting-api/api/FavoriteReports")
+	favRepGroup := r.Group("/api/FavoriteReports")
 	favRepGroup.Use(auth.AuthRequired)
 	{
 		favRepGroup.GET("/GetReports", handlers.GetFavoriteReportsHandler)
@@ -64,7 +64,7 @@ func NewRouter() *gin.Engine {
 		favRepGroup.DELETE("/DeleteReport/:reportId", handlers.RemoveFavoriteReportHandler)
 	}
 
-	repGroup := r.Group("/reporting-api/api/Reports")
+	repGroup := r.Group("/api/Reports")
 	repGroup.GET("", handlers.GetReportsHandler)
 	repGroup.Use(auth.AuthRequired)
 	{
