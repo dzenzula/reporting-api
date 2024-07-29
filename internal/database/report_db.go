@@ -316,7 +316,7 @@ func CreateReport(report models.CreateReport) (*int, error) {
 
 	var duplicateByAlias models.Report
 	if err := DB.Where("\"Alias\" = ?", report.Alias).First(&duplicateByAlias).Error; err == nil {
-		msg := fmt.Sprintf("report with this alias already exists. Report alias: %s", duplicateByAlias.Alias)
+		msg := fmt.Sprintf("report with this alias already exists. Report name: %s", duplicateByAlias.Text)
 		log.Error(msg)
 		return nil, fmt.Errorf(msg)
 	}
