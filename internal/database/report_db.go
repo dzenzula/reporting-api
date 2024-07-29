@@ -160,7 +160,7 @@ func UpdateReport(uRep models.UpdateReport) error {
 	if err := DB.
 		Where("\"Text\" = ? AND \"Id\" != ?", uRep.Text, uRep.Id).
 		First(&duplicateByText).Error; err == nil {
-		msg := fmt.Sprintf("report with this name already exists. Report alias: %s", duplicateByText.Alias)
+		msg := fmt.Sprintf("report with this name already exists. Report name: %s", duplicateByText.Text)
 		log.Error(msg)
 		return fmt.Errorf(msg)
 	}
@@ -169,7 +169,7 @@ func UpdateReport(uRep models.UpdateReport) error {
 	if err := DB.
 		Where("\"URL\" = ? AND \"Id\" != ?", uRep.URL, uRep.Id).
 		First(&duplicateByURL).Error; err == nil {
-		msg := fmt.Sprintf("report with this URL already exists. Report alias: %s", duplicateByURL.Alias)
+		msg := fmt.Sprintf("report with this URL already exists. Report name: %s", duplicateByURL.Text)
 		log.Error(msg)
 		return fmt.Errorf(msg)
 	}
@@ -309,7 +309,7 @@ func CreateReport(report models.CreateReport) (*int, error) {
 
 	var duplicateByText models.Report
 	if err := DB.Where("\"Text\" = ?", report.Text).First(&duplicateByText).Error; err == nil {
-		msg := fmt.Sprintf("report with this name already exists. Report alias: %s", duplicateByText.Alias)
+		msg := fmt.Sprintf("report with this name already exists. Report name: %s", duplicateByText.Text)
 		log.Error(msg)
 		return nil, fmt.Errorf(msg)
 	}
@@ -323,7 +323,7 @@ func CreateReport(report models.CreateReport) (*int, error) {
 
 	var duplicateByURL models.Report
 	if err := DB.Where("\"URL\" = ?", report.URL).First(&duplicateByURL).Error; err == nil {
-		msg := fmt.Sprintf("report with this URL already exists. Report alias: %s", duplicateByURL.Alias)
+		msg := fmt.Sprintf("report with this URL already exists. Report name: %s", duplicateByURL.Text)
 		log.Error(msg)
 		return nil, fmt.Errorf(msg)
 	}
@@ -355,7 +355,7 @@ func CreateReport(report models.CreateReport) (*int, error) {
 	}
 
 	categoryReport := models.CategoryReports{
-		ReportsId:    newReport.Id,
+		ReportsId:    *newReport.Id,
 		CategoriesId: report.ParentId,
 	}
 	if err := DB.Create(&categoryReport).Error; err != nil {
@@ -364,7 +364,7 @@ func CreateReport(report models.CreateReport) (*int, error) {
 		return nil, fmt.Errorf(msg)
 	}
 
-	return &newReport.Id, nil
+	return newReport.Id, nil
 }
 
 func RemoveReportById(reportID, categoryID int) error {

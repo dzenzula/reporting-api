@@ -3,7 +3,7 @@ package models
 import "time"
 
 type Category struct {
-	Id          int       `gorm:"column:Id; primary_key; autoIncrement"`
+	Id          *int      `gorm:"column:Id; primary_key; autoIncrement"`
 	ParentId    *int      `gorm:"column:ParentId"`
 	Text        string    `gorm:"column:Text"`
 	Visible     bool      `gorm:"column:Visible"`

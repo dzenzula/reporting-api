@@ -3,7 +3,7 @@ package models
 import "time"
 
 type Report struct {
-	Id            int        `json:"id" gorm:"column:Id"`
+	Id            *int       `json:"id" gorm:"column:Id; autoIncrement"`
 	Text          string     `json:"text" gorm:"column:Text"`
 	URL           string     `json:"-" gorm:"column:URL"`
 	Visible       bool       `json:"visible" gorm:"column:Visible"`
