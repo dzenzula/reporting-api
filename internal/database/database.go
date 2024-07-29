@@ -10,6 +10,7 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"gorm.io/gorm/schema"
 )
 
 var DB *gorm.DB
@@ -26,7 +27,11 @@ func ConnectToPGDataBase() error {
 		c.GlobalConfig.PgConnection.SSLMode,
 	)
 
-	DB, err = gorm.Open(postgres.Open(connString), &gorm.Config{})
+	DB, err = gorm.Open(postgres.Open(connString), &gorm.Config{
+		NamingStrategy: schema.NamingStrategy{
+			NoLowerCase: true,
+		},
+	})
 	if err != nil {
 		return err
 	}

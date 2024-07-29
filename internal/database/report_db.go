@@ -195,7 +195,7 @@ func UpdateReport(uRep models.UpdateReport) error {
 }
 
 func checkReportInCategory(reportID, categoryID int) (bool, error) {
-	var catReport models.CategoryReport
+	var catReport models.CategoryReports
 	err := DB.Where("\"ReportsId\" = ? AND \"CategoriesId\" = ?", reportID, categoryID).First(&catReport).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -207,14 +207,14 @@ func checkReportInCategory(reportID, categoryID int) (bool, error) {
 }
 
 func moveReportToCategory(reportID, fromCategoryID, toCategoryID int) error {
-	err := DB.Where("\"ReportsId\" = ? AND \"CategoriesId\" = ?", reportID, fromCategoryID).Delete(&models.CategoryReport{}).Error
+	err := DB.Where("\"ReportsId\" = ? AND \"CategoriesId\" = ?", reportID, fromCategoryID).Delete(&models.CategoryReports{}).Error
 	if err != nil {
 		return fmt.Errorf("error deleting report from category: %v", err)
 	}
 
-	newCatReport := models.CategoryReport{
-		ReportID:   reportID,
-		CategoryID: toCategoryID,
+	newCatReport := models.CategoryReports{
+		ReportsId:    reportID,
+		CategoriesId: toCategoryID,
 	}
 
 	err = DB.Create(&newCatReport).Error
@@ -274,8 +274,8 @@ func AddReportRelation(reportID, categoryID int) error {
 		return fmt.Errorf("error checking category existence: %v", err)
 	}
 
-	var catRep models.CategoryReport
-	err := DB.Where(&models.CategoryReport{ReportID: reportID, CategoryID: categoryID}).First(&catRep).Error
+	var catRep models.CategoryReports
+	err := DB.Where(&models.CategoryReports{ReportsId: reportID, CategoriesId: categoryID}).First(&catRep).Error
 	if err == nil {
 		return fmt.Errorf("relation between report %d and category %d already exists", reportID, categoryID)
 	} else if err != gorm.ErrRecordNotFound {
@@ -283,9 +283,9 @@ func AddReportRelation(reportID, categoryID int) error {
 		return fmt.Errorf("error checking existing relation: %v", err)
 	}
 
-	newCatRep := models.CategoryReport{
-		ReportID:   reportID,
-		CategoryID: categoryID,
+	newCatRep := models.CategoryReports{
+		ReportsId:    reportID,
+		CategoriesId: categoryID,
 	}
 
 	if err := DB.Create(&newCatRep).Error; err != nil {
@@ -354,9 +354,9 @@ func CreateReport(report models.CreateReport) (*int, error) {
 		return nil, fmt.Errorf(msg)
 	}
 
-	categoryReport := models.CategoryReport{
-		ReportID:   newReport.ID,
-		CategoryID: report.ParentId,
+	categoryReport := models.CategoryReports{
+		ReportsId:    newReport.Id,
+		CategoriesId: report.ParentId,
 	}
 	if err := DB.Create(&categoryReport).Error; err != nil {
 		msg := fmt.Sprintf("failed to create category report relation: %v", err)
@@ -364,13 +364,13 @@ func CreateReport(report models.CreateReport) (*int, error) {
 		return nil, fmt.Errorf(msg)
 	}
 
-	return &newReport.ID, nil
+	return &newReport.Id, nil
 }
 
 func RemoveReportById(reportID, categoryID int) error {
 	var report models.Report
-	if err := DB.Where("\"Id\" = ?", reportID).First(&report).Error; err != nil {
-		msg := fmt.Sprintf("report with ID %d not found", reportID)
+	if err := DB.Model(&report).Preload("Categories").Where("\"Reports\".\"Id\" = ?", reportID).First(&report).Error; err != nil {
+		msg := fmt.Sprintf("report with ID %d not found: %s", reportID, err.Error())
 		log.Error(msg)
 		return fmt.Errorf(msg)
 	}
@@ -382,17 +382,17 @@ func RemoveReportById(reportID, categoryID int) error {
 		return fmt.Errorf(msg)
 	}
 
-	if err := DB.Where("\"ReportsId\" = ? AND \"CategoriesId\" = ?", reportID, categoryID).Delete(&models.CategoryReport{}).Error; err != nil {
+	if err := DB.Where("\"ReportsId\" = ? AND \"CategoriesId\" = ?", reportID, categoryID).Delete(&models.CategoryReports{}).Error; err != nil {
 		msg := fmt.Sprintf("failed to remove report from category: %v", err)
 		log.Error(msg)
 		return fmt.Errorf(msg)
 	}
 
-	if err := DB.Preload("\"sys-reporting\".\"Categories\"").Where("\"Id\" = ?", reportID).Delete(&category).Error; err != nil {
+	/*if err := DB.Preload("\"sys-reporting\".\"Categories\"").Where("\"Id\" = ?", reportID).Delete(&category).Error; err != nil {
 		msg := fmt.Sprintf("failed to remove report from category: %v", err)
 		log.Error(msg)
 		return fmt.Errorf(msg)
-	}
+	}*/
 
 	if len(report.Categories) == 0 {
 		if err := DB.Delete(&report).Error; err != nil {
