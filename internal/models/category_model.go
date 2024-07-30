@@ -3,7 +3,7 @@ package models
 import "time"
 
 type Category struct {
-	Id          int       `gorm:"column:Id; primary_key; autoIncrement"`
+	Id          *int      `gorm:"column:Id; primary_key; autoIncrement"`
 	ParentId    *int      `gorm:"column:ParentId"`
 	Text        string    `gorm:"column:Text"`
 	Visible     bool      `gorm:"column:Visible"`
@@ -12,7 +12,7 @@ type Category struct {
 	UpdatedBy   string    `gorm:"column:UpdatedBy"`
 	UpdatedAt   time.Time `gorm:"column:UpdatedAt"`
 	Description string    `gorm:"column:Description"`
-	Reports     []Report  `gorm:"many2many:CategoryReports;"`
+	Reports     []Report  `gorm:"many2many:\"sys-reporting\".\"CategoryReports\";foreignKey:Id;joinForeignKey:CategoriesId;References:Id;joinReferences:ReportsId"`
 }
 
 func (Category) TableName() string {
@@ -64,11 +64,11 @@ func (UpdateCategoryParent) TableName() string {
 	return "\"sys-reporting\".\"Categories\""
 }
 
-type CategoryReport struct {
-	ReportID   int `gorm:"column:ReportsId"`
-	CategoryID int `gorm:"column:CategoriesId"`
+type CategoryReports struct {
+	ReportsId    int `gorm:"column:ReportsId;primaryKey"`
+	CategoriesId int `gorm:"column:CategoriesId;primaryKey"`
 }
 
-func (CategoryReport) TableName() string {
+func (CategoryReports) TableName() string {
 	return "\"sys-reporting\".\"CategoryReports\""
 }

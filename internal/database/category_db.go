@@ -58,7 +58,7 @@ func CreateCategory(newCategory models.InsertCategory) (*int, error) {
 		log.Error(fmt.Sprintf("failed to insert category: %v", err))
 		return nil, err
 	}
-	return &category.Id, nil
+	return category.Id, nil
 }
 
 func UpdateCategory(updatedCategory models.UpdateCategory) error {

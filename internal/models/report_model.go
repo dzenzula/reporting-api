@@ -3,7 +3,7 @@ package models
 import "time"
 
 type Report struct {
-	ID            int        `json:"id" gorm:"column:Id"`
+	Id            *int       `json:"id" gorm:"column:Id; autoIncrement"`
 	Text          string     `json:"text" gorm:"column:Text"`
 	URL           string     `json:"-" gorm:"column:URL"`
 	Visible       bool       `json:"visible" gorm:"column:Visible"`
@@ -18,7 +18,7 @@ type Report struct {
 	Type          string     `json:"type" gorm:"-"`
 	ParentID      *int       `json:"parentId" gorm:"-"`
 	Data          DataField  `json:"data" gorm:"-"`
-	Categories    []Category `json:"-" gorm:"many2many:CategoryReports;"`
+	Categories    []Category `json:"-" gorm:"many2many:\"sys-reporting\".\"CategoryReports\";foreignKey:Id;joinForeignKey:ReportsId;References:Id;joinReferences:CategoriesId"`
 }
 
 type ReportWithParent struct {
