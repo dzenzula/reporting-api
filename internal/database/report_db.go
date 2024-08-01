@@ -394,8 +394,8 @@ func RemoveReportById(reportID, categoryID int) error {
 		return fmt.Errorf(msg)
 	}*/
 
-	if len(report.Categories) == 0 {
-		if err := DB.Delete(&report).Error; err != nil {
+	if len(report.Categories) == 1 {
+		if err := DB.Where("\"Id\" = ?", reportID).Delete(&report).Error; err != nil {
 			msg := fmt.Sprintf("failed to delete report: %v", err)
 			log.Error(msg)
 			return fmt.Errorf(msg)
