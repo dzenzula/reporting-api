@@ -273,7 +273,7 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "description": "Report ID",
-                        "name": "id",
+                        "name": "reportId",
                         "in": "path",
                         "required": true
                     }

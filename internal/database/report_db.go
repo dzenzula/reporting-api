@@ -21,7 +21,7 @@ func FetchAllFavoriteReports() ([]models.Report, error) {
 	var reportsWithParent []models.ReportWithParent
 	err := DB.Table("\"sys-reporting\".\"FavoriteReports\" AS fr").
 		Select("fr.*, r.*").
-		Joins("JOIN \"sys-reporting\".\"Reports\" r ON r.\"Id\" = fr.\"ReportId\" AND r.\"Owner\" = fr.\"Login\"").
+		Joins("JOIN \"sys-reporting\".\"Reports\" r ON r.\"Id\" = fr.\"ReportId\" AND fr.\"Login\" = ?", auth.GetUserMail()).
 		Scan(&reportsWithParent).Error
 	if err != nil {
 		log.Error(fmt.Sprintf(errRunQuery, err))

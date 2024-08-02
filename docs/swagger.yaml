@@ -321,7 +321,7 @@ paths:
       parameters:
       - description: Report ID
         in: path
-        name: id
+        name: reportId
         required: true
         type: integer
       produces:
