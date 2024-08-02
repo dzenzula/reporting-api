@@ -37,7 +37,7 @@ func GetFavoriteReportsHandler(c *gin.Context) {
 // @Description Add a report to favorites by report ID
 // @Tags FavoriteReports
 // @Produce json
-// @Param id path int true "Report ID"
+// @Param reportId path int true "Report ID"
 // @Success 200
 // @Router /api/FavoriteReports/AddReport/{reportId} [post]
 func AddFavoriteReportHandler(c *gin.Context) {
