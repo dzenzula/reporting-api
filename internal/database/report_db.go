@@ -180,13 +180,15 @@ func UpdateReport(uRep models.UpdateReport) error {
 	report.UpdatedAt = time.Now()
 	report.UpdatedBy = auth.ReturnDomainUser()
 
-	if err := DB.Model(&report).Updates(map[string]interface{}{
-		"Text":          report.Text,
-		"URL":           report.URL,
-		"OperationName": report.OperationName,
-		"UpdatedAt":     report.UpdatedAt,
-		"UpdatedBy":     report.UpdatedBy,
-	}).Error; err != nil {
+	if err := DB.Model(&report).
+		Where("\"Id\" = ?", report.Id).
+		Updates(map[string]interface{}{
+			"Text":          report.Text,
+			"URL":           report.URL,
+			"OperationName": report.OperationName,
+			"UpdatedAt":     report.UpdatedAt,
+			"UpdatedBy":     report.UpdatedBy,
+		}).Error; err != nil {
 		log.Error(fmt.Sprintf("failed to update report: %v", err))
 		return err
 	}
