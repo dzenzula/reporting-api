@@ -54,7 +54,9 @@ func AddFavoriteReport(id int) error {
 	}
 
 	var favoriteReport models.FavoriteReport
-	if err := DB.Model(&models.FavoriteReport{}).Where("\"ReportId\" = ?", id).First(&favoriteReport).Error; err == nil {
+	var login string = auth.GetUserMail()
+
+	if err := DB.Model(&models.FavoriteReport{}).Where("\"ReportId\" = ? AND \"Login\" = ?", id, login).First(&favoriteReport).Error; err == nil {
 		msg := "this report is already in favorites"
 		log.Error(msg)
 		return fmt.Errorf(msg)
@@ -62,7 +64,7 @@ func AddFavoriteReport(id int) error {
 
 	newFavReport := models.FavoriteReport{
 		ReportId: id,
-		Login:    auth.GetUserMail(),
+		Login:    login,
 	}
 
 	if err := DB.Model(&models.FavoriteReport{}).Create(&newFavReport).Error; err != nil {
