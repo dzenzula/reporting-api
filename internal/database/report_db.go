@@ -106,6 +106,49 @@ func RemoveFavoriteReportById(id int) error {
 	return nil
 }
 
+func GetLastVisitedReport(quantity int) ([]models.VisitedReport, error) {
+	var reports []models.VisitedReport
+	err := DB.Table("\"sys-reporting\".\"Reports\" AS r").
+		Joins("JOIN \"sys-reporting\".\"VisitHistory\" vh ON vh.\"ReportId\" = r.\"Id\"").
+		Where("vh.\"Login\" = ? AND r.\"Visible\" = ?", auth.GetUserMail(), true).
+		Order("vh.\"Dt\" DESC").
+		Limit(quantity).
+		Select("r.\"Text\" AS \"Name\", r.\"Alias\"").
+		Find(&reports).Error
+	if err != nil {
+		return nil, fmt.Errorf("error fetching reports: %w", err)
+	}
+
+	return reports, nil
+}
+
+func AddVisitedReport(id int, ip string) error {
+	var report models.Report
+	if err := DB.Model(&models.Report{}).First(&report, "\"Id\" = ?", id).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			msg := fmt.Sprintf("report with this Id not found: %d", id)
+			log.Error(msg)
+			return fmt.Errorf(msg)
+		} else {
+			log.Error(fmt.Sprintf(errRunQuery, err))
+			return err
+		}
+	}
+
+	visitedReport := models.VisitHistory{
+		ReportId:  id,
+		Login:     auth.GetUserMail(),
+		IpAddress: ip,
+	}
+
+	if err := DB.Model(&models.VisitHistory{}).Create(&visitedReport).Error; err != nil {
+		log.Error(fmt.Sprintf("error add visited report: %v", err))
+		return err
+	}
+
+	return nil
+}
+
 func FetchAllReports() ([]models.Report, error) {
 	permissions := auth.GetPermissions()
 	isAdmin := slices.Contains(permissions, config.GlobalConfig.Permissions.AdminAccess)

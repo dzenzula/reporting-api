@@ -81,6 +81,62 @@ func RemoveFavoriteReportHandler(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
+// GetLastVisitedHandler godoc
+// @Summary Get last visited reports
+// @Description Get last visited reports
+// @Tags VisitedReports
+// @Produce json
+// @Param quantity query int false "Quantity of reports to return" default(20)
+// @Success 200 {array} models.VisitedReport
+// @Router /api/TrackVisit/GetLastVisited [get]
+func GetLastVisitedHandler(c *gin.Context) {
+	auth.Init(c)
+
+	quantityStr := c.DefaultQuery("quantity", "20")
+
+	quantity, err := strconv.Atoi(quantityStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid quantity"})
+		return
+	}
+
+	reports := []models.VisitedReport{}
+	res, err := services.GetLastVisitedReport(quantity)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	reports = append(reports, res...)
+	c.JSON(http.StatusOK, reports)
+}
+
+// AddVisitHandler godoc
+// @Summary Add visited report
+// @Description Track visited reports
+// @Tags VisitHistory
+// @Produce json
+// @Param reportId path int true "Report ID"
+// @Success 200
+// @Router /api/TrackVisit/{reportId} [post]
+func AddVisitHandler(c *gin.Context) {
+	auth.Init(c)
+	id, err := strconv.Atoi(c.Param("reportId"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	ip := c.ClientIP()
+	err = services.AddVisitedReport(id, ip)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.Status(http.StatusOK)
+}
+
 // GetReportsHandler godoc
 // @Summary Get all reports
 // @Description Get a list of all reports

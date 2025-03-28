@@ -13,6 +13,14 @@ func AddFavoriteReport(id int) error {
 	return database.AddFavoriteReport(id)
 }
 
+func GetLastVisitedReport(quantity int) ([]models.VisitedReport, error) {
+	return database.GetLastVisitedReport(quantity)
+}
+
+func AddVisitedReport(id int, ip string) error {
+	return database.AddVisitedReport(id, ip)
+}
+
 func RemoveFavoriteReportById(id int) error {
 	return database.RemoveFavoriteReportById(id)
 }

@@ -536,6 +536,64 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/TrackVisit/GetLastVisited": {
+            "get": {
+                "description": "Get last visited reports",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "VisitedReports"
+                ],
+                "summary": "Get last visited reports",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Quantity of reports to return",
+                        "name": "quantity",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.VisitedReport"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/TrackVisit/{reportId}": {
+            "post": {
+                "description": "Track visited reports",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "VisitHistory"
+                ],
+                "summary": "Add visited report",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Report ID",
+                        "name": "reportId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -769,6 +827,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.VisitedReport": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "url": {
                     "type": "string"
                 }
             }

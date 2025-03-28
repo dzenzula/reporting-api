@@ -44,6 +44,22 @@ func (FavoriteReport) TableName() string {
 	return "\"sys-reporting\".\"FavoriteReports\""
 }
 
+type VisitHistory struct {
+	Dt        time.Time `gorm:"column:Dt;<-:false"`
+	ReportId  int       `gorm:"column:ReportId"`
+	Login     string    `gorm:"column:Login"`
+	IpAddress string    `gorm:"column:IpAddress"`
+}
+
+func (VisitHistory) TableName() string {
+	return "\"sys-reporting\".\"VisitHistory\""
+}
+
+type VisitedReport struct {
+	Name  string `json:"name"`
+	Alias string `json:"alias"`
+}
+
 type UpdateReport struct {
 	Id            int    `json:"id" gorm:"column:Id"`
 	Text          string `json:"text" gorm:"column:Text"`
