@@ -3,7 +3,7 @@ permissions:
   fav_reports: "work_with_favorite_reports"
 
 postgres:
-  host: "krr-sql-pgnode01"
+  host: "KRR-SQL-PGNODE00"
   port: 5432
   username: "%PG_LOGIN%"
   password: "%PG_PASSWORD%"
