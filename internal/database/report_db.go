@@ -111,10 +111,10 @@ func GetLastVisitedReport(quantity int) ([]models.VisitedReport, error) {
 	err := DB.Table("\"sys-reporting\".\"Reports\" AS r").
 		Joins(`
 			JOIN (
-				SELECT \"ReportId\", MAX(\"Dt\") AS max_dt 
-				FROM \"sys-reporting\".\"VisitHistory\" 
-				WHERE \"Login\" = ? GROUP BY \"ReportId\"
-			) vh ON vh.\"ReportId\" = r.\"Id\"`, auth.GetUserMail()).
+				SELECT "ReportId", MAX("Dt") AS max_dt 
+				FROM "sys-reporting"."VisitHistory" 
+				WHERE "Login" = ? GROUP BY "ReportId"
+			) vh ON vh."ReportId" = r."Id"`, auth.GetUserMail()).
 		Where("r.\"Visible\" = ?", true).
 		Order("vh.max_dt DESC").
 		Limit(quantity).
