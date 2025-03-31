@@ -109,12 +109,18 @@ func RemoveFavoriteReportById(id int) error {
 func GetLastVisitedReport(quantity int) ([]models.VisitedReport, error) {
 	var reports []models.VisitedReport
 	err := DB.Table("\"sys-reporting\".\"Reports\" AS r").
-		Joins("JOIN \"sys-reporting\".\"VisitHistory\" vh ON vh.\"ReportId\" = r.\"Id\"").
-		Where("vh.\"Login\" = ? AND r.\"Visible\" = ?", auth.GetUserMail(), true).
-		Order("vh.\"Dt\" DESC").
+		Joins(`
+			JOIN (
+				SELECT \"ReportId\", MAX(\"Dt\") AS max_dt 
+				FROM \"sys-reporting\".\"VisitHistory\" 
+				WHERE \"Login\" = ? GROUP BY \"ReportId\"
+			) vh ON vh.\"ReportId\" = r.\"Id\"`, auth.GetUserMail()).
+		Where("r.\"Visible\" = ?", true).
+		Order("vh.max_dt DESC").
 		Limit(quantity).
 		Select("r.\"Text\" AS \"Name\", r.\"Alias\"").
 		Find(&reports).Error
+
 	if err != nil {
 		return nil, fmt.Errorf("error fetching reports: %w", err)
 	}
