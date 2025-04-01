@@ -64,6 +64,13 @@ func NewRouter() *gin.Engine {
 		favRepGroup.DELETE("/DeleteReport/:reportId", handlers.RemoveFavoriteReportHandler)
 	}
 
+	trackVisitGroup := r.Group("/api/TrackVisit")
+	trackVisitGroup.Use(auth.AuthRequired)
+	{
+		trackVisitGroup.GET("/GetLastVisited", handlers.GetLastVisitedHandler)
+		trackVisitGroup.POST("/:reportId", handlers.AddVisitHandler)
+	}
+
 	repGroup := r.Group("/api/Reports")
 	repGroup.GET("", handlers.GetReportsHandler)
 	repGroup.Use(auth.AuthRequired)
