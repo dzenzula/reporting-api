@@ -6,6 +6,7 @@ import (
 	"cmd/reporting-api/internal/services"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	auth "krr-app-gitlab01.europe.mittalco.com/pait/modules/go/authorization"
@@ -127,7 +128,9 @@ func AddVisitHandler(c *gin.Context) {
 		return
 	}
 
-	ip := c.ClientIP()
+	clientAddress := strings.Split(c.GetHeader("X-Forwarded-For"), ",")[0]
+	ip := strings.Split(clientAddress, ":")[0]
+
 	err = services.AddVisitedReport(id, ip)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
