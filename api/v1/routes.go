@@ -65,10 +65,10 @@ func NewRouter() *gin.Engine {
 	}
 
 	trackVisitGroup := r.Group("/api/TrackVisit")
+	trackVisitGroup.POST("/:reportId", handlers.AddVisitHandler)
 	trackVisitGroup.Use(auth.AuthRequired)
 	{
 		trackVisitGroup.GET("/GetLastVisited", handlers.GetLastVisitedHandler)
-		trackVisitGroup.POST("/:reportId", handlers.AddVisitHandler)
 	}
 
 	repGroup := r.Group("/api/Reports")
