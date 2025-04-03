@@ -5,9 +5,17 @@ permissions:
 postgres:
   host: "KRR-SQL-PGNODE00"
   port: 5432
-  username: "%PG_LOGIN%"
+  username: "%PG_USER%"
   password: "%PG_PASSWORD%"
   dbname: "krr-pa-analytics-data"
+  sslmode: "disable"
+
+pg_auth:
+  host: "KRR-SQL-PGNODE00"
+  port: 5432
+  username: "%PG_USER%"
+  password: "%PG_PASSWORD%"
+  dbname: "development"
   sslmode: "disable"
 
 ad_address: "KRR-DC-EU01.europe.mittalco.com:636"
