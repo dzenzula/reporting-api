@@ -15,7 +15,7 @@ pg_auth:
   port: 5432
   username: "%PG_USER%"
   password: "%PG_PASSWORD%"
-  dbname: "development"
+  dbname: "krr-pa-analytics-data"
   sslmode: "disable"
 
 ad_address: "KRR-DC-EU01.europe.mittalco.com:636"
