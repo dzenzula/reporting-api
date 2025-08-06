@@ -6,6 +6,7 @@ type Category struct {
 	Id          *int      `gorm:"column:Id; primary_key; autoIncrement"`
 	ParentId    *int      `gorm:"column:ParentId"`
 	Text        string    `gorm:"column:Text"`
+	Alias       string    `gorm:"column:Alias"`
 	Visible     bool      `gorm:"column:Visible"`
 	CreatedBy   string    `gorm:"column:CreatedBy"`
 	CreatedAt   time.Time `gorm:"column:CreatedAt"`
@@ -23,6 +24,7 @@ type GetCategory struct {
 	Id          *int   `json:"id" gorm:"column:Id"`
 	Text        string `json:"text" gorm:"size:150;not null;column:Text"`
 	Description string `json:"description" gorm:"size:150;column:Description"`
+	Alias       string `json:"alias" gorm:"column:Alias"`
 	Type        string `json:"type" gorm:"-"`
 	ParentId    *int   `json:"parentId" gorm:"column:ParentId"`
 	Visible     bool   `json:"visible" gorm:"column:Visible"`
@@ -46,6 +48,7 @@ func (UpdateCategory) TableName() string {
 type InsertCategory struct {
 	Text        string `json:"text" gorm:"column:Text"`
 	Description string `json:"description" gorm:"column:Description"`
+	Alias       string `gorm:"column:size:50;not null;Alias"`
 	ParentId    *int   `json:"parentId" gorm:"column:ParentId"`
 	Visible     bool   `json:"visible" gorm:"column:Visible"`
 }

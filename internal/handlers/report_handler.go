@@ -22,7 +22,7 @@ import (
 func GetFavoriteReportsHandler(c *gin.Context) {
 	auth.Init(c)
 
-	favReports := []models.Report{}
+	favReports := []models.FavoriteReportItem{}
 	res, err := services.GetAllFavoriteReports()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -35,21 +35,25 @@ func GetFavoriteReportsHandler(c *gin.Context) {
 
 // AddFavoriteReportHandler godoc
 // @Summary Add a report to favorites
-// @Description Add a report to favorites by report ID
+// @Description Add a report to favorites by report ID and category ID
 // @Tags FavoriteReports
+// @Accept json
 // @Produce json
-// @Param reportId path int true "Report ID"
+// @Param request body models.FavoriteReportDTO true "Favorite report request"
 // @Success 200
-// @Router /api/FavoriteReports/AddReport/{reportId} [post]
+// @Failure 400 {object} map[string]string
+// @Router /api/FavoriteReports/AddReport [post]
 func AddFavoriteReportHandler(c *gin.Context) {
 	auth.Init(c)
-	id, err := strconv.Atoi(c.Param("reportId"))
-	if err != nil {
+
+	var dto models.FavoriteReportDTO
+
+	if err := c.ShouldBindJSON(&dto); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	err = services.AddFavoriteReport(id)
+	err := services.AddFavoriteReport(dto)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -60,20 +64,25 @@ func AddFavoriteReportHandler(c *gin.Context) {
 
 // RemoveFavoriteReportHandler godoc
 // @Summary Remove a report from favorites
-// @Description Remove a report from favorites by report ID
+// @Description Remove a report from favorites by report ID and category ID
 // @Tags FavoriteReports
+// @Accept json
 // @Produce json
-// @Param reportId path int true "Report ID"
+// @Param request body models.FavoriteReportDTO true "Favorite report request"
 // @Success 200
-// @Router /api/FavoriteReports/DeleteReport/{reportId} [delete]
+// @Failure 400 {object} map[string]string
+// @Router /api/FavoriteReports/DeleteReport [delete]
 func RemoveFavoriteReportHandler(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("reportId"))
-	if err != nil {
+	auth.Init(c)
+
+	var dto models.FavoriteReportDTO
+
+	if err := c.ShouldBindJSON(&dto); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	err = services.RemoveFavoriteReportById(id)
+	err := services.RemoveFavoriteReport(dto)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -116,22 +125,25 @@ func GetLastVisitedHandler(c *gin.Context) {
 // @Summary Add visited report
 // @Description Track visited reports
 // @Tags VisitHistory
+// @Accept json
 // @Produce json
-// @Param reportId path int true "Report ID"
+// @Param input body models.TrackVisitDTO true "Report and Category IDs"
 // @Success 200
-// @Router /api/TrackVisit/{reportId} [post]
+// @Failure 400 {object} map[string]string
+// @Router /api/TrackVisit [post]
 func AddVisitHandler(c *gin.Context) {
 	auth.Init(c)
-	id, err := strconv.Atoi(c.Param("reportId"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
+	var dto models.TrackVisitDTO
+	if err := c.ShouldBindJSON(&dto); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input: " + err.Error()})
 		return
 	}
 
 	clientAddress := strings.Split(c.GetHeader("X-Forwarded-For"), ",")[0]
 	ip := strings.Split(clientAddress, ":")[0]
 
-	err = services.AddVisitedReport(id, ip)
+	err := services.AddVisitedReport(dto, ip)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

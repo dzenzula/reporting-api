@@ -17,34 +17,36 @@ const (
 	errRunQuery string = "error running query: %s"
 )
 
-func FetchAllFavoriteReports() ([]models.Report, error) {
-	var reportsWithParent []models.ReportWithParent
+func FetchAllFavoriteReports() ([]models.FavoriteReportItem, error) {
+	var favoriteReports []models.FavoriteReportItem
+
 	err := DB.Table("\"sys-reporting\".\"FavoriteReports\" AS fr").
-		Select("fr.*, r.*").
-		Joins("JOIN \"sys-reporting\".\"Reports\" r ON r.\"Id\" = fr.\"ReportId\" AND fr.\"Login\" = ?", auth.GetUserMail()).
-		Scan(&reportsWithParent).Error
+		Select(`
+		r."Id",
+		r."Text",
+		r."Description",
+		r."Alias",
+		fr."CategoryId" AS "ParentId",
+		c."Alias" AS "ParentAlias"
+	`).
+		Joins(`JOIN "sys-reporting"."Reports" r ON r."Id" = fr."ReportId"`).
+		Joins(`LEFT JOIN "sys-reporting"."Categories" c ON c."Id" = fr."CategoryId"`).
+		Where(`fr."Login" = ?`, auth.GetUserMail()).
+		Scan(&favoriteReports).Error
+
 	if err != nil {
 		log.Error(fmt.Sprintf(errRunQuery, err))
 		return nil, err
 	}
 
-	var favoriteReports []models.Report
-	for _, rwp := range reportsWithParent {
-		r := rwp.Report
-		r.ParentID = rwp.ParentID
-		r.Type = "file"
-		r.Data.URL = r.URL
-		favoriteReports = append(favoriteReports, r)
-	}
-
 	return favoriteReports, nil
 }
 
-func AddFavoriteReport(id int) error {
-	var report models.Report
-	if err := DB.Model(&models.Report{}).First(&report, "\"Id\" = ?", id).Error; err != nil {
+func AddFavoriteReport(dto models.FavoriteReportDTO) error {
+	var category models.Category
+	if err := DB.Model(&models.Category{}).First(&category, "\"Id\" = ?", dto.CategoryId).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			msg := fmt.Sprintf("report with this Id not found: %d", id)
+			msg := fmt.Sprintf("category with this Id not found: %d", dto.CategoryId)
 			log.Error(msg)
 			return fmt.Errorf(msg)
 		} else {
@@ -53,18 +55,53 @@ func AddFavoriteReport(id int) error {
 		}
 	}
 
-	var favoriteReport models.FavoriteReport
+	var report models.Report
+	if err := DB.Model(&models.Report{}).First(&report, "\"Id\" = ?", dto.ReportId).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			msg := fmt.Sprintf("report with this Id not found: %d", dto.ReportId)
+			log.Error(msg)
+			return fmt.Errorf(msg)
+		} else {
+			log.Error(fmt.Sprintf(errRunQuery, err))
+			return err
+		}
+	}
+
+	if !report.Visible {
+		msg := fmt.Sprintf("report %d is not accessible", dto.ReportId)
+		log.Error(msg)
+		return fmt.Errorf(msg)
+	}
+
+	var count int64
+	if err := DB.Table("\"sys-reporting\".\"CategoryReports\"").
+		Where("\"CategoriesId\" = ? AND \"ReportsId\" = ?", dto.CategoryId, dto.ReportId).
+		Count(&count).Error; err != nil {
+		log.Error(fmt.Sprintf(errRunQuery, err))
+		return err
+	}
+
+	if count == 0 {
+		msg := fmt.Sprintf("report %d does not belong to category %d", dto.ReportId, dto.CategoryId)
+		log.Error(msg)
+		return fmt.Errorf(msg)
+	}
+
 	var login string = auth.GetUserMail()
 
-	if err := DB.Model(&models.FavoriteReport{}).Where("\"ReportId\" = ? AND \"Login\" = ?", id, login).First(&favoriteReport).Error; err == nil {
-		msg := "this report is already in favorites"
+	var existingFavorite models.FavoriteReport
+	if err := DB.Model(&models.FavoriteReport{}).
+		Where("\"ReportId\" = ? AND \"CategoryId\" = ? AND \"Login\" = ?", dto.ReportId, dto.CategoryId, login).
+		First(&existingFavorite).Error; err == nil {
+		msg := "this report in this category is already in favorites"
 		log.Error(msg)
 		return fmt.Errorf(msg)
 	}
 
 	newFavReport := models.FavoriteReport{
-		ReportId: id,
-		Login:    login,
+		ReportId:   dto.ReportId,
+		CategoryId: dto.CategoryId,
+		Login:      login,
 	}
 
 	if err := DB.Model(&models.FavoriteReport{}).Create(&newFavReport).Error; err != nil {
@@ -75,13 +112,13 @@ func AddFavoriteReport(id int) error {
 	return nil
 }
 
-func RemoveFavoriteReportById(id int) error {
-	login := auth.ReturnDomainUser()
+func RemoveFavoriteReport(dto models.FavoriteReportDTO) error {
+	login := auth.GetUserMail()
 
 	var report models.Report
-	if err := DB.Model(&models.Report{}).First(&report, "\"Id\" = ?", id).Error; err != nil {
+	if err := DB.Model(&models.Report{}).First(&report, "\"Id\" = ?", dto.ReportId).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			msg := fmt.Sprintf("report with this Id not found: %d", id)
+			msg := fmt.Sprintf("report with this Id not found: %d", dto.ReportId)
 			log.Error(msg)
 			return fmt.Errorf(msg)
 		} else {
@@ -90,14 +127,49 @@ func RemoveFavoriteReportById(id int) error {
 		}
 	}
 
-	var favoriteReport models.FavoriteReport
-	if err := DB.Model(&models.FavoriteReport{}).Where("\"Login\" = ? AND \"ReportId\" = ?", login, id).First(&favoriteReport).Error; err == nil {
-		msg := "this report NOT in favorite"
+	var category models.Category
+	if err := DB.Model(&models.Category{}).First(&category, "\"Id\" = ?", dto.CategoryId).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			msg := fmt.Sprintf("category with this Id not found: %d", dto.CategoryId)
+			log.Error(msg)
+			return fmt.Errorf(msg)
+		} else {
+			log.Error(fmt.Sprintf(errRunQuery, err))
+			return err
+		}
+	}
+
+	var count int64
+	if err := DB.Table("\"sys-reporting\".\"CategoryReports\"").
+		Where("\"CategoriesId\" = ? AND \"ReportsId\" = ?", dto.CategoryId, dto.ReportId).
+		Count(&count).Error; err != nil {
+		log.Error(fmt.Sprintf(errRunQuery, err))
+		return err
+	}
+
+	if count == 0 {
+		msg := fmt.Sprintf("report %d does not belong to category %d", dto.ReportId, dto.CategoryId)
 		log.Error(msg)
 		return fmt.Errorf(msg)
 	}
 
-	if err := DB.Model(&models.FavoriteReport{}).Where("\"ReportId\" = ?", id).Delete(&models.FavoriteReport{}).Error; err != nil {
+	var favoriteReport models.FavoriteReport
+	if err := DB.Model(&models.FavoriteReport{}).
+		Where("\"Login\" = ? AND \"ReportId\" = ? AND \"CategoryId\" = ?", login, dto.ReportId, dto.CategoryId).
+		First(&favoriteReport).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			msg := "this report is NOT in favorites"
+			log.Error(msg)
+			return fmt.Errorf(msg)
+		} else {
+			log.Error(fmt.Sprintf(errRunQuery, err))
+			return err
+		}
+	}
+
+	if err := DB.Model(&models.FavoriteReport{}).
+		Where("\"Login\" = ? AND \"ReportId\" = ? AND \"CategoryId\" = ?", login, dto.ReportId, dto.CategoryId).
+		Delete(&models.FavoriteReport{}).Error; err != nil {
 		msg := fmt.Sprintf("failed to delete favorite report: %v", err)
 		log.Error(msg)
 		return fmt.Errorf(msg)
@@ -108,43 +180,79 @@ func RemoveFavoriteReportById(id int) error {
 
 func GetLastVisitedReport(quantity int) ([]models.VisitedReport, error) {
 	var reports []models.VisitedReport
-	err := DB.Table("\"sys-reporting\".\"Reports\" AS r").
+
+	err := DB.Table("\"sys-reporting\".\"VisitHistory\" AS vh").
+		Select(`
+			r."Text" AS "Name",
+			r."Alias" AS "Alias",
+			c."Alias" AS "CategoryAlias"
+		`).
 		Joins(`
 			JOIN (
-				SELECT "ReportId", MAX("Dt") AS max_dt 
-				FROM "sys-reporting"."VisitHistory" 
-				WHERE "Login" = ? GROUP BY "ReportId"
-			) vh ON vh."ReportId" = r."Id"`, auth.GetUserMail()).
+				SELECT "ReportId", "CategoryId", MAX("Dt") AS max_dt
+        		FROM "sys-reporting"."VisitHistory"
+        		WHERE "Login" = ?
+        		GROUP BY "ReportId", "CategoryId"
+      		) latest ON latest."ReportId" = vh."ReportId" 
+              		AND latest."CategoryId" = vh."CategoryId"
+              		AND latest.max_dt = vh."Dt"
+		`, auth.GetUserMail()).
+		Joins(`JOIN "sys-reporting"."Reports" AS r ON r."Id" = vh."ReportId"`).
+		Joins(`JOIN "sys-reporting"."Categories" AS c ON c."Id" = vh."CategoryId"`).
 		Where("r.\"Visible\" = ?", true).
-		Order("vh.max_dt DESC").
+		Order("latest.max_dt DESC").
 		Limit(quantity).
-		Select("r.\"Text\" AS \"Name\", r.\"Alias\"").
-		Find(&reports).Error
+		Scan(&reports).Error
 
 	if err != nil {
-		return nil, fmt.Errorf("error fetching reports: %w", err)
+		return nil, fmt.Errorf("error fetching visited reports: %w", err)
 	}
 
 	return reports, nil
 }
 
-func AddVisitedReport(id int, ip string) error {
-	var report models.Report
-	if err := DB.Model(&models.Report{}).First(&report, "\"Id\" = ?", id).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			msg := fmt.Sprintf("report with this Id not found: %d", id)
-			log.Error(msg)
-			return fmt.Errorf(msg)
-		} else {
-			log.Error(fmt.Sprintf(errRunQuery, err))
-			return err
-		}
+func AddVisitedReport(dto models.TrackVisitDTO, ip string) error {
+	var categoryExists bool
+	err := DB.
+		Model(&models.Category{}).
+		Select("count(1) > 0").
+		Where(`"Id" = ?`, dto.CategoryId).
+		Find(&categoryExists).Error
+
+	if err != nil {
+		log.Error(fmt.Sprintf(errRunQuery, err))
+		return err
+	}
+
+	if !categoryExists {
+		msg := fmt.Sprintf("category with this Id not found: %d", dto.CategoryId)
+		log.Error(msg)
+		return fmt.Errorf(msg)
+	}
+
+	var reportExists bool
+	err = DB.
+		Model(&models.Report{}).
+		Select("count(1) > 0").
+		Where(`"Id" = ?`, dto.ReportId).
+		Find(&reportExists).Error
+
+	if err != nil {
+		log.Error(fmt.Sprintf(errRunQuery, err))
+		return err
+	}
+
+	if !reportExists {
+		msg := fmt.Sprintf("report with this Id not found: %d", dto.ReportId)
+		log.Error(msg)
+		return fmt.Errorf(msg)
 	}
 
 	visitedReport := models.VisitHistory{
-		ReportId:  id,
-		Login:     auth.GetUserMail(),
-		IpAddress: ip,
+		ReportId:   dto.ReportId,
+		CategoryId: dto.CategoryId,
+		Login:      auth.GetUserMail(),
+		IpAddress:  ip,
 	}
 
 	if err := DB.Model(&models.VisitHistory{}).Create(&visitedReport).Error; err != nil {

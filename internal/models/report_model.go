@@ -26,6 +26,20 @@ type ReportWithParent struct {
 	ParentID *int `json:"parentId" gorm:"column:ParentId"`
 }
 
+type FavoriteReportDTO struct {
+	ReportId   int `json:"reportId" binding:"required"`
+	CategoryId int `json:"categoryId" binding:"required"`
+}
+
+type FavoriteReportItem struct {
+	Id          *int   `json:"id" gorm:"column:Id"`
+	Text        string `json:"text" gorm:"column:Text"`
+	Description string `json:"description" gorm:"column:Description"`
+	Alias       string `json:"alias" gorm:"column:Alias"`
+	ParentID    *int   `json:"parentId" gorm:"column:ParentId"`
+	ParentAlias string `json:"parentAlias" gorm:"column:ParentAlias"`
+}
+
 func (Report) TableName() string {
 	return "\"sys-reporting\".\"Reports\""
 }
@@ -35,20 +49,27 @@ type DataField struct {
 }
 
 type FavoriteReport struct {
-	ID       int    `gorm:"column:Id"`
-	Login    string `gorm:"column:Login"`
-	ReportId int    `gorm:"column:ReportId"`
+	ID         int    `gorm:"column:Id"`
+	Login      string `gorm:"column:Login"`
+	ReportId   int    `gorm:"column:ReportId"`
+	CategoryId int    `gorm:"column:CategoryId"`
 }
 
 func (FavoriteReport) TableName() string {
 	return "\"sys-reporting\".\"FavoriteReports\""
 }
 
+type TrackVisitDTO struct {
+	ReportId   int `json:"reportId" binding:"required"`
+	CategoryId int `json:"categoryId" binding:"required"`
+}
+
 type VisitHistory struct {
-	Dt        time.Time `gorm:"column:Dt;<-:false"`
-	ReportId  int       `gorm:"column:ReportId"`
-	Login     string    `gorm:"column:Login"`
-	IpAddress string    `gorm:"column:IpAddress"`
+	Dt         time.Time `gorm:"column:Dt;<-:false"`
+	ReportId   int       `gorm:"column:ReportId"`
+	CategoryId int       `gorm:"column:CategoryId"`
+	Login      string    `gorm:"column:Login"`
+	IpAddress  string    `gorm:"column:IpAddress"`
 }
 
 func (VisitHistory) TableName() string {
@@ -56,8 +77,9 @@ func (VisitHistory) TableName() string {
 }
 
 type VisitedReport struct {
-	Name  string `json:"name"`
-	Alias string `json:"alias"`
+	Name          string `json:"name"`
+	Alias         string `json:"alias"`
+	CategoryAlias string `json:"category_alias"`
 }
 
 type UpdateReport struct {
