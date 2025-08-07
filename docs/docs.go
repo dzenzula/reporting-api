@@ -259,9 +259,12 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/FavoriteReports/AddReport/{reportId}": {
+        "/api/FavoriteReports/AddReport": {
             "post": {
-                "description": "Add a report to favorites by report ID",
+                "description": "Add a report to favorites by report ID and category ID",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -271,23 +274,37 @@ const docTemplate = `{
                 "summary": "Add a report to favorites",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "Report ID",
-                        "name": "reportId",
-                        "in": "path",
-                        "required": true
+                        "description": "Favorite report request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.FavoriteReportDTO"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
                     }
                 }
             }
         },
-        "/api/FavoriteReports/DeleteReport/{reportId}": {
+        "/api/FavoriteReports/DeleteReport": {
             "delete": {
-                "description": "Remove a report from favorites by report ID",
+                "description": "Remove a report from favorites by report ID and category ID",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -297,16 +314,27 @@ const docTemplate = `{
                 "summary": "Remove a report from favorites",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "Report ID",
-                        "name": "reportId",
-                        "in": "path",
-                        "required": true
+                        "description": "Favorite report request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.FavoriteReportDTO"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
                     }
                 }
             }
@@ -537,6 +565,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/TrackVisit": {
+            "post": {
+                "description": "Track visited reports",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "VisitHistory"
+                ],
+                "summary": "Add visited report",
+                "parameters": [
+                    {
+                        "description": "Report and Category IDs",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.TrackVisitDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/TrackVisit/GetLastVisited": {
             "get": {
                 "description": "Get last visited reports",
@@ -565,32 +633,6 @@ const docTemplate = `{
                                 "$ref": "#/definitions/models.VisitedReport"
                             }
                         }
-                    }
-                }
-            }
-        },
-        "/api/TrackVisit/{reportId}": {
-            "post": {
-                "description": "Track visited reports",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "VisitHistory"
-                ],
-                "summary": "Add visited report",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Report ID",
-                        "name": "reportId",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
                     }
                 }
             }
@@ -663,6 +705,9 @@ const docTemplate = `{
         "models.FavoriteReport": {
             "type": "object",
             "properties": {
+                "categoryId": {
+                    "type": "integer"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -674,9 +719,27 @@ const docTemplate = `{
                 }
             }
         },
+        "models.FavoriteReportDTO": {
+            "type": "object",
+            "required": [
+                "categoryId",
+                "reportId"
+            ],
+            "properties": {
+                "categoryId": {
+                    "type": "integer"
+                },
+                "reportId": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.GetCategory": {
             "type": "object",
             "properties": {
+                "alias": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },
@@ -700,6 +763,9 @@ const docTemplate = `{
         "models.InsertCategory": {
             "type": "object",
             "properties": {
+                "alias": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },
@@ -757,6 +823,21 @@ const docTemplate = `{
                 },
                 "visible": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.TrackVisitDTO": {
+            "type": "object",
+            "required": [
+                "categoryId",
+                "reportId"
+            ],
+            "properties": {
+                "categoryId": {
+                    "type": "integer"
+                },
+                "reportId": {
+                    "type": "integer"
                 }
             }
         },
@@ -834,10 +915,13 @@ const docTemplate = `{
         "models.VisitedReport": {
             "type": "object",
             "properties": {
-                "name": {
+                "alias": {
                     "type": "string"
                 },
-                "url": {
+                "category_alias": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 }
             }

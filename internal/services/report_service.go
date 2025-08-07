@@ -5,24 +5,24 @@ import (
 	"cmd/reporting-api/internal/models"
 )
 
-func GetAllFavoriteReports() ([]models.Report, error) {
+func GetAllFavoriteReports() ([]models.FavoriteReportItem, error) {
 	return database.FetchAllFavoriteReports()
 }
 
-func AddFavoriteReport(id int) error {
-	return database.AddFavoriteReport(id)
+func AddFavoriteReport(dto models.FavoriteReportDTO) error {
+	return database.AddFavoriteReport(dto)
 }
 
 func GetLastVisitedReport(quantity int) ([]models.VisitedReport, error) {
 	return database.GetLastVisitedReport(quantity)
 }
 
-func AddVisitedReport(id int, ip string) error {
-	return database.AddVisitedReport(id, ip)
+func AddVisitedReport(dto models.TrackVisitDTO, ip string) error {
+	return database.AddVisitedReport(dto, ip)
 }
 
-func RemoveFavoriteReportById(id int) error {
-	return database.RemoveFavoriteReportById(id)
+func RemoveFavoriteReport(dto models.FavoriteReportDTO) error {
+	return database.RemoveFavoriteReport(dto)
 }
 
 func GetAllReports() ([]models.Report, error) {

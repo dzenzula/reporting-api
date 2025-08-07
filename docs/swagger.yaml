@@ -43,6 +43,8 @@ definitions:
     type: object
   models.FavoriteReport:
     properties:
+      categoryId:
+        type: integer
       id:
         type: integer
       login:
@@ -50,8 +52,20 @@ definitions:
       reportId:
         type: integer
     type: object
+  models.FavoriteReportDTO:
+    properties:
+      categoryId:
+        type: integer
+      reportId:
+        type: integer
+    required:
+    - categoryId
+    - reportId
+    type: object
   models.GetCategory:
     properties:
+      alias:
+        type: string
       description:
         type: string
       id:
@@ -67,6 +81,8 @@ definitions:
     type: object
   models.InsertCategory:
     properties:
+      alias:
+        type: string
       description:
         type: string
       parentId:
@@ -105,6 +121,16 @@ definitions:
         type: string
       visible:
         type: boolean
+    type: object
+  models.TrackVisitDTO:
+    properties:
+      categoryId:
+        type: integer
+      reportId:
+        type: integer
+    required:
+    - categoryId
+    - reportId
     type: object
   models.UpdateCategory:
     properties:
@@ -154,9 +180,11 @@ definitions:
     type: object
   models.VisitedReport:
     properties:
-      name:
+      alias:
         type: string
-      url:
+      category_alias:
+        type: string
+      name:
         type: string
     type: object
 info:
@@ -322,37 +350,55 @@ paths:
       summary: Update Parent Category
       tags:
       - Categories
-  /api/FavoriteReports/AddReport/{reportId}:
+  /api/FavoriteReports/AddReport:
     post:
-      description: Add a report to favorites by report ID
+      consumes:
+      - application/json
+      description: Add a report to favorites by report ID and category ID
       parameters:
-      - description: Report ID
-        in: path
-        name: reportId
+      - description: Favorite report request
+        in: body
+        name: request
         required: true
-        type: integer
+        schema:
+          $ref: '#/definitions/models.FavoriteReportDTO'
       produces:
       - application/json
       responses:
         "200":
           description: OK
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
       summary: Add a report to favorites
       tags:
       - FavoriteReports
-  /api/FavoriteReports/DeleteReport/{reportId}:
+  /api/FavoriteReports/DeleteReport:
     delete:
-      description: Remove a report from favorites by report ID
+      consumes:
+      - application/json
+      description: Remove a report from favorites by report ID and category ID
       parameters:
-      - description: Report ID
-        in: path
-        name: reportId
+      - description: Favorite report request
+        in: body
+        name: request
         required: true
-        type: integer
+        schema:
+          $ref: '#/definitions/models.FavoriteReportDTO'
       produces:
       - application/json
       responses:
         "200":
           description: OK
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
       summary: Remove a report from favorites
       tags:
       - FavoriteReports
@@ -504,20 +550,29 @@ paths:
       summary: Update category reports
       tags:
       - Reports
-  /api/TrackVisit/{reportId}:
+  /api/TrackVisit:
     post:
+      consumes:
+      - application/json
       description: Track visited reports
       parameters:
-      - description: Report ID
-        in: path
-        name: reportId
+      - description: Report and Category IDs
+        in: body
+        name: input
         required: true
-        type: integer
+        schema:
+          $ref: '#/definitions/models.TrackVisitDTO'
       produces:
       - application/json
       responses:
         "200":
           description: OK
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
       summary: Add visited report
       tags:
       - VisitHistory
