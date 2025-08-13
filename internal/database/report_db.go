@@ -4,6 +4,7 @@ import (
 	"cmd/reporting-api/internal/config"
 	"cmd/reporting-api/internal/models"
 	"fmt"
+	"regexp"
 	"slices"
 	"strings"
 	"time"
@@ -304,16 +305,73 @@ func FetchAllReports() ([]models.Report, error) {
 }
 
 func UpdateReport(uRep models.UpdateReport) error {
-	var report models.Report
-	err := DB.Where("\"Id\" = ?", uRep.Id).Select("*").Find(&report).Error
-	if err != nil {
+	if strings.TrimSpace(uRep.Text) == "" {
+		return fmt.Errorf("Name cannot be empty")
+	}
+
+	privateAliasTrimmed := strings.TrimSpace(uRep.PrivateAlias)
+	expiresAtTrimmed := strings.TrimSpace(uRep.PrivateAliasExpiresAt)
+
+	var parsedExpiresAt *time.Time
+	if expiresAtTrimmed != "" {
+		parsedDate, err := time.Parse("2006-01-02", expiresAtTrimmed)
+		if err != nil {
+			return fmt.Errorf("Invalid date format, use YYYY-MM-DD")
+		}
+
+		tomorrow := time.Now().AddDate(0, 0, 1).Truncate(24 * time.Hour)
+		if parsedDate.Before(tomorrow) {
+			return fmt.Errorf("Expiration date must be from tomorrow or later")
+		}
+
+		parsedExpiresAt = &parsedDate
+	}
+
+	if expiresAtTrimmed != "" && privateAliasTrimmed == "" {
+		return fmt.Errorf("Private alias is required if expiration date is specified")
+	}
+
+	var currentReport models.Report
+	if err := DB.Where("\"Id\" = ?", uRep.Id).First(&currentReport).Error; err != nil {
 		msg := fmt.Sprintf("report with this id %d does not exist", uRep.Id)
 		log.Error(msg)
 		return fmt.Errorf(msg)
 	}
 
-	report.Owner = strings.ToLower(strings.TrimSpace(report.Owner))
-	report.OperationName = strings.ToLower(strings.TrimSpace(report.OperationName))
+	if privateAliasTrimmed != "" {
+		if expiresAtTrimmed == "" {
+			return fmt.Errorf("Set expiration date for Private Alias")
+		}
+		if len(privateAliasTrimmed) != 8 {
+			return fmt.Errorf("Private Alias must be 8 characters")
+		}
+
+		if privateAliasTrimmed == currentReport.Alias {
+			return fmt.Errorf("Private Alias cannot be the same as Alias of the report")
+		}
+
+		var validAlias = regexp.MustCompile(`^[a-zA-Z0-9]+$`)
+		if !validAlias.MatchString(privateAliasTrimmed) {
+			return fmt.Errorf("Private Alias must contain only letters and digits")
+		}
+
+		var duplicateCategory models.Category
+		if err := DB.Where("\"Alias\" = ? OR \"PrivateAlias\" = ?", privateAliasTrimmed, privateAliasTrimmed).
+			First(&duplicateCategory).Error; err == nil {
+			msg := fmt.Sprintf("Private Alias already used as alias or private alias. Category name: %s", duplicateCategory.Text)
+			log.Error(msg)
+			return fmt.Errorf(msg)
+		}
+
+		var duplicateReport models.Report
+		if err := DB.Where("(\"Alias\" = ? OR \"PrivateAlias\" = ?) AND \"Id\" != ?",
+			privateAliasTrimmed, privateAliasTrimmed, uRep.Id).
+			First(&duplicateReport).Error; err == nil {
+			msg := fmt.Sprintf("Private Alias already used as alias or private alias. Report name: %s", duplicateReport.Text)
+			log.Error(msg)
+			return fmt.Errorf(msg)
+		}
+	}
 
 	var duplicateByText models.Report
 	if err := DB.
@@ -333,21 +391,20 @@ func UpdateReport(uRep models.UpdateReport) error {
 		return fmt.Errorf(msg)
 	}
 
-	report.Text = uRep.Text
-	report.URL = uRep.URL
-	report.OperationName = uRep.OperationName
-	report.UpdatedAt = time.Now()
-	report.UpdatedBy = auth.ReturnDomainUser()
+	updateData := map[string]interface{}{
+		"Text":                  uRep.Text,
+		"Description":           uRep.Description,
+		"Owner":                 strings.ToLower(strings.TrimSpace(uRep.Owner)),
+		"Visible":               uRep.Visible,
+		"URL":                   uRep.URL,
+		"OperationName":         strings.ToLower(strings.TrimSpace(uRep.OperationName)),
+		"PrivateAlias":          privateAliasTrimmed,
+		"PrivateAliasExpiresAt": parsedExpiresAt,
+		"UpdatedAt":             time.Now(),
+		"UpdatedBy":             auth.ReturnDomainUser(),
+	}
 
-	if err := DB.Model(&report).
-		Where("\"Id\" = ?", report.Id).
-		Updates(map[string]interface{}{
-			"Text":          report.Text,
-			"URL":           report.URL,
-			"OperationName": report.OperationName,
-			"UpdatedAt":     report.UpdatedAt,
-			"UpdatedBy":     report.UpdatedBy,
-		}).Error; err != nil {
+	if err := DB.Model(&models.Report{}).Where("\"Id\" = ?", uRep.Id).Updates(updateData).Error; err != nil {
 		log.Error(fmt.Sprintf("failed to update report: %v", err))
 		return err
 	}
@@ -468,6 +525,77 @@ func CreateReport(report models.CreateReport) (*int, error) {
 		return nil, fmt.Errorf(msg)
 	}
 
+	if strings.TrimSpace(report.Text) == "" {
+		return nil, fmt.Errorf("Name cannot be empty")
+	}
+
+	if strings.TrimSpace(report.Alias) == "" {
+		return nil, fmt.Errorf("Alias cannot be empty")
+	}
+
+	var unknownCat models.Category
+	if err := DB.Where("\"Id\" = ?", report.ParentId).First(&unknownCat).Error; err != nil {
+		msg := fmt.Sprintf("category with this id %d does not exist", report.ParentId)
+		log.Error(msg)
+		return nil, fmt.Errorf(msg)
+	}
+
+	privateAliasTrimmed := strings.TrimSpace(report.PrivateAlias)
+	expiresAtTrimmed := strings.TrimSpace(report.PrivateAliasExpiresAt)
+
+	var parsedExpiresAt *time.Time
+	if expiresAtTrimmed != "" {
+		parsedDate, err := time.Parse("2006-01-02", expiresAtTrimmed)
+		if err != nil {
+			return nil, fmt.Errorf("Invalid date format, use YYYY-MM-DD")
+		}
+
+		tomorrow := time.Now().AddDate(0, 0, 1).Truncate(24 * time.Hour)
+		if parsedDate.Before(tomorrow) {
+			return nil, fmt.Errorf("Expiration date must be from tomorrow or later")
+		}
+
+		parsedExpiresAt = &parsedDate
+	}
+
+	if expiresAtTrimmed != "" && privateAliasTrimmed == "" {
+		return nil, fmt.Errorf("Private alias is required if expiration date is specified")
+	}
+
+	if privateAliasTrimmed != "" {
+		if expiresAtTrimmed == "" {
+			return nil, fmt.Errorf("Set expiration date for Private Alias")
+		}
+		if len(privateAliasTrimmed) != 8 {
+			return nil, fmt.Errorf("Private Alias must be 8 characters")
+		}
+
+		if privateAliasTrimmed == report.Alias {
+			return nil, fmt.Errorf("Private Alias cannot be the same as Alias of the new report")
+		}
+
+		var validAlias = regexp.MustCompile(`^[a-zA-Z0-9]+$`)
+		if !validAlias.MatchString(privateAliasTrimmed) {
+			return nil, fmt.Errorf("Private Alias must contain only letters and digits")
+		}
+
+		var duplicateCategory models.Category
+		if err := DB.Where("\"Alias\" = ? OR \"PrivateAlias\" = ?", privateAliasTrimmed, privateAliasTrimmed).
+			First(&duplicateCategory).Error; err == nil {
+			msg := fmt.Sprintf("Private Alias already used as alias or private alias. Category name: %s", duplicateCategory.Text)
+			log.Error(msg)
+			return nil, fmt.Errorf(msg)
+		}
+
+		var duplicateReport models.Report
+		if err := DB.Where("\"Alias\" = ? OR \"PrivateAlias\" = ?", privateAliasTrimmed, privateAliasTrimmed).
+			First(&duplicateReport).Error; err == nil {
+			msg := fmt.Sprintf("Private Alias already used as alias or private alias. Report name: %s", duplicateReport.Text)
+			log.Error(msg)
+			return nil, fmt.Errorf(msg)
+		}
+	}
+
 	var duplicateByText models.Report
 	if err := DB.Where("\"Text\" = ?", report.Text).First(&duplicateByText).Error; err == nil {
 		msg := fmt.Sprintf("report with this name already exists. Report name: %s", duplicateByText.Text)
@@ -482,6 +610,20 @@ func CreateReport(report models.CreateReport) (*int, error) {
 		return nil, fmt.Errorf(msg)
 	}
 
+	var duplicateByPrivateAlias models.Report
+	if err := DB.Where("\"PrivateAlias\" = ?", report.Alias).First(&duplicateByPrivateAlias).Error; err == nil {
+		msg := fmt.Sprintf("Alias already used as Private Alias in reports. Report name: %s", duplicateByPrivateAlias.Text)
+		log.Error(msg)
+		return nil, fmt.Errorf(msg)
+	}
+
+	var duplicateByPrivateAliasInCategories models.Category
+	if err := DB.Where("\"PrivateAlias\" = ?", report.Alias).First(&duplicateByPrivateAliasInCategories).Error; err == nil {
+		msg := fmt.Sprintf("Alias already used as Private Alias in categories. Category name: %s", duplicateByPrivateAliasInCategories.Text)
+		log.Error(msg)
+		return nil, fmt.Errorf(msg)
+	}
+
 	var duplicateByURL models.Report
 	if err := DB.Where("\"URL\" = ?", report.URL).First(&duplicateByURL).Error; err == nil {
 		msg := fmt.Sprintf("report with this URL already exists. Report name: %s", duplicateByURL.Text)
@@ -489,24 +631,19 @@ func CreateReport(report models.CreateReport) (*int, error) {
 		return nil, fmt.Errorf(msg)
 	}
 
-	var unknownCat models.Category
-	if err := DB.Where("\"Id\" = ?", report.ParentId).First(&unknownCat).Error; err != nil {
-		msg := fmt.Sprintf("category with this id %d does not exist", report.ParentId)
-		log.Error(msg)
-		return nil, fmt.Errorf(msg)
-	}
-
 	newReport := models.Report{
-		Text:          report.Text,
-		URL:           report.URL,
-		Visible:       report.Visible,
-		Alias:         report.Alias,
-		Description:   report.Description,
-		OperationName: report.OperationName,
-		Owner:         report.Owner,
-		CreatedBy:     auth.ReturnDomainUser(),
-		CreatedAt:     time.Now(),
-		UpdatedBy:     auth.ReturnDomainUser(),
+		Text:                  report.Text,
+		URL:                   report.URL,
+		Visible:               report.Visible,
+		Alias:                 report.Alias,
+		Description:           report.Description,
+		OperationName:         report.OperationName,
+		Owner:                 report.Owner,
+		CreatedBy:             auth.ReturnDomainUser(),
+		CreatedAt:             time.Now(),
+		UpdatedBy:             auth.ReturnDomainUser(),
+		PrivateAlias:          report.PrivateAlias,
+		PrivateAliasExpiresAt: parsedExpiresAt,
 	}
 
 	if err := DB.Create(&newReport).Error; err != nil {
