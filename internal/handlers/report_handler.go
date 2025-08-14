@@ -152,6 +152,27 @@ func AddVisitHandler(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
+// @Summary Get Reports for Admin
+// @Description Получение списка отчетов для администратора
+// @Tags Reports
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} models.Report
+// @Router /api/Reports/GetReportsForAdmin [get]
+func GetReportsForAdminHandler(c *gin.Context) {
+	permissions := []string{config.GlobalConfig.Permissions.AdminAccess}
+	if !checkPermissions(c, permissions) {
+		return
+	}
+
+	categories, err := services.GetReportsForAdmin()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, categories)
+}
+
 // GetReportsHandler godoc
 // @Summary Get all reports
 // @Description Get a list of all reports

@@ -490,6 +490,32 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/Reports/GetReportsForAdmin": {
+            "get": {
+                "description": "Получение списка отчетов для администратора",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Get Reports for Admin",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Report"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/Reports/UpdateCategoryReports": {
             "put": {
                 "description": "Update the category of a report",
@@ -636,6 +662,120 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/data": {
+            "get": {
+                "description": "Returns all visible categories and reports (empty path or two aliases)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "data"
+                ],
+                "summary": "Get all visible categories and reports",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.PathDataResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/data/{alias}": {
+            "get": {
+                "description": "Returns categories and reports for a single alias (public or private)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "data"
+                ],
+                "summary": "Get category or report by single alias",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Alias (category or private alias)",
+                        "name": "alias",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.PathDataResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/data/{alias}/{subalias}": {
+            "get": {
+                "description": "Returns all visible categories and reports (empty path or two aliases)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "data"
+                ],
+                "summary": "Get all visible categories and reports",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.PathDataResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -682,6 +822,12 @@ const docTemplate = `{
                 },
                 "parentId": {
                     "type": "integer"
+                },
+                "privateAlias": {
+                    "type": "string"
+                },
+                "privateAliasExpiresAt": {
+                    "type": "string"
                 },
                 "text": {
                     "type": "string"
@@ -749,6 +895,12 @@ const docTemplate = `{
                 "parentId": {
                     "type": "integer"
                 },
+                "privateAlias": {
+                    "type": "string"
+                },
+                "privateAliasExpiresAt": {
+                    "type": "string"
+                },
                 "text": {
                     "type": "string"
                 },
@@ -772,6 +924,12 @@ const docTemplate = `{
                 "parentId": {
                     "type": "integer"
                 },
+                "privateAlias": {
+                    "type": "string"
+                },
+                "privateAliasExpiresAt": {
+                    "type": "string"
+                },
                 "text": {
                     "type": "string"
                 },
@@ -788,6 +946,26 @@ const docTemplate = `{
                 },
                 "permission": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.PathDataResponse": {
+            "type": "object",
+            "properties": {
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.GetCategory"
+                    }
+                },
+                "isPrivate": {
+                    "type": "boolean"
+                },
+                "reports": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Report"
+                    }
                 }
             }
         },
@@ -814,6 +992,12 @@ const docTemplate = `{
                 },
                 "parentId": {
                     "type": "integer"
+                },
+                "privateAlias": {
+                    "type": "string"
+                },
+                "privateAliasExpiresAt": {
+                    "type": "string"
                 },
                 "text": {
                     "type": "string"
@@ -850,6 +1034,12 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "privateAlias": {
+                    "type": "string"
+                },
+                "privateAliasExpiresAt": {
+                    "type": "string"
+                },
                 "text": {
                     "type": "string"
                 },
@@ -885,6 +1075,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "owner": {
+                    "type": "string"
+                },
+                "privateAlias": {
+                    "type": "string"
+                },
+                "privateAliasExpiresAt": {
                     "type": "string"
                 },
                 "text": {

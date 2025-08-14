@@ -29,6 +29,10 @@ definitions:
         type: string
       parentId:
         type: integer
+      privateAlias:
+        type: string
+      privateAliasExpiresAt:
+        type: string
       text:
         type: string
       url:
@@ -72,6 +76,10 @@ definitions:
         type: integer
       parentId:
         type: integer
+      privateAlias:
+        type: string
+      privateAliasExpiresAt:
+        type: string
       text:
         type: string
       type:
@@ -87,6 +95,10 @@ definitions:
         type: string
       parentId:
         type: integer
+      privateAlias:
+        type: string
+      privateAliasExpiresAt:
+        type: string
       text:
         type: string
       visible:
@@ -98,6 +110,19 @@ definitions:
         type: string
       permission:
         type: integer
+    type: object
+  models.PathDataResponse:
+    properties:
+      categories:
+        items:
+          $ref: '#/definitions/models.GetCategory'
+        type: array
+      isPrivate:
+        type: boolean
+      reports:
+        items:
+          $ref: '#/definitions/models.Report'
+        type: array
     type: object
   models.Report:
     properties:
@@ -115,6 +140,10 @@ definitions:
         type: string
       parentId:
         type: integer
+      privateAlias:
+        type: string
+      privateAliasExpiresAt:
+        type: string
       text:
         type: string
       type:
@@ -138,6 +167,10 @@ definitions:
         type: string
       id:
         type: integer
+      privateAlias:
+        type: string
+      privateAliasExpiresAt:
+        type: string
       text:
         type: string
       visible:
@@ -161,6 +194,10 @@ definitions:
       operation_name:
         type: string
       owner:
+        type: string
+      privateAlias:
+        type: string
+      privateAliasExpiresAt:
         type: string
       text:
         type: string
@@ -528,6 +565,23 @@ paths:
       summary: Add report relation
       tags:
       - Reports
+  /api/Reports/GetReportsForAdmin:
+    get:
+      consumes:
+      - application/json
+      description: Получение списка отчетов для администратора
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Report'
+            type: array
+      summary: Get Reports for Admin
+      tags:
+      - Reports
   /api/Reports/UpdateCategoryReports:
     put:
       consumes:
@@ -597,4 +651,79 @@ paths:
       summary: Get last visited reports
       tags:
       - VisitedReports
+  /api/data:
+    get:
+      consumes:
+      - application/json
+      description: Returns all visible categories and reports (empty path or two aliases)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.PathDataResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all visible categories and reports
+      tags:
+      - data
+  /api/data/{alias}:
+    get:
+      consumes:
+      - application/json
+      description: Returns categories and reports for a single alias (public or private)
+      parameters:
+      - description: Alias (category or private alias)
+        in: path
+        name: alias
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.PathDataResponse'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get category or report by single alias
+      tags:
+      - data
+  /api/data/{alias}/{subalias}:
+    get:
+      consumes:
+      - application/json
+      description: Returns all visible categories and reports (empty path or two aliases)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.PathDataResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all visible categories and reports
+      tags:
+      - data
 swagger: "2.0"

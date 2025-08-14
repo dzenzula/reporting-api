@@ -264,6 +264,32 @@ func AddVisitedReport(dto models.TrackVisitDTO, ip string) error {
 	return nil
 }
 
+func FetchAllReportsForAdmin() ([]models.Report, error) {
+	var reportsWithParent []models.ReportWithParent
+	err := DB.Table("\"sys-reporting\".\"Reports\" AS r").
+		Joins("LEFT JOIN \"sys-reporting\".\"CategoryReports\" cr ON r.\"Id\" = cr.\"ReportsId\"").
+		Joins("LEFT JOIN \"sys-reporting\".\"Categories\" c ON cr.\"CategoriesId\" = c.\"Id\"").
+		Select("r.*, c.\"Id\" AS \"ParentId\"").
+		Find(&reportsWithParent).Error
+
+	if err != nil {
+		msg := fmt.Sprintf("failed to query reports: %v", err)
+		log.Error(msg)
+		return nil, fmt.Errorf(msg)
+	}
+
+	var reports []models.Report
+	for _, rwp := range reportsWithParent {
+		r := rwp.Report
+		r.ParentID = rwp.ParentID
+		r.Type = "file"
+		r.Data.URL = r.URL
+		reports = append(reports, r)
+	}
+
+	return reports, nil
+}
+
 func FetchAllReports() ([]models.Report, error) {
 	permissions := auth.GetPermissions()
 	isAdmin := slices.Contains(permissions, config.GlobalConfig.Permissions.AdminAccess)

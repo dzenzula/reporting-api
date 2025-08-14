@@ -25,6 +25,10 @@ func RemoveFavoriteReport(dto models.FavoriteReportDTO) error {
 	return database.RemoveFavoriteReport(dto)
 }
 
+func GetReportsForAdmin() ([]models.Report, error) {
+	return database.FetchAllReportsForAdmin()
+}
+
 func GetAllReports() ([]models.Report, error) {
 	return database.FetchAllReports()
 }
