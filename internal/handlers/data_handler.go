@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetAllVisibleFlatHandler godoc
+// GetVisibleDataFlatHandler godoc
 // @Summary Get all visible categories and reports
 // @Description Returns all visible categories and reports (empty path or two aliases)
 // @Tags data
@@ -17,8 +17,8 @@ import (
 // @Failure 500 {object} map[string]string
 // @Router /api/data [get]
 // @Router /api/data/{alias}/{subalias} [get]
-func GetAllVisibleFlatHandler(c *gin.Context) {
-	response, err := services.GetAllVisibleFlat()
+func GetVisibleDataFlatHandler(c *gin.Context) {
+	response, err := services.GetVisibleDataFlat()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

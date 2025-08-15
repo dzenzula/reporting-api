@@ -4,6 +4,8 @@ import (
 	"cmd/reporting-api/internal/models"
 	"fmt"
 	"time"
+
+	log "krr-app-gitlab01.europe.mittalco.com/pait/modules/go/logging"
 )
 
 func HandleSingleAlias(alias string) (*models.PathDataResponse, error) {
@@ -11,7 +13,7 @@ func HandleSingleAlias(alias string) (*models.PathDataResponse, error) {
 
 	var cat models.Category
 	if err := DB.Where("\"Alias\" = ? AND \"Visible\" = true", alias).First(&cat).Error; err == nil {
-		return GetAllVisibleFlat()
+		return FetchVisibleDataFlat()
 	}
 
 	if err := DB.Where("\"PrivateAlias\" = ? AND \"PrivateAliasExpiresAt\" > ? AND \"Visible\" = true",
@@ -43,7 +45,7 @@ func HandleSingleAlias(alias string) (*models.PathDataResponse, error) {
 		}, nil
 	}
 
-	return GetAllVisibleFlat()
+	return FetchVisibleDataFlat()
 }
 
 func getCategorySubtree(rootID int) (*models.PathDataResponse, error) {
@@ -113,10 +115,18 @@ func getCategorySubtree(rootID int) (*models.PathDataResponse, error) {
 	}, nil
 }
 
-func GetAllVisibleFlat() (*models.PathDataResponse, error) {
+func FetchVisibleDataFlat() (*models.PathDataResponse, error) {
 	var categories []models.GetCategory
-	if err := DB.Where("\"Visible\" = true").Find(&categories).Error; err != nil {
-		return nil, fmt.Errorf("error loading categories: %v", err)
+
+	err := DB.Table("\"sys-reporting\".\"Categories\" AS c").
+		Select("DISTINCT c.*").
+		Joins("JOIN \"sys-reporting\".\"CategoryReports\" cr ON cr.\"CategoriesId\" = c.\"Id\"").
+		Joins("JOIN \"sys-reporting\".\"Reports\" r ON cr.\"ReportsId\" = r.\"Id\" AND r.\"OperationName\" = ?", "public").
+		Where("c.\"Visible\" = ?", true).
+		Find(&categories).Error
+	if err != nil {
+		log.Error(fmt.Sprintf("failed to query categories: %v", err))
+		return nil, err
 	}
 
 	for i := range categories {

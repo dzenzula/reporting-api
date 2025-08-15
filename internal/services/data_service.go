@@ -6,8 +6,8 @@ import (
 	"fmt"
 )
 
-func GetAllVisibleFlat() (*models.PathDataResponse, error) {
-	response, err := database.GetAllVisibleFlat()
+func GetVisibleDataFlat() (*models.PathDataResponse, error) {
+	response, err := database.FetchVisibleDataFlat()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get all visible data: %v", err)
 	}
