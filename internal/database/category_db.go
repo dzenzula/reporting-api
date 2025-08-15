@@ -201,7 +201,8 @@ func UpdateCategory(updatedCategory models.UpdateCategory) error {
 		}
 
 		var duplicateCategory models.Category
-		if err := DB.Where("\"Alias\" = ? OR \"PrivateAlias\" = ?", privateAliasTrimmed, privateAliasTrimmed).
+		if err := DB.Where("(\"Alias\" = ? OR \"PrivateAlias\" = ?) AND \"Id\" != ?",
+			privateAliasTrimmed, privateAliasTrimmed, updatedCategory.Id).
 			First(&duplicateCategory).Error; err == nil {
 			msg := fmt.Sprintf("Private Alias already exists in categories. Category name: %s", duplicateCategory.Text)
 			log.Error(msg)
