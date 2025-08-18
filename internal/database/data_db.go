@@ -118,39 +118,59 @@ func getCategorySubtree(rootID int) (*models.PathDataResponse, error) {
 func FetchVisibleDataFlat() (*models.PathDataResponse, error) {
 	var categories []models.GetCategory
 
-	err := DB.Table("\"sys-reporting\".\"Categories\" AS c").
-		Select("DISTINCT c.*").
-		Joins("JOIN \"sys-reporting\".\"CategoryReports\" cr ON cr.\"CategoriesId\" = c.\"Id\"").
-		Joins("JOIN \"sys-reporting\".\"Reports\" r ON cr.\"ReportsId\" = r.\"Id\" AND r.\"OperationName\" = ?", "public").
-		Where("c.\"Visible\" = ?", true).
-		Find(&categories).Error
+	err := DB.Raw(`
+	    WITH RECURSIVE cat_tree AS (
+	        SELECT c.*
+	        FROM "sys-reporting"."Categories" c
+	        JOIN "sys-reporting"."CategoryReports" cr ON cr."CategoriesId" = c."Id"
+	        JOIN "sys-reporting"."Reports" r ON cr."ReportsId" = r."Id"
+	        WHERE r."OperationName" = 'public' AND r."Visible" = true AND c."Visible" = true
+	
+	        UNION
+	
+	        SELECT parent.*
+	        FROM "sys-reporting"."Categories" parent
+	        JOIN cat_tree ct ON ct."ParentId" = parent."Id"
+	        WHERE parent."Visible" = true
+	    )
+	    SELECT DISTINCT *
+	    FROM cat_tree
+	`).Scan(&categories).Error
+
 	if err != nil {
 		log.Error(fmt.Sprintf("failed to query categories: %v", err))
 		return nil, err
 	}
 
+	var categoryIds = make([]int, 0, len(categories))
 	for i := range categories {
 		categories[i].Type = "folder"
-	}
-
-	var reportsWithParent []models.ReportWithParent
-	if err := DB.Table("\"sys-reporting\".\"Reports\" AS r").
-		Joins("LEFT JOIN \"sys-reporting\".\"CategoryReports\" cr ON r.\"Id\" = cr.\"ReportsId\"").
-		Joins("LEFT JOIN \"sys-reporting\".\"Categories\" c ON cr.\"CategoriesId\" = c.\"Id\"").
-		Where("r.\"Visible\" = true").
-		Select("r.*", "c.\"Id\" AS \"ParentId\"").
-		Find(&reportsWithParent).Error; err != nil {
-		return nil, fmt.Errorf("error loading reports: %v", err)
+		if categories[i].Id != nil {
+			categoryIds = append(categoryIds, *categories[i].Id)
+		}
 	}
 
 	var reports []models.Report
-	for _, rwp := range reportsWithParent {
-		r := rwp.Report
-		r.ParentID = rwp.ParentID
-		r.Type = "file"
-		r.Data.URL = r.URL
-		reports = append(reports, r)
+	if len(categoryIds) > 0 {
+		var reportsWithParent []models.ReportWithParent
+		if err := DB.Table("\"sys-reporting\".\"Reports\" AS r").
+			Joins("JOIN \"sys-reporting\".\"CategoryReports\" cr ON r.\"Id\" = cr.\"ReportsId\"").
+			Where("r.\"Visible\" = true AND cr.\"CategoriesId\" IN ?", categoryIds).
+			Select("r.*", "cr.\"CategoriesId\" AS \"ParentId\"").
+			Find(&reportsWithParent).Error; err != nil {
+			return nil, fmt.Errorf("error loading reports: %v", err)
+		}
+
+		reports = make([]models.Report, len(reportsWithParent))
+		for i, rwp := range reportsWithParent {
+			r := rwp.Report
+			r.ParentID = rwp.ParentID
+			r.Type = "file"
+			r.Data.URL = r.URL
+			reports[i] = r
+		}
 	}
+
 	return &models.PathDataResponse{
 		Categories: categories,
 		Reports:    reports,
