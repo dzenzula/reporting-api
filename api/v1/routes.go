@@ -47,9 +47,9 @@ func NewRouter() *gin.Engine {
 
 	dataGroup := r.Group("/api/data")
 	{
-		dataGroup.GET("/", handlers.GetAllVisibleFlatHandler)
+		dataGroup.GET("/", handlers.GetVisibleDataFlatHandler)
 		dataGroup.GET("/:alias", handlers.SingleAliasHandler)
-		dataGroup.GET("/:alias/:subalias", handlers.GetAllVisibleFlatHandler)
+		dataGroup.GET("/:alias/:subalias", handlers.GetVisibleDataFlatHandler)
 	}
 
 	catGroup := r.Group("/api/Categories")
