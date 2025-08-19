@@ -3,17 +3,19 @@ package models
 import "time"
 
 type Category struct {
-	Id          *int      `gorm:"column:Id; primary_key; autoIncrement"`
-	ParentId    *int      `gorm:"column:ParentId"`
-	Text        string    `gorm:"column:Text"`
-	Alias       string    `gorm:"column:Alias"`
-	Visible     bool      `gorm:"column:Visible"`
-	CreatedBy   string    `gorm:"column:CreatedBy"`
-	CreatedAt   time.Time `gorm:"column:CreatedAt"`
-	UpdatedBy   string    `gorm:"column:UpdatedBy"`
-	UpdatedAt   time.Time `gorm:"column:UpdatedAt"`
-	Description string    `gorm:"column:Description"`
-	Reports     []Report  `gorm:"many2many:\"sys-reporting\".\"CategoryReports\";foreignKey:Id;joinForeignKey:CategoriesId;References:Id;joinReferences:ReportsId"`
+	Id                    *int       `gorm:"column:Id; primary_key; autoIncrement"`
+	ParentId              *int       `gorm:"column:ParentId"`
+	Text                  string     `gorm:"column:Text"`
+	Alias                 string     `gorm:"column:Alias"`
+	Visible               bool       `gorm:"column:Visible"`
+	CreatedBy             string     `gorm:"column:CreatedBy"`
+	CreatedAt             time.Time  `gorm:"column:CreatedAt"`
+	UpdatedBy             string     `gorm:"column:UpdatedBy"`
+	UpdatedAt             time.Time  `gorm:"column:UpdatedAt"`
+	Description           string     `gorm:"column:Description"`
+	Reports               []Report   `gorm:"many2many:\"sys-reporting\".\"CategoryReports\";foreignKey:Id;joinForeignKey:CategoriesId;References:Id;joinReferences:ReportsId"`
+	PrivateAlias          string     `json:"privateAlias" gorm:"column:PrivateAlias"`
+	PrivateAliasExpiresAt *time.Time `json:"privateAliasExpiresAt" gorm:"column:PrivateAliasExpiresAt"`
 }
 
 func (Category) TableName() string {
@@ -21,13 +23,15 @@ func (Category) TableName() string {
 }
 
 type GetCategory struct {
-	Id          *int   `json:"id" gorm:"column:Id"`
-	Text        string `json:"text" gorm:"size:150;not null;column:Text"`
-	Description string `json:"description" gorm:"size:150;column:Description"`
-	Alias       string `json:"alias" gorm:"column:Alias"`
-	Type        string `json:"type" gorm:"-"`
-	ParentId    *int   `json:"parentId" gorm:"column:ParentId"`
-	Visible     bool   `json:"visible" gorm:"column:Visible"`
+	Id                    *int       `json:"id" gorm:"column:Id"`
+	Text                  string     `json:"text" gorm:"size:150;not null;column:Text"`
+	Description           string     `json:"description" gorm:"size:150;column:Description"`
+	Alias                 string     `json:"alias" gorm:"column:Alias"`
+	Type                  string     `json:"type" gorm:"-"`
+	ParentId              *int       `json:"parentId" gorm:"column:ParentId"`
+	Visible               bool       `json:"visible" gorm:"column:Visible"`
+	PrivateAlias          string     `json:"privateAlias" gorm:"column:PrivateAlias"`
+	PrivateAliasExpiresAt *time.Time `json:"privateAliasExpiresAt" gorm:"column:PrivateAliasExpiresAt"`
 }
 
 func (GetCategory) TableName() string {
@@ -35,10 +39,12 @@ func (GetCategory) TableName() string {
 }
 
 type UpdateCategory struct {
-	Id          int    `json:"id" gorm:"column:Id"`
-	Text        string `json:"text" gorm:"column:Text"`
-	Description string `json:"description" gorm:"column:Description"`
-	Visible     bool   `json:"visible" gorm:"column:Visible"`
+	Id                    int    `json:"id" gorm:"column:Id"`
+	Text                  string `json:"text" gorm:"column:Text"`
+	Description           string `json:"description" gorm:"column:Description"`
+	Visible               bool   `json:"visible" gorm:"column:Visible"`
+	PrivateAlias          string `json:"privateAlias"`
+	PrivateAliasExpiresAt string `json:"privateAliasExpiresAt"`
 }
 
 func (UpdateCategory) TableName() string {
@@ -46,11 +52,13 @@ func (UpdateCategory) TableName() string {
 }
 
 type InsertCategory struct {
-	Text        string `json:"text" gorm:"column:Text"`
-	Description string `json:"description" gorm:"column:Description"`
-	Alias       string `gorm:"column:size:50;not null;Alias"`
-	ParentId    *int   `json:"parentId" gorm:"column:ParentId"`
-	Visible     bool   `json:"visible" gorm:"column:Visible"`
+	Text                  string `json:"text" gorm:"column:Text"`
+	Description           string `json:"description" gorm:"column:Description"`
+	Alias                 string `gorm:"column:size:50;not null;Alias"`
+	ParentId              *int   `json:"parentId" gorm:"column:ParentId"`
+	Visible               bool   `json:"visible" gorm:"column:Visible"`
+	PrivateAlias          string `json:"privateAlias"`
+	PrivateAliasExpiresAt string `json:"privateAliasExpiresAt"`
 }
 
 func (InsertCategory) TableName() string {

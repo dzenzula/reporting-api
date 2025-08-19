@@ -45,6 +45,13 @@ func NewRouter() *gin.Engine {
 		authGroup.POST("/LogOutAuthorization", auth.LogOutAuthorization)
 	}
 
+	dataGroup := r.Group("/api/data")
+	{
+		dataGroup.GET("/", handlers.GetVisibleDataFlatHandler)
+		dataGroup.GET("/:alias", handlers.SingleAliasHandler)
+		dataGroup.GET("/:alias/:subalias", handlers.GetVisibleDataFlatHandler)
+	}
+
 	catGroup := r.Group("/api/Categories")
 	catGroup.GET("", handlers.GetCategoriesHandler)
 	catGroup.Use(auth.AuthRequired)
@@ -75,6 +82,7 @@ func NewRouter() *gin.Engine {
 	repGroup.GET("", handlers.GetReportsHandler)
 	repGroup.Use(auth.AuthRequired)
 	{
+		repGroup.GET("/GetReportsForAdminHandler", handlers.GetReportsForAdminHandler)
 		repGroup.PUT("", handlers.UpdateReportHandler)
 		repGroup.POST("", handlers.CreateReportHandler)
 		repGroup.PUT("/UpdateCategoryReports", handlers.UpdateCategoryReportsHandler)
