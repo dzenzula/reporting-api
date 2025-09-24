@@ -417,6 +417,17 @@ func UpdateReport(uRep models.UpdateReport) error {
 		return fmt.Errorf(msg)
 	}
 
+	isMail, err := auth.CheckUserMail(uRep.Owner)
+	if !isMail {
+		if err != nil {
+			log.Error(err.Error())
+			return err
+		}
+		msg := "e-mail not found"
+		log.Error(msg)
+		return fmt.Errorf(msg)
+	}
+
 	updateData := map[string]interface{}{
 		"Text":                  uRep.Text,
 		"Description":           uRep.Description,
