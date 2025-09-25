@@ -13,7 +13,7 @@ type Report struct {
 	UpdatedAt             time.Time  `json:"-" gorm:"column:UpdatedAt"`
 	Alias                 string     `json:"alias" gorm:"column:Alias"`
 	Description           string     `json:"description" gorm:"column:Description"`
-	Owner                 string     `json:"owner" gorm:"column:Owner"`
+	Owner                 *string    `json:"owner" gorm:"column:Owner"`
 	OperationName         string     `json:"operation_name" gorm:"column:OperationName"`
 	Type                  string     `json:"type" gorm:"-"`
 	ParentID              *int       `json:"parentId" gorm:"-"`
@@ -85,15 +85,15 @@ type VisitedReport struct {
 }
 
 type UpdateReport struct {
-	Id                    int    `json:"id" gorm:"column:Id"`
-	Text                  string `json:"text" gorm:"column:Text"`
-	Description           string `json:"description" gorm:"column:Description"`
-	Owner                 string `json:"owner" gorm:"column:Owner"`
-	Visible               bool   `json:"visible" gorm:"column:Visible"`
-	URL                   string `json:"url" gorm:"column:URL"`
-	OperationName         string `json:"operation_name" gorm:"column:OperationName"`
-	PrivateAlias          string `json:"privateAlias"`
-	PrivateAliasExpiresAt string `json:"privateAliasExpiresAt"`
+	Id                    int     `json:"id" gorm:"column:Id"`
+	Text                  string  `json:"text" gorm:"column:Text"`
+	Description           string  `json:"description" gorm:"column:Description"`
+	Owner                 *string `json:"owner" gorm:"column:Owner"`
+	Visible               bool    `json:"visible" gorm:"column:Visible"`
+	URL                   string  `json:"url" gorm:"column:URL"`
+	OperationName         string  `json:"operation_name" gorm:"column:OperationName"`
+	PrivateAlias          string  `json:"privateAlias"`
+	PrivateAliasExpiresAt string  `json:"privateAliasExpiresAt"`
 }
 
 func (UpdateReport) TableName() string {
@@ -101,16 +101,16 @@ func (UpdateReport) TableName() string {
 }
 
 type CreateReport struct {
-	Text                  string `json:"text"`
-	Description           string `json:"description"`
-	Alias                 string `json:"alias"`
-	Owner                 string `json:"owner"`
-	ParentId              int    `json:"parentId"`
-	URL                   string `json:"url"`
-	Visible               bool   `json:"visible"`
-	OperationName         string `json:"operation_name"`
-	PrivateAlias          string `json:"privateAlias"`
-	PrivateAliasExpiresAt string `json:"privateAliasExpiresAt"`
+	Text                  string  `json:"text"`
+	Description           string  `json:"description"`
+	Alias                 string  `json:"alias"`
+	Owner                 *string `json:"owner"`
+	ParentId              int     `json:"parentId"`
+	URL                   string  `json:"url"`
+	Visible               bool    `json:"visible"`
+	OperationName         string  `json:"operation_name"`
+	PrivateAlias          string  `json:"privateAlias"`
+	PrivateAliasExpiresAt string  `json:"privateAliasExpiresAt"`
 }
 
 func (CreateReport) TableName() string {

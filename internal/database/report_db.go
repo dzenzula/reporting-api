@@ -417,21 +417,16 @@ func UpdateReport(uRep models.UpdateReport) error {
 		return fmt.Errorf(msg)
 	}
 
-	isMail, err := auth.CheckUserMail(uRep.Owner)
-	if !isMail {
-		if err != nil {
-			log.Error(err.Error())
-			return err
-		}
-		msg := "e-mail not found"
-		log.Error(msg)
-		return fmt.Errorf(msg)
+	var owner *string
+	if uRep.Owner != nil {
+		normalized := strings.ToLower(strings.TrimSpace(*uRep.Owner))
+		owner = &normalized
 	}
 
 	updateData := map[string]interface{}{
 		"Text":                  uRep.Text,
 		"Description":           uRep.Description,
-		"Owner":                 strings.ToLower(strings.TrimSpace(uRep.Owner)),
+		"Owner":                 owner,
 		"Visible":               uRep.Visible,
 		"URL":                   uRep.URL,
 		"OperationName":         strings.ToLower(strings.TrimSpace(uRep.OperationName)),
@@ -551,17 +546,6 @@ func AddReportRelation(reportID, categoryID int) error {
 }
 
 func CreateReport(report models.CreateReport) (*int, error) {
-	isMail, err := auth.CheckUserMail(report.Owner)
-	if !isMail {
-		if err != nil {
-			log.Error(err.Error())
-			return nil, err
-		}
-		msg := "e-mail not found"
-		log.Error(msg)
-		return nil, fmt.Errorf(msg)
-	}
-
 	if strings.TrimSpace(report.Text) == "" {
 		return nil, fmt.Errorf("Name cannot be empty")
 	}
@@ -668,6 +652,12 @@ func CreateReport(report models.CreateReport) (*int, error) {
 		return nil, fmt.Errorf(msg)
 	}
 
+	var owner *string
+	if report.Owner != nil {
+		normalized := strings.ToLower(strings.TrimSpace(*report.Owner))
+		owner = &normalized
+	}
+
 	newReport := models.Report{
 		Text:                  report.Text,
 		URL:                   report.URL,
@@ -675,7 +665,7 @@ func CreateReport(report models.CreateReport) (*int, error) {
 		Alias:                 report.Alias,
 		Description:           report.Description,
 		OperationName:         report.OperationName,
-		Owner:                 report.Owner,
+		Owner:                 owner,
 		CreatedBy:             auth.ReturnDomainUser(),
 		CreatedAt:             time.Now(),
 		UpdatedBy:             auth.ReturnDomainUser(),
