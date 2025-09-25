@@ -550,8 +550,8 @@ func CreateReport(report models.CreateReport) (*int, error) {
 		return nil, fmt.Errorf("Name cannot be empty")
 	}
 
-	if strings.TrimSpace(report.Alias) == "" {
-		return nil, fmt.Errorf("Alias cannot be empty")
+	if err := models.ValidateAlias(report.Alias); err != nil {
+		return nil, err
 	}
 
 	var unknownCat models.Category

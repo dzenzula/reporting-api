@@ -51,8 +51,8 @@ func CreateCategory(newCategory models.InsertCategory) (*int, error) {
 		return nil, fmt.Errorf("Name cannot be empty")
 	}
 
-	if strings.TrimSpace(newCategory.Alias) == "" {
-		return nil, fmt.Errorf("Alias cannot be empty")
+	if err := models.ValidateAlias(newCategory.Alias); err != nil {
+		return nil, err
 	}
 
 	privateAliasTrimmed := strings.TrimSpace(newCategory.PrivateAlias)
